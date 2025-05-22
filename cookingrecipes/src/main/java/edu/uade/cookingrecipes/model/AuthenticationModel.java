@@ -31,7 +31,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "authentication")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class AuthenticationModel implements Serializable, UserDetails {
 
