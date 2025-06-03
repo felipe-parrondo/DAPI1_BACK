@@ -2,5 +2,8 @@ package edu.uade.cookingrecipes.dto.auth;
 
 import java.io.Serializable;
 
-public class AuthenticationResponseDto implements Serializable {
-}
+public record AuthenticationResponseDto (
+
+        String token
+
+) implements Serializable {}
