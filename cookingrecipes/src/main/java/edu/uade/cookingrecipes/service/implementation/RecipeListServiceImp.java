@@ -42,7 +42,10 @@ public class RecipeListServiceImp implements RecipeListService {
     public RecipeListResponseDto addRecipeToList(Long listId, Long recipeId) {
         RecipeList recipeList = recipeListRepository.findById(listId).orElse(null);
         if (recipeList != null) {
-            // Poner la logica para agregar la receta a la lista (Cuando ya este hecha la parte de recetas)
+            Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+            if (recipe != null && !recipeList.getRecipes().contains(recipe)) {
+                recipeList.getRecipes().add(recipe);
+            }
             recipeListRepository.save(recipeList);
             return RecipeListMapper.toDto(recipeList);
         }
@@ -53,12 +56,17 @@ public class RecipeListServiceImp implements RecipeListService {
     public RecipeListResponseDto removeRecipeFromList(Long listId, Long recipeId) {
         RecipeList recipeList = recipeListRepository.findById(listId).orElse(null);
         if (recipeList == null) return null;
-        // Poner la logica para eliminar la receta de la lista (Cuando ya este hecha la parte de recetas)
+        recipeRepository.findById(recipeId).ifPresent(recipe -> recipeList.getRecipes().remove(recipe));
+        recipeListRepository.save(recipeList);
         return RecipeListMapper.toDto(recipeList);
     }
 
     @Override
     public boolean deleteList(Long listId) {
+        if (recipeListRepository.existsById(listId)) {
+            recipeListRepository.deleteById(listId);
+            return true;
+        }
         return false;
     }
 
