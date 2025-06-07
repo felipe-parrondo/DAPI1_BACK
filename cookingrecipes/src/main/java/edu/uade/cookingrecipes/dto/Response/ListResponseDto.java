@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecipeListResponseDto {
+public class ListResponseDto {
     private Long id;
     private String name;
     private List<RecipeResponseDto> recipes;

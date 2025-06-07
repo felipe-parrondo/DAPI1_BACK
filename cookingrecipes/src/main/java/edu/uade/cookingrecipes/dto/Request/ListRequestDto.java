@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecipeListRequestDto {
+public class ListRequestDto {
     String name;
     private List<Long> recipeIds;
 }
