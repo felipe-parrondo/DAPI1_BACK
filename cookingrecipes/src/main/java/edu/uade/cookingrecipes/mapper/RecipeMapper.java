@@ -3,8 +3,7 @@ package edu.uade.cookingrecipes.mapper;
 import edu.uade.cookingrecipes.Entity.Recipe;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 
-public interface RecipeMapper {
-
+public class RecipeMapper {
     public static RecipeResponseDto toDto(Recipe recipe) {
         if (recipe == null) return null;
 
@@ -19,5 +18,4 @@ public interface RecipeMapper {
                 recipe.getSteps()
         );
     }
-
 }

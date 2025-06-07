@@ -23,7 +23,7 @@ public class RecipeListController {
         this.recipeListService = recipeListService;
     }
 
-    @GetMapping("/ ") //Obtener todas las listas
+    @GetMapping("/") //Obtener todas las listas
     public ResponseEntity<List<RecipeListResponseDto>> getAllLists() {
         List<RecipeListResponseDto> lists = recipeListService.getAllLists();
         return new ResponseEntity<>(lists, HttpStatus.OK);
