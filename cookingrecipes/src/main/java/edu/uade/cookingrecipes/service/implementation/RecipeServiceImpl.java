@@ -76,9 +76,13 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<String> getRecipeIngredients(Long recipeId) {
-        return recipeRepository.findById(recipeId)
+        List<IngredientEmbeddable> ingredients = recipeRepository.findById(recipeId)
                 .map(Recipe::getIngredients)
                 .orElse(null);
+        if (ingredients == null) return null;
+        return ingredients.stream()
+                .map(IngredientEmbeddable::getName)
+                .collect(Collectors.toList());
     }
 
     @Override

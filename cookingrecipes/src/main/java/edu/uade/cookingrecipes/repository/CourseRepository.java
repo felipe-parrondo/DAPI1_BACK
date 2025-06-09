@@ -1,9 +1,9 @@
 package edu.uade.cookingrecipes.repository;
 
-import edu.uade.cookingrecipes.model.UserModel;
+import edu.uade.cookingrecipes.Entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 }

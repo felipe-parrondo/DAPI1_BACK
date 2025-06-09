@@ -1,5 +1,7 @@
 package edu.uade.cookingrecipes.dto.Request;
 
+import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.Entity.Embeddable.Step;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,6 @@ public class RecipeRequestDto {
     private Integer servings;
     private String dishType;
     private List<String> photos;
-    private List<String> ingredients;
-    private List<String> steps;
+    private List<IngredientEmbeddable> ingredients;
+    private List<Step> steps;
 }

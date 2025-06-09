@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
 import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;

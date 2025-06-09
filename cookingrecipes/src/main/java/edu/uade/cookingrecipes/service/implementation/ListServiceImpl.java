@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ListServiceImp implements ListService {
+public class ListServiceImpl implements ListService {
 
     @Autowired
     private ListRepository recipeListRepository;

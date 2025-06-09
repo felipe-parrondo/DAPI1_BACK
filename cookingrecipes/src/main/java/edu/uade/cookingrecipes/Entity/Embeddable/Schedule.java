@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngredientEmbeddable {
-    private String name;
-    private double quantity;
+public class Schedule {
+    private String dayOfWeek;
+    private String startTime;
+    private String endTime;
 }

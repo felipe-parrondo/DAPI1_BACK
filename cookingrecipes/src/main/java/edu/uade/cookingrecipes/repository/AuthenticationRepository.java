@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface AuthenticationRepository extends JpaRepository<AuthenticationModel, Long> {
     Optional<AuthenticationModel> findByUsername(String username);
-    Optional<AuthenticationModel> findByEmail(String email);
 }
