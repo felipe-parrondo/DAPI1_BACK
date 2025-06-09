@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.mapper;
 
 import edu.uade.cookingrecipes.Entity.Recipe;
+import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 
 public class RecipeMapper {
@@ -17,5 +18,21 @@ public class RecipeMapper {
                 recipe.getIngredients(),
                 recipe.getSteps()
         );
+    }
+
+    public static Recipe toEntity(RecipeRequestDto dto) {
+        if (dto == null) return null;
+
+        Recipe recipe = new Recipe();
+        recipe.setName(dto.getName());
+        recipe.setDescription(dto.getDescription());
+        recipe.setServings(dto.getServings());
+        recipe.setDishType(dto.getDishType());
+        recipe.setPhotos(dto.getPhotos());
+        recipe.setIngredients(dto.getIngredients());
+        recipe.setSteps(dto.getSteps());
+        recipe.setAverageRating(0.0);
+        recipe.setApproved(false);
+        return recipe;
     }
 }

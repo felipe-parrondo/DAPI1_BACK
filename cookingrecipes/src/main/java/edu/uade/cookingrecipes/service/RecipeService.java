@@ -1,2 +1,17 @@
-package edu.uade.cookingrecipes.service;public class RecipeService {
+package edu.uade.cookingrecipes.service;
+
+import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+
+import java.util.List;
+
+public interface RecipeService {
+    List<RecipeResponseDto> getAllRecipes();
+    RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto);
+    boolean approveRecipe(Long recipeId);
+    List<RecipeResponseDto> getRecentRecipes();
+    boolean deleteRecipe(Long recipeId);
+    RecipeResponseDto getRecipeById(Long recipeId);
+    List<String> getRecipeIngredients(Long recipeId);
+    List<String> getRecipeDishTypes(Long recipeId);
 }

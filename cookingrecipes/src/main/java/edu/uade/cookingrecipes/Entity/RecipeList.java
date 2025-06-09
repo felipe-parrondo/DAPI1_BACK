@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name = "recipe_list")
 @Getter
 @Setter
-public class List {
+public class RecipeList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
