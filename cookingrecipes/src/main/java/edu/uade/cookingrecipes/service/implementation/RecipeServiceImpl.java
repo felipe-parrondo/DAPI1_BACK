@@ -53,7 +53,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeResponseDto> getRecentRecipes() {
-        return recipeRepository.findByTop10ByOrderByIdDesc().stream()
+        return recipeRepository.findTop10ByOrderByIdDesc().stream()
                 .map(RecipeMapper::toDto)
                 .collect(Collectors.toList());
     }

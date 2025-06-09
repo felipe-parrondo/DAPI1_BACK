@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    List<Recipe> findByTop10ByOrderByIdDesc();
+    List<Recipe> findTop10ByOrderByIdDesc();
+
 }

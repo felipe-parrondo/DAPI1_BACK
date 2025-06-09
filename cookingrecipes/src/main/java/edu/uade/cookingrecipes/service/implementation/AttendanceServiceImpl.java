@@ -4,6 +4,7 @@ import edu.uade.cookingrecipes.Entity.Attendance;
 import edu.uade.cookingrecipes.dto.Response.AttendanceResponseDto;
 import edu.uade.cookingrecipes.repository.AttendanceRepository;
 import edu.uade.cookingrecipes.repository.CourseRepository;
+import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,14 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public AttendanceResponseDto registerAttendance(Long userId, Long courseId) {
         Attendance attendance = new Attendance();
-        attendance.setUserId(userId);
+        attendance.setUser(userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("User not found with id: " + userId)));
         attendance.setCourse(courseRepository.findById(courseId).orElseThrow(
                 () -> new IllegalArgumentException("Course not found with id: " + courseId)));
         attendance.setAttendanceDate(LocalDate.now());
