@@ -26,7 +26,7 @@ public class ApplicationConfig {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws NoSuchElementException {
-                return authenticationRepository.findByUsername(username)
+                return authenticationRepository.findByEmail(username)
                       .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
             }
         };

@@ -4,10 +4,8 @@ import edu.uade.cookingrecipes.dto.auth.AuthenticationRequestDto;
 import edu.uade.cookingrecipes.dto.auth.AuthenticationResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ChangePasswordRequestDto;
 import edu.uade.cookingrecipes.dto.auth.CreateCodeRequestDto;
-import edu.uade.cookingrecipes.dto.auth.CreateCodeResponseDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateCodeRequestDto;
-import edu.uade.cookingrecipes.dto.auth.ValidateCodeResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 import edu.uade.cookingrecipes.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -19,7 +17,6 @@ import io.swagger.annotations.Api;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
+    @PostMapping(path = "/testuser")
+    public ResponseEntity<Void> testUserCreation () {
+        authenticationService.createTestUser();
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping(path = "/authenticate",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponseDto> authenticate (@Valid @RequestBody
@@ -57,17 +60,19 @@ public class AuthenticationController {
     }
 
     @PostMapping(path = "/code/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreateCodeResponseDto> createCode (@Valid @RequestBody
-                                                             @NotNull(message = "{authentication-controller.register-service.create-code-request-not-null}")
-                                                             CreateCodeRequestDto createCodeRequest) {
-        return ResponseEntity.ok(authenticationService.createCode(createCodeRequest));
+    public ResponseEntity<Void> createCode (@Valid @RequestBody
+                                            @NotNull(message = "{authentication-controller.register-service.create-code-request-not-null}")
+                                            CreateCodeRequestDto createCodeRequest) {
+        authenticationService.createCode(createCodeRequest);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/code/validate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ValidateCodeResponseDto> validateCode (@Valid @RequestBody
+    public ResponseEntity<Void> validateCode (@Valid @RequestBody
                                                                 @NotNull(message = "{authentication-controller.register-service.validate-code-request-not-null}")
                                                                 ValidateCodeRequestDto validateCodeRequest) {
-        return ResponseEntity.ok(authenticationService.validateCode(validateCodeRequest));
+        authenticationService.validateCode(validateCodeRequest);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/password/change", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

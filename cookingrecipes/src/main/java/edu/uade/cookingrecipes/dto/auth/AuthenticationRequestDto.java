@@ -7,7 +7,7 @@ import java.io.Serializable;
 public record AuthenticationRequestDto (
 
         @NotBlank(message = "{authentication-request-dto.username-not-blank}")
-        String username,
+        String email,
 
         @NotBlank(message = "{authentication-request-dto.password-not-blank}")
         String password
