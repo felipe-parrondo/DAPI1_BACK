@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RatingRequestDto {
     private Long recipeId;
-    private Integer value;
+    private Integer ratingValue;
     private String comment;
 }

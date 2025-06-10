@@ -5,6 +5,7 @@ import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
 import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import io.swagger.annotations.Api;
@@ -24,9 +25,11 @@ public class RecipeController {
     private RecipeService recipeService;
     @Autowired
     private RatingService ratingService;
+    @Autowired
+    private IngredientService ingredientService;
 
 
-    @GetMapping("/")
+    @GetMapping("/") //Obtener todas las recetas del usuario que esta logueado
     public ResponseEntity<List<RecipeResponseDto>> getAllRecipes() {
         List<RecipeResponseDto> recipes = recipeService.getAllRecipes();
         return new ResponseEntity<>(recipes, HttpStatus.OK);
@@ -144,6 +147,15 @@ public class RecipeController {
         List<String> dishTypes = recipeService.getRecipeDishTypes(recipeId);
         if (dishTypes != null) {
             return new ResponseEntity<>(dishTypes, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/ingredient") //Obtener todas los ingredientes
+    public ResponseEntity<List<IngredientEmbeddable>> getAllIngredients() {
+        List<IngredientEmbeddable> ingredients = ingredientService.getAllIngredients();
+        if (ingredients != null) {
+            return new ResponseEntity<>(ingredients, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

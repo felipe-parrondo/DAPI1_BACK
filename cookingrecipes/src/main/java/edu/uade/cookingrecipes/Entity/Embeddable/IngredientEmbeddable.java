@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class IngredientEmbeddable {
     private String name;
     private double quantity;

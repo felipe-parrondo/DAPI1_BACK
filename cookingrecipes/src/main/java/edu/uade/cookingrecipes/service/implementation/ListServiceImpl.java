@@ -26,8 +26,8 @@ public class ListServiceImpl implements ListService {
 
     @Override
     public List<ListResponseDto> getAllLists() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<RecipeList> recipeLists = recipeListRepository.findAllByUserUsername(username);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<RecipeList> recipeLists = recipeListRepository.findAllByUserAddress(email);
         return recipeLists.stream()
                 .map(ListMapper::toDto)
                 .collect(Collectors.toList());

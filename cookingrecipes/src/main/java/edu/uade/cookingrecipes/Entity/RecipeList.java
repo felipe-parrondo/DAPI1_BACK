@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.Entity;
 
+import edu.uade.cookingrecipes.model.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +32,7 @@ public class RecipeList {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private UserModel user;
 
 
 }

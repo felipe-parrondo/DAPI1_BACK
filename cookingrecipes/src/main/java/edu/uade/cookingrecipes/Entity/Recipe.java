@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.Entity;
 
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.Entity.Embeddable.Step;
+import edu.uade.cookingrecipes.model.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class Recipe {
 
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
-    private User user;
+    private UserModel user;
 
     @Column(name = "servings_count", nullable = false)
     private int servings;
