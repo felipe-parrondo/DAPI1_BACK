@@ -6,6 +6,7 @@ import edu.uade.cookingrecipes.dto.auth.AuthenticationResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ChangePasswordRequestDto;
 import edu.uade.cookingrecipes.dto.auth.CreateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
+import edu.uade.cookingrecipes.dto.auth.UserSuggestionResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 import edu.uade.cookingrecipes.exceptions.EmailAlreadyInUseException;
@@ -82,7 +83,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void validateRegister(ValidateRegisterRequestDto validateCodeRequest) { //TODO delete temp register
+    public UserSuggestionResponseDto validateRegister(ValidateRegisterRequestDto validateCodeRequest) {
         TempAuthenticationModel tempAuthEmail = tempAuthRepository
                 .findByEmail(validateCodeRequest.email())
                 .orElse(null);
@@ -119,12 +120,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tempAuthSave.setEmail(validateCodeRequest.email());
         tempAuthSave.setUsername(validateCodeRequest.username());
         tempAuthRepository.save(tempAuthSave);
+        return null;
     }
 
     @Override
     public void createCode(CreateCodeRequestDto createCodeRequest) {
         CodeModel codeModel = codeRepository.findByEmail(createCodeRequest.email()).orElse(new CodeModel());
-        codeModel.setCode(Integer.toString((int)(Math.random() * 90000) + 10000));
+        codeModel.setCode(Integer.toString((int)(Math.random() * 900000) + 100000));
         codeModel.setEmail(createCodeRequest.email());
         codeModel.setExpiration(LocalDateTime.now().plusMinutes(30));
         codeRepository.save(codeModel);

@@ -5,6 +5,7 @@ import edu.uade.cookingrecipes.dto.auth.AuthenticationResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ChangePasswordRequestDto;
 import edu.uade.cookingrecipes.dto.auth.CreateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
+import edu.uade.cookingrecipes.dto.auth.UserSuggestionResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 
@@ -14,7 +15,7 @@ public interface AuthenticationService {
 
     AuthenticationResponseDto register(RegisterRequestDto registerRequest);
 
-    void validateRegister(ValidateRegisterRequestDto validateRegisterRequest);
+    UserSuggestionResponseDto validateRegister(ValidateRegisterRequestDto validateRegisterRequest);
 
     void createCode(CreateCodeRequestDto createCodeRequest);
 

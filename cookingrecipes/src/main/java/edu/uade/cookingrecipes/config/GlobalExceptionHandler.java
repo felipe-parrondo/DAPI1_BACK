@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.config;
 
+import edu.uade.cookingrecipes.dto.auth.UserSuggestionResponseDto;
 import edu.uade.cookingrecipes.exceptions.EmailAlreadyInUseException;
 import edu.uade.cookingrecipes.exceptions.EmailNotActivatedException;
 import edu.uade.cookingrecipes.exceptions.UsernameAlreadyInUseException;
@@ -81,7 +82,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameAlreadyInUseException.class)
-    public ResponseEntity<List<String>> handleUsernameAlreadyInUseException (UsernameAlreadyInUseException e) {
-        return new ResponseEntity<List<String>>(e.getUsernameSuggestions(), HttpStatusCode.valueOf(400));
+    public ResponseEntity<UserSuggestionResponseDto> handleUsernameAlreadyInUseException (UsernameAlreadyInUseException e) {
+        return new ResponseEntity<UserSuggestionResponseDto>(e.getUsernameSuggestions(), HttpStatusCode.valueOf(400));
     }
 }
