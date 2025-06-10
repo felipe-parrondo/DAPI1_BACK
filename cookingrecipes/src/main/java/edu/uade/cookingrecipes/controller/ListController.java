@@ -17,21 +17,21 @@ import java.util.List;
 public class ListController {
 
     @Autowired
-    private final ListService recipeListService;
+    private ListService ListService;
 
     public ListController(ListService recipeListService) {
-        this.recipeListService = recipeListService;
+        this.ListService = recipeListService;
     }
 
     @GetMapping("/") //Obtener todas las listas
     public ResponseEntity<List<ListResponseDto>> getAllLists() {
-        List<ListResponseDto> lists = recipeListService.getAllLists();
+        List<ListResponseDto> lists = ListService.getAllLists();
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
 
     @PostMapping("/create") //Crear lista
     public ResponseEntity<ListResponseDto> createList(@RequestBody ListRequestDto requestDto) {
-        ListResponseDto createdList = recipeListService.createList(requestDto);
+        ListResponseDto createdList = ListService.createList(requestDto);
         if(createdList != null) {
             return new ResponseEntity<>(createdList, HttpStatus.CREATED);
         }
@@ -40,7 +40,7 @@ public class ListController {
 
     @PostMapping("/{list}/{recipe}") //Agregar receta a la lista
     public ResponseEntity<ListResponseDto> addRecipeToList(@PathVariable Long list, @PathVariable Long recipe) {
-        ListResponseDto updatedList = recipeListService.addRecipeToList(list, recipe);
+        ListResponseDto updatedList = ListService.addRecipeToList(list, recipe);
         if(updatedList != null) {
             return new ResponseEntity<>(updatedList, HttpStatus.OK);
         }
@@ -49,7 +49,7 @@ public class ListController {
 
     @DeleteMapping("/{list}") //Eliminar lista
     public ResponseEntity<Void> deleteList(@PathVariable Long list) {
-        boolean isDeleted = recipeListService.deleteList(list);
+        boolean isDeleted = ListService.deleteList(list);
         if(isDeleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -58,7 +58,7 @@ public class ListController {
 
     @DeleteMapping("/{list}/{recipe}") //Eliminar receta de la lista
     public ResponseEntity<ListResponseDto> removeRecipeFromList(@PathVariable Long list, @PathVariable Long recipe) {
-        ListResponseDto updatedList = recipeListService.removeRecipeFromList(list, recipe);
+        ListResponseDto updatedList = ListService.removeRecipeFromList(list, recipe);
         if(updatedList != null) {
             return new ResponseEntity<>(updatedList, HttpStatus.OK);
         }
