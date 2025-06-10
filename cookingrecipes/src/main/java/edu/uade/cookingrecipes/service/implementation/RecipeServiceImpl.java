@@ -69,6 +69,7 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
         String address = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = userRepository.findByAddress(address);
+        System.out.println(address);
         if (user == null) throw new NoSuchElementException("User not found: " + address);
 
         if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {

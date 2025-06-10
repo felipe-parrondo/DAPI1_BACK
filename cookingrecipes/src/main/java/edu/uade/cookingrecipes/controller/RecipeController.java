@@ -20,7 +20,7 @@ import java.util.List;
 
 @Api (value = "Recipe Operations")
 @RestController
-@RequestMapping("/recipes")
+@RequestMapping("/recipe")
 public class RecipeController {
 
     @Autowired
@@ -47,7 +47,8 @@ public class RecipeController {
             @RequestParam(required = false) String sortByDate,
             @RequestParam(required = false) String username
     ) {
-        List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient, sortByDate, username);
+        List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient,
+                sortByDate, username);
         return new ResponseEntity<>(filteredRecipes, HttpStatus.OK);
     }
 

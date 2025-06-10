@@ -158,7 +158,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void createTestUser() {
         UserModel userModel = new UserModel();
         userModel.setName("testero");
+        userModel.setAddress("t@hotmail.com");
         userModel.setIsStudent(false);
+        userModel.setPaymentInformationModel(null);
         userModel.setAddress("calle false 123");
 
         userModel = userRepository.save(userModel);
