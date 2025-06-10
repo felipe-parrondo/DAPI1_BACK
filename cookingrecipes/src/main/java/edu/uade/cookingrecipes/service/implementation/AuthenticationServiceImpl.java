@@ -67,18 +67,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponseDto register(RegisterRequestDto registerRequest) {
-        PaymentInformationModel paymentInformationModel = UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest);
+        PaymentInformationModel paymentInformationModel = null;
+        if (registerRequest.isStudent()) {
+            paymentInformationModel = UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest);
+            paymentInformationModel = paymentInformationRepository.save(paymentInformationModel);
+        }
         UserModel userModel = UserMapper.registerRequestDtoToUserModel(registerRequest);
         AuthenticationModel authenticationModel = UserMapper.registerRequestDtoToAuthenticationModel(registerRequest);
-
-        paymentInformationModel = paymentInformationRepository.save(paymentInformationModel);
         userModel.setPaymentInformationModel(paymentInformationModel);
         userModel = userRepository.save(userModel);
         authenticationModel.setUser(userModel);
-        authenticationRepository.save(authenticationModel);
+        authenticationModel.setPassword(passwordEncoder.encode(authenticationModel.getPassword()));
+        authenticationModel = authenticationRepository.save(authenticationModel);
 
-        tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).orElse(null));
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationModel.getEmail(), authenticationModel.getPassword()));
+        tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).get());
         return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel));
     }
 
@@ -150,7 +152,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationModel authenticationModel = authenticationRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
 
-        authenticationModel.setPassword(changePasswordRequest.password());
+        authenticationModel.setPassword(passwordEncoder.encode(changePasswordRequest.password()));
         authenticationRepository.save(authenticationModel);
     }
 

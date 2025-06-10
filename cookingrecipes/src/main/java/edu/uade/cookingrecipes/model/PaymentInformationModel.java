@@ -29,6 +29,12 @@ public class PaymentInformationModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
+    @Column(name = "owner_name", nullable = false)
+    private String ownerName;
+
+    @Column(name = "is_credit", nullable = false)
+    private Boolean isCredit;
+
     @Column(name = "card_number", nullable = false)
     private String cardNumber;
 
@@ -37,4 +43,7 @@ public class PaymentInformationModel {
 
     @Column(name = "expiration_date", nullable = false)
     private String expirationDate;
+
+    @Column(name = "id_number", nullable = false)
+    private String idNumber;
 }

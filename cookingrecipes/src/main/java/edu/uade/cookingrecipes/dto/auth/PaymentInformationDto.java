@@ -1,17 +1,27 @@
 package edu.uade.cookingrecipes.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 
 public record PaymentInformationDto (
 
-        @JsonAlias("card_number")
+        @JsonProperty("nameTitular")
+        String ownerName,
+
+        @JsonProperty("isCredit")
+        Boolean isCredit,
+
+        @JsonProperty("cardNumber")
         String cardNumber,
 
+        @JsonProperty("cvv")
         String cvv,
 
-        @JsonAlias("expiration_date")
-        String expirationDate
+        @JsonProperty("expirationDate")
+        String expirationDate,
+
+        @JsonProperty("numTramiteDNI")
+        String idNumber
 
 ) implements Serializable {}
