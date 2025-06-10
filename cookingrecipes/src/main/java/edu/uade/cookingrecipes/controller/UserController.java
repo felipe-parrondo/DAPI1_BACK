@@ -12,4 +12,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
+    //TODO recordar que el POST para crear tambien funciona como PUT
 }

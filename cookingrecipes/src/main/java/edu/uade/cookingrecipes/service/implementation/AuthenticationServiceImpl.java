@@ -11,14 +11,16 @@ import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 import edu.uade.cookingrecipes.exceptions.EmailAlreadyInUseException;
 import edu.uade.cookingrecipes.exceptions.EmailNotActivatedException;
 import edu.uade.cookingrecipes.exceptions.UsernameAlreadyInUseException;
-import edu.uade.cookingrecipes.mapper.AuthenticationMapper;
+import edu.uade.cookingrecipes.mapper.UserMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.CodeModel;
+import edu.uade.cookingrecipes.model.PaymentInformationModel;
 import edu.uade.cookingrecipes.model.RoleEnum;
 import edu.uade.cookingrecipes.model.TempAuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.CodeRepository;
+import edu.uade.cookingrecipes.repository.PaymentInformationRepository;
 import edu.uade.cookingrecipes.repository.TempAuthenticationRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.AuthenticationService;
@@ -43,18 +45,14 @@ import java.util.stream.IntStream;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final CodeRepository codeRepository;
-
-    private final TempAuthenticationRepository tempAuthRepository;
-
     private final UserRepository userRepository;
-
-    private final EmailService emailService;
-
+    private final TempAuthenticationRepository tempAuthRepository;
     private final AuthenticationRepository authenticationRepository;
-    private final AuthenticationMapper authenticationMapper;
+    private final PaymentInformationRepository paymentInformationRepository;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public AuthenticationResponseDto authenticate(AuthenticationRequestDto authRequest) {
@@ -68,13 +66,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponseDto register(RegisterRequestDto registerRequest) {
-        //registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        //UserModel userModel = userRepository.save(authenticationMapper.mapToDatabaseEntity(registerRequest));
-        return null; //TODO
+        PaymentInformationModel paymentInformationModel = UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest);
+        UserModel userModel = UserMapper.registerRequestDtoToUserModel(registerRequest);
+        AuthenticationModel authenticationModel = UserMapper.registerRequestDtoToAuthenticationModel(registerRequest);
+
+        paymentInformationModel = paymentInformationRepository.save(paymentInformationModel);
+        userModel.setPaymentInformationModel(paymentInformationModel);
+        userModel = userRepository.save(userModel);
+        authenticationModel.setUser(userModel);
+        authenticationRepository.save(authenticationModel);
+
+        tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).orElse(null));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationModel.getEmail(), authenticationModel.getPassword()));
+        return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel));
     }
 
     @Override
-    public void validateRegister(ValidateRegisterRequestDto validateCodeRequest) {
+    public void validateRegister(ValidateRegisterRequestDto validateCodeRequest) { //TODO delete temp register
         TempAuthenticationModel tempAuthEmail = tempAuthRepository
                 .findByEmail(validateCodeRequest.email())
                 .orElse(null);
@@ -94,7 +102,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByUsername(validateCodeRequest.username())
                 .orElse(null);
         if (Objects.nonNull(tempAuthUser) || Objects.nonNull(authModelUser)) {
-            List<String> candidates = IntStream.range(1, 100)
+            List<String> candidates = IntStream.range(1, 10)
                     .mapToObj(i -> validateCodeRequest.username() + i)
                     .toList();
             List<AuthenticationModel> authList = authenticationRepository.findByUsernameIn(candidates);
@@ -105,8 +113,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             candidates = candidates.stream()
                     .filter(u -> !taken.contains(u))
                     .toList();
-            throw new UsernameAlreadyInUseException(candidates);
+            throw new UsernameAlreadyInUseException(candidates.subList(0, 3));
         }
+        TempAuthenticationModel tempAuthSave = new TempAuthenticationModel();
+        tempAuthSave.setEmail(validateCodeRequest.email());
+        tempAuthSave.setUsername(validateCodeRequest.username());
+        tempAuthRepository.save(tempAuthSave);
     }
 
     @Override
@@ -131,7 +143,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void changePassword(ChangePasswordRequestDto changePasswordRequest) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName(); //TODO asi no va
 
         AuthenticationModel authenticationModel = authenticationRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));

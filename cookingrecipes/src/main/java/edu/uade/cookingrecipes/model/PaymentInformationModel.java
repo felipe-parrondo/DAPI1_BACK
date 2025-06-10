@@ -22,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "payment_information")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class PaymentInformation {
+public class PaymentInformationModel {
 
     @Id
     @Column(name = "id")

@@ -16,8 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
@@ -41,5 +39,5 @@ public class UserModel {
 
     @OneToOne
     @JoinColumn(name = "payment_information", referencedColumnName = "id", nullable = true)
-    private PaymentInformation paymentInformation;
+    private PaymentInformationModel paymentInformationModel;
 }
