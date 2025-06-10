@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface RecipeService {
     List<RecipeResponseDto> getAllRecipes();
+    List<RecipeResponseDto> filterRecipes(String dishType, String order, String ingredient, String sortByDate, String username);
+
     RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto);
     boolean approveRecipe(Long recipeId);
     List<RecipeResponseDto> getRecentRecipes();

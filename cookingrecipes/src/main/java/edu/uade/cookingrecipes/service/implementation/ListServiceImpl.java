@@ -9,6 +9,7 @@ import edu.uade.cookingrecipes.repository.ListRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.service.ListService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +23,11 @@ public class ListServiceImpl implements ListService {
     @Autowired
     private RecipeRepository recipeRepository;
 
+
     @Override
-    public java.util.List<ListResponseDto> getAllLists() {
-        List<RecipeList> recipeLists = recipeListRepository.findAll();
+    public List<ListResponseDto> getAllLists() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<RecipeList> recipeLists = recipeListRepository.findAllByUsername(username);
         return recipeLists.stream()
                 .map(ListMapper::toDto)
                 .collect(Collectors.toList());

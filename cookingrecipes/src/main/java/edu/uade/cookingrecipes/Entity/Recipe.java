@@ -24,6 +24,10 @@ public class Recipe {
     @Column(name = "description", length = 2000)
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "username", nullable = false)
+    private User user;
+
     @Column(name = "servings_count", nullable = false)
     private int servings;
 

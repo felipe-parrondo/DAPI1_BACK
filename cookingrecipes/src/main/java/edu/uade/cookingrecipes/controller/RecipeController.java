@@ -25,10 +25,23 @@ public class RecipeController {
     @Autowired
     private RatingService ratingService;
 
-    @GetMapping("/") //Obtener todas las recetas
+
+    @GetMapping("/")
     public ResponseEntity<List<RecipeResponseDto>> getAllRecipes() {
         List<RecipeResponseDto> recipes = recipeService.getAllRecipes();
         return new ResponseEntity<>(recipes, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter") //Obtener recetas filtradas
+    public ResponseEntity<List<RecipeResponseDto>> filterRecipes(
+            @RequestParam(required = false) String dishType,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false) String ingredient,
+            @RequestParam(required = false) String sortByDate,
+            @RequestParam(required = false) String username
+    ) {
+        List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient, sortByDate, username);
+        return new ResponseEntity<>(filteredRecipes, HttpStatus.OK);
     }
 
     @PostMapping("/create") //Crear receta
@@ -101,9 +114,9 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/rating/{ratingId}") //Obtener valoracion de receta por ID
-    public ResponseEntity<RatingResponseDto> getRatingById(@PathVariable Long ratingId) {
-        RatingResponseDto rating = ratingService.getRatingById(ratingId);
+    @GetMapping("/rating/{recipeId}") //Obtener valoracion de receta por ID
+    public ResponseEntity<RatingResponseDto> getRatingByRecipeId(@PathVariable Long recipeId) {
+        RatingResponseDto rating = ratingService.getRatingByRecipeId(recipeId);
         if (rating != null) {
             return new ResponseEntity<>(rating, HttpStatus.OK);
         }

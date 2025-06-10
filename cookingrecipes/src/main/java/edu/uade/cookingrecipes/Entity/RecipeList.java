@@ -29,4 +29,8 @@ public class RecipeList {
     )
     private List<Recipe> recipes;
 
+    @ManyToOne
+    @JoinColumn(name = "username", nullable = false)
+    private User user;
+
 }
