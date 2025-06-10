@@ -147,9 +147,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void changePassword(ChangePasswordRequestDto changePasswordRequest) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName(); //TODO asi no va
-
-        AuthenticationModel authenticationModel = authenticationRepository.findByUsername(username)
+        AuthenticationModel authenticationModel = authenticationRepository.findByEmail(changePasswordRequest.email())
                 .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
 
         authenticationModel.setPassword(passwordEncoder.encode(changePasswordRequest.password()));
@@ -161,6 +159,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserModel userModel = new UserModel();
         userModel.setName("testero");
         userModel.setIsStudent(false);
+        userModel.setAddress("calle false 123");
 
         userModel = userRepository.save(userModel);
 

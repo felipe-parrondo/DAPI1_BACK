@@ -9,6 +9,8 @@ import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class RecipeController {
     private RatingService ratingService;
     @Autowired
     private IngredientService ingredientService;
+
+    private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
 
     @GetMapping("/") //Obtener todas las recetas del usuario que esta logueado
@@ -86,7 +90,9 @@ public class RecipeController {
 
     @GetMapping("/recent") //Obtener recetas recientes
     public ResponseEntity<List<RecipeResponseDto>> getRecentRecipes() {
+        logger.info("REQUESTING RECENT RECIPES");
         List<RecipeResponseDto> recentRecipes = recipeService.getRecentRecipes();
+        logger.info(recentRecipes.toString());
         return new ResponseEntity<>(recentRecipes, HttpStatus.OK);
     }
 

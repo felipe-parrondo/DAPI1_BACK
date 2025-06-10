@@ -7,7 +7,7 @@ import java.util.List;
 
 public record UserSuggestionResponseDto (
 
-        @JsonAlias("user_suggestion")
+        @JsonAlias("userSuggestion")
         List<String> userSuggestion
 
 ) implements Serializable {}
