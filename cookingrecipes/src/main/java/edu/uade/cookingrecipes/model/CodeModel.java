@@ -30,7 +30,7 @@ public class CodeModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long codeId;
+    private Long Id;
 
     @Column(name = "code", nullable = false)
     private String code;

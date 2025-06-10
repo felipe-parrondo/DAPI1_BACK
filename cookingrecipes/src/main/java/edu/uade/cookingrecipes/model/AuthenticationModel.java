@@ -38,7 +38,7 @@ public class AuthenticationModel implements Serializable, UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authenticationId;
+    private Long Id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

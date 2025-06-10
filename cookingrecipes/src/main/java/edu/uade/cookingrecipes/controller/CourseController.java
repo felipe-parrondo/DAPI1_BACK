@@ -1,6 +1,5 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.Entity.Attendance;
 import edu.uade.cookingrecipes.dto.Response.AttendanceResponseDto;
 import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
 import edu.uade.cookingrecipes.service.AttendanceService;
@@ -85,5 +84,4 @@ public class CourseController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
 }

@@ -42,7 +42,7 @@ public class RatingServiceImpl implements RatingService {
         Rating rating = ratingRepository.findById(ratingId).orElse(null);
         if (rating == null) return null;
 
-        rating.setValue(ratingRequestDto.getValue());
+        rating.setRatingValue(ratingRequestDto.getRatingValue());
         rating.setComment(ratingRequestDto.getComment());
 
         return RatingMapper.toDto(ratingRepository.save(rating));
@@ -65,7 +65,7 @@ public class RatingServiceImpl implements RatingService {
         if (recipe == null || rating == null) return false;
         recipe.setRatingsCount(recipe.getRatingsCount() + 1);
         double totalRating = recipe.getAverageRating() * (recipe.getRatingsCount() - 1);
-        totalRating += rating.getValue();
+        totalRating += rating.getRatingValue();
         recipe.setAverageRating(totalRating / recipe.getRatingsCount());
         recipeRepository.save(recipe);
         rating.setApproved(true);

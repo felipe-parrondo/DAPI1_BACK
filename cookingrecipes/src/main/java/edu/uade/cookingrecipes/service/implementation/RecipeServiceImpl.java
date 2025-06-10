@@ -2,11 +2,10 @@ package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.Entity.User;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
-import edu.uade.cookingrecipes.repository.AuthenticationRepository;
+import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
@@ -68,13 +67,13 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username);
-        if (user == null) throw new NoSuchElementException("User not found: " + username);
+        String address = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = userRepository.findByAddress(address);
+        if (user == null) throw new NoSuchElementException("User not found: " + address);
 
         if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {
             throw new IllegalArgumentException("Recipe with name '" +
-                    recipeRequestDto.getName() + "' already exists for user: " + username);
+                    recipeRequestDto.getName() + "' already exists for user: " + address);
         }
 
         Recipe recipe = RecipeMapper.toEntity(recipeRequestDto);

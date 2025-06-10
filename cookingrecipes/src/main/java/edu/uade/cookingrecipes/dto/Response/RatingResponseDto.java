@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RatingResponseDto {
     private Long id;
-    private Integer value;
+    private Integer ratingValue;
     private String comment;
     private Boolean approved;
     private LocalDateTime ratedAt;

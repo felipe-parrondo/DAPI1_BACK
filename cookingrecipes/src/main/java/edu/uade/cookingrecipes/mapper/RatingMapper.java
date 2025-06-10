@@ -13,7 +13,7 @@ public class RatingMapper {
 
         return new RatingResponseDto(
                 rating.getId(),
-                rating.getValue(),
+                rating.getRatingValue(),
                 rating.getComment(),
                 rating.getApproved(),
                 rating.getRatedAt(),
@@ -25,7 +25,7 @@ public class RatingMapper {
         if (dto == null) return null;
 
         Rating rating = new Rating();
-        rating.setValue(dto.getValue());
+        rating.setRatingValue(dto.getRatingValue());
         rating.setComment(dto.getComment());
         rating.setApproved(false);
         rating.setRatedAt(LocalDateTime.now());
