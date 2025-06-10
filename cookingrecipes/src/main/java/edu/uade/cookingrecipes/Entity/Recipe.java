@@ -1,5 +1,7 @@
 package edu.uade.cookingrecipes.Entity;
 
+import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.Entity.Embeddable.Step;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +24,10 @@ public class Recipe {
     @Column(name = "description", length = 2000)
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "username", nullable = false)
+    private User user;
+
     @Column(name = "servings_count", nullable = false)
     private int servings;
 
@@ -36,11 +42,19 @@ public class Recipe {
     @ElementCollection
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "ingredient", nullable = false)
-    private List<String> ingredients;
+    private List<IngredientEmbeddable> ingredients;
 
     @ElementCollection
     @CollectionTable(name = "recipe_steps", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "step", nullable = false)
-    private List<String> steps;
+    private List<Step> steps;
 
+    @Column(name = "average_rating", nullable = false)
+    private double averageRating;
+
+    @Column(name = "ratings_count", nullable = false)
+    private int ratingsCount;
+
+    @Column(name = "approved", nullable = false)
+    private Boolean approved;
 }

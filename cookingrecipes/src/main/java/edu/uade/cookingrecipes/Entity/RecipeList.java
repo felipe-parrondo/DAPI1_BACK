@@ -3,6 +3,8 @@ package edu.uade.cookingrecipes.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @AllArgsConstructor
@@ -10,7 +12,7 @@ import lombok.*;
 @Table(name = "recipe_list")
 @Getter
 @Setter
-public class List {
+public class RecipeList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,11 @@ public class List {
             joinColumns = @JoinColumn(name = "recipe_list_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
-    private java.util.List<Recipe> recipes;
+    private List<Recipe> recipes;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
 
 }

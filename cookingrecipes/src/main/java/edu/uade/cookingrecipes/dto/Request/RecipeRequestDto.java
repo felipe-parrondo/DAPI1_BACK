@@ -1,4 +1,4 @@
-package edu.uade.cookingrecipes.dto.Response;
+package edu.uade.cookingrecipes.dto.Request;
 
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.Entity.Embeddable.Step;
@@ -11,8 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecipeResponseDto {
-    private Long id;
+public class RecipeRequestDto {
     private String name;
     private String description;
     private Integer servings;
