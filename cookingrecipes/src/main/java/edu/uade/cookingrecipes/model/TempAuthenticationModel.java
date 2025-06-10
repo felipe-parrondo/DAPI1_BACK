@@ -27,7 +27,7 @@ public class TempAuthenticationModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tempAuthId;
+    private Long Id;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;

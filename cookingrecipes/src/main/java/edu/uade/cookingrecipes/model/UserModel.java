@@ -29,7 +29,7 @@ public class UserModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long Id;
 
     @Column(name = "name", nullable = false)
     private String name;

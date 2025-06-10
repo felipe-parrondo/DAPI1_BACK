@@ -27,7 +27,7 @@ public class PaymentInformationModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paymentId;
+    private Long Id;
 
     @Column(name = "owner_name", nullable = false)
     private String ownerName;
