@@ -1,16 +1,18 @@
 package edu.uade.cookingrecipes.dto.Request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.Entity.Embeddable.Step;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RecipeRequestDto {
     private String name;
     private String description;

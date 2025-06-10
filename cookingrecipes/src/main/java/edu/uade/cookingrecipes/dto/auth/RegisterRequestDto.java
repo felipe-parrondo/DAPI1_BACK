@@ -1,6 +1,5 @@
 package edu.uade.cookingrecipes.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.model.RoleEnum;
 
