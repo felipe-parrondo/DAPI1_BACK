@@ -30,7 +30,8 @@ public class RecipeList {
     private List<Recipe> recipes;
 
     @ManyToOne
-    @JoinColumn(name = "username", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
 
 }

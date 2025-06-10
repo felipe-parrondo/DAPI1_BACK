@@ -68,15 +68,6 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public RatingResponseDto getRatingByRecipeId(Long recipeId) {
-        return ratingRepository.findByRecipeId(recipeId)
-                .stream()
-                .findFirst()
-                .map(RatingMapper::toDto)
-                .orElse(null);
-    }
-
-    @Override
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
         return ratingRepository.findByRecipeId(recipeId)
                 .stream()

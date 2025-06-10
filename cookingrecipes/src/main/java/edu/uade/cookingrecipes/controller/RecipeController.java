@@ -114,16 +114,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/rating/{recipeId}") //Obtener valoracion de receta por ID
-    public ResponseEntity<RatingResponseDto> getRatingByRecipeId(@PathVariable Long recipeId) {
-        RatingResponseDto rating = ratingService.getRatingByRecipeId(recipeId);
-        if (rating != null) {
-            return new ResponseEntity<>(rating, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/rating/{ratingId}") //Actualizar valoracion de receta
+    @PutMapping("/rating/{ratingId}/update") //Actualizar valoracion de receta
     public ResponseEntity<RatingResponseDto> updateRating(@PathVariable Long ratingId,
                                                                 @RequestBody RatingRequestDto ratingRequestDto) {
         RatingResponseDto updatedRating = ratingService.updateRating(ratingId, ratingRequestDto);
