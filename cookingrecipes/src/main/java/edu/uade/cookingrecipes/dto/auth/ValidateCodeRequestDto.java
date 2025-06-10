@@ -2,6 +2,10 @@ package edu.uade.cookingrecipes.dto.auth;
 
 import java.io.Serializable;
 
-public class ValidateCodeRequestDto implements Serializable {
+public record ValidateCodeRequestDto (
 
-}
+        String email,
+
+        String code
+
+) implements Serializable {}

@@ -7,8 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,25 +20,30 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "payment_information")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class UserModel {
+public class PaymentInformationModel {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long paymentId;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "owner_name", nullable = false)
+    private String ownerName;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "is_credit", nullable = false)
+    private Boolean isCredit;
 
-    @Column(name = "is_student", nullable = false)
-    private Boolean isStudent;
+    @Column(name = "card_number", nullable = false)
+    private String cardNumber;
 
-    @OneToOne
-    @JoinColumn(name = "payment_information", referencedColumnName = "id", nullable = true)
-    private PaymentInformationModel paymentInformationModel;
+    @Column(name = "cvv", nullable = false)
+    private String cvv;
+
+    @Column(name = "expiration_date", nullable = false)
+    private String expirationDate;
+
+    @Column(name = "id_number", nullable = false)
+    private String idNumber;
 }

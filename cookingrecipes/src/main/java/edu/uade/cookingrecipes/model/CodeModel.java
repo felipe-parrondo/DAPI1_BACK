@@ -7,14 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,25 +23,21 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "authentication_codes")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class UserModel {
+public class CodeModel {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long codeId;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "code", nullable = false)
+    private String code;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-    @Column(name = "is_student", nullable = false)
-    private Boolean isStudent;
-
-    @OneToOne
-    @JoinColumn(name = "payment_information", referencedColumnName = "id", nullable = true)
-    private PaymentInformationModel paymentInformationModel;
+    @Column(name = "expiration", nullable = false)
+    private LocalDateTime expiration;
 }

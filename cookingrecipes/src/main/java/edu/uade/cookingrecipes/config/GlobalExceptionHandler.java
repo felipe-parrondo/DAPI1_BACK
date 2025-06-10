@@ -1,11 +1,16 @@
 package edu.uade.cookingrecipes.config;
 
+import edu.uade.cookingrecipes.dto.auth.UserSuggestionResponseDto;
+import edu.uade.cookingrecipes.exceptions.EmailAlreadyInUseException;
+import edu.uade.cookingrecipes.exceptions.EmailNotActivatedException;
+import edu.uade.cookingrecipes.exceptions.UsernameAlreadyInUseException;
 import jakarta.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -63,5 +69,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleHttpMessageNotReadableException (HttpMessageNotReadableException e) {
         logger.info(httpMessageNotReadableExceptionMessage + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         return new ResponseEntity<>(httpMessageNotReadableExceptionCode);
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<Void> handleEmailAlreadyInUseException (EmailAlreadyInUseException e) {
+        return new ResponseEntity<Void>(HttpStatusCode.valueOf(401));
+    }
+
+    @ExceptionHandler(EmailNotActivatedException.class)
+    public ResponseEntity<Void> handleEmailNotActivatedException (EmailNotActivatedException e) {
+        return new ResponseEntity<Void>(HttpStatusCode.valueOf(403));
+    }
+
+    @ExceptionHandler(UsernameAlreadyInUseException.class)
+    public ResponseEntity<UserSuggestionResponseDto> handleUsernameAlreadyInUseException (UsernameAlreadyInUseException e) {
+        return new ResponseEntity<UserSuggestionResponseDto>(e.getUsernameSuggestions(), HttpStatusCode.valueOf(400));
     }
 }
