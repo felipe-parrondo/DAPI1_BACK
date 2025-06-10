@@ -10,6 +10,7 @@ public class RecipeMapper {
 
         return new RecipeResponseDto(
                 recipe.getId(),
+                recipe.getUser().getName(),
                 recipe.getName(),
                 recipe.getDescription(),
                 recipe.getServings(),

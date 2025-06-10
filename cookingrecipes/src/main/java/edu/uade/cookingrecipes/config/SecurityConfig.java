@@ -32,7 +32,9 @@ public class SecurityConfig {
                         .and()
                         .csrf(AbstractHttpConfigurer::disable)
                         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                        .authorizeHttpRequests(req -> req.anyRequest().permitAll())
+                        .authorizeHttpRequests(req ->
+                                req.requestMatchers("/auth/**", "/h2-console/**").permitAll()
+                                .requestMatchers("/**").permitAll())
                         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                         .authenticationProvider(authenticationProvider)
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

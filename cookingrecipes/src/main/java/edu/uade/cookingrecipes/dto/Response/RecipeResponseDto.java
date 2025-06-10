@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RecipeResponseDto {
     private Long id;
+    private String username;
     private String name;
     private String description;
     private Integer servings;

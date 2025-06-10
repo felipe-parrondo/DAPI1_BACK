@@ -7,6 +7,8 @@ import java.io.Serializable;
 public record ChangePasswordRequestDto (
 
         @NotBlank(message = "{change-password-dto.password-not-blank}")
-        String password
+        String password,
+
+        String email
 
 ) implements Serializable {}

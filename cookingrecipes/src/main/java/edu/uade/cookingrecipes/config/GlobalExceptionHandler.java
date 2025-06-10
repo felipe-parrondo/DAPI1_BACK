@@ -83,6 +83,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameAlreadyInUseException.class)
     public ResponseEntity<UserSuggestionResponseDto> handleUsernameAlreadyInUseException (UsernameAlreadyInUseException e) {
+        logger.info(e.getUsernameSuggestions().toString());
         return new ResponseEntity<UserSuggestionResponseDto>(e.getUsernameSuggestions(), HttpStatusCode.valueOf(400));
     }
 }

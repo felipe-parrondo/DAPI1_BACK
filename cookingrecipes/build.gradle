@@ -44,7 +44,6 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.38'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'
-	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	implementation 'org.postgresql:postgresql:42.7.3'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
