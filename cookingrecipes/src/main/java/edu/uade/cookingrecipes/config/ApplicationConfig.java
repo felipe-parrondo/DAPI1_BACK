@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.config;
 
+import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -8,11 +9,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Configuration
@@ -23,14 +26,18 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws NoSuchElementException {
-                return authenticationRepository.findByEmail(username)
-                      .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
-            }
+        return username -> {
+            AuthenticationModel user = authenticationRepository.findByEmail(username)
+                    .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
+            String roleName = "ROLE_" + user.getRole().name();
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority(roleName)) // O ajustá según cómo tengas el rol
+            );
         };
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

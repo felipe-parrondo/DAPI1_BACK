@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.config;
 
+import edu.uade.cookingrecipes.model.AuthenticationModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -17,9 +18,9 @@ public class JwtService {
     private String secretKey = "WFJ#$%^)!*@#234-7850-231123FERGWEFRFG!";
     private long jwtExpiration = 100000000;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(AuthenticationModel userDetails) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(userDetails.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSecretKey())

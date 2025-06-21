@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "User Operations")
 @Validated
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     //TODO recordar que el POST para crear tambien funciona como PUT
