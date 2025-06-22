@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ListRepository extends JpaRepository<RecipeList, Long> {
 
-    List<RecipeList> findAllByUserAddress(String address);
+    List<RecipeList> findAllByUserId(Long id);
 
 }

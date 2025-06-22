@@ -157,7 +157,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void createTestUser() {
         UserModel userModel = new UserModel();
-        userModel.setName("testero");
+        userModel.setName("Carlos Perez");
+        userModel.setUsername("testero");
         userModel.setAddress("t@hotmail.com");
         userModel.setIsStudent(false);
         userModel.setPaymentInformationModel(null);

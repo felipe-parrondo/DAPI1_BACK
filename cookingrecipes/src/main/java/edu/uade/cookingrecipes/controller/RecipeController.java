@@ -20,7 +20,7 @@ import java.util.List;
 
 @Api (value = "Recipe Operations")
 @RestController
-@RequestMapping("/recipe")
+@RequestMapping("/recipes")
 public class RecipeController {
 
     @Autowired
@@ -61,10 +61,9 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/{recipeId}/rating") //Valorar receta
-    public ResponseEntity<RecipeResponseDto> ratingRecipe(@PathVariable Long recipeId,
-                                                          @RequestBody RatingRequestDto ratingRequestDto) {
-        RecipeResponseDto ratedRecipe = ratingService.ratingRecipe(recipeId, ratingRequestDto);
+    @PostMapping("/rating") //Valorar receta
+    public ResponseEntity<RecipeResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
+        RecipeResponseDto ratedRecipe = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
         if (ratedRecipe != null) {
             return new ResponseEntity<>(ratedRecipe, HttpStatus.OK);
         }

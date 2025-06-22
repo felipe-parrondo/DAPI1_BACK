@@ -31,7 +31,9 @@ public class ListController {
 
     @PostMapping("/create") //Crear lista
     public ResponseEntity<ListResponseDto> createList(@RequestBody ListRequestDto requestDto) {
+        System.out.printf("requestDto.getName()");
         ListResponseDto createdList = ListService.createList(requestDto);
+        System.out.printf(requestDto.getName());
         if(createdList != null) {
             return new ResponseEntity<>(createdList, HttpStatus.CREATED);
         }

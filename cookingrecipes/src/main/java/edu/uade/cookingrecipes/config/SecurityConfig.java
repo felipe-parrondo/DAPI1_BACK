@@ -3,6 +3,7 @@ package edu.uade.cookingrecipes.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,9 +33,11 @@ public class SecurityConfig {
                         .and()
                         .csrf(AbstractHttpConfigurer::disable)
                         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                        .authorizeHttpRequests(req ->
-                                req.requestMatchers("/auth/**", "/h2-console/**").permitAll()
-                                .requestMatchers("/**").permitAll())
+                        .authorizeHttpRequests(req -> req
+                                .requestMatchers("/auth/**", "/h2-console/**", "/recipes/recent").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/recipes/rating/{recipeId}", "/recipes/{recipeId}").permitAll()
+                                .requestMatchers("/recipes/rating/{recipeId}").authenticated()
+                                .requestMatchers("/**").authenticated())
                         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                         .authenticationProvider(authenticationProvider)
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

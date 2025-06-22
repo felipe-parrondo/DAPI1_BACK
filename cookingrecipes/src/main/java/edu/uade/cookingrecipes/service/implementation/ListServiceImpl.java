@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class ListServiceImpl implements ListService {
     @Override
     public List<ListResponseDto> getAllLists() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<RecipeList> recipeLists = recipeListRepository.findAllByUserAddress(email);
+        List<RecipeList> recipeLists = recipeListRepository.findAllByUserId(1L);
         return recipeLists.stream()
                 .map(ListMapper::toDto)
                 .collect(Collectors.toList());
@@ -35,11 +36,16 @@ public class ListServiceImpl implements ListService {
 
     @Override
     public ListResponseDto createList(ListRequestDto requestDto) {
-        List<Recipe> recipes = recipeRepository.findAllById(requestDto.getRecipeIds());
+        List<Recipe> recipes = new ArrayList<>();
+        if (requestDto.getRecipeIds() != null && !requestDto.getRecipeIds().isEmpty()) {
+            recipes = recipeRepository.findAllById(requestDto.getRecipeIds());
+        }
+
         RecipeList list = ListMapper.toEntity(requestDto, recipes);
         RecipeList savedList = recipeListRepository.save(list);
         return ListMapper.toDto(savedList);
     }
+
 
     @Override
     public ListResponseDto addRecipeToList(Long listId, Long recipeId) {
