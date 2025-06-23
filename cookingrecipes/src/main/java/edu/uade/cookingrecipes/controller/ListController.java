@@ -44,7 +44,7 @@ public class ListController {
     public ResponseEntity<ListResponseDto> addRecipeToList(@PathVariable Long list, @PathVariable Long recipe) {
         ListResponseDto updatedList = ListService.addRecipeToList(list, recipe);
         if(updatedList != null) {
-            return new ResponseEntity<>(updatedList, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -62,7 +62,7 @@ public class ListController {
     public ResponseEntity<ListResponseDto> removeRecipeFromList(@PathVariable Long list, @PathVariable Long recipe) {
         ListResponseDto updatedList = ListService.removeRecipeFromList(list, recipe);
         if(updatedList != null) {
-            return new ResponseEntity<>(updatedList, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
