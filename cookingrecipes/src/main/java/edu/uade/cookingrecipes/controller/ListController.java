@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.controller;
 
 import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
 import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
+import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.ListService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,7 @@ public class ListController {
 
     @PostMapping("/create") //Crear lista
     public ResponseEntity<ListResponseDto> createList(@RequestBody ListRequestDto requestDto) {
-        System.out.printf("requestDto.getName()");
         ListResponseDto createdList = ListService.createList(requestDto);
-        System.out.printf(requestDto.getName());
         if(createdList != null) {
             return new ResponseEntity<>(createdList, HttpStatus.CREATED);
         }
@@ -65,6 +64,14 @@ public class ListController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    @GetMapping("/{listId}") //Obtener lista por ID
+    public ResponseEntity<ListResponseDto> getListById(@PathVariable Long listId) {
+        ListResponseDto list = ListService.getListById(listId);
+        if (list != null) {
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
