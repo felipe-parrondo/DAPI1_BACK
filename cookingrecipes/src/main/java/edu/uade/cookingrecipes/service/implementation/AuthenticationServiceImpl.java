@@ -62,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationModel authenticationModel = authenticationRepository.findByEmail(authRequest.email())
                 .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
 
-        return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel));
+        return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel), authenticationModel.getUser().getIsStudent());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationModel = authenticationRepository.save(authenticationModel);
 
         tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).get());
-        return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel));
+        return this.authenticate(new AuthenticationRequestDto(authenticationModel.getEmail(), authenticationModel.getPassword()));
     }
 
     @Override

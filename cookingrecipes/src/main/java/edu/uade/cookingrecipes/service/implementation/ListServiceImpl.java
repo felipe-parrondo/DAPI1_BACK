@@ -2,6 +2,8 @@ package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.Entity.Recipe;
 import edu.uade.cookingrecipes.Entity.RecipeList;
+import edu.uade.cookingrecipes.config.JwtService;
+import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
 import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
 import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
@@ -31,8 +33,8 @@ public class ListServiceImpl implements ListService {
     private RecipeRepository recipeRepository;
     @Autowired
     private AuthenticationRepository authenticationRepository;
-
-
+    @Autowired
+    private JwtService jwtService; //TODO pasar a constructor
 
     @Override
     public List<ListResponseDto> getAllLists() {
@@ -102,4 +104,16 @@ public class ListServiceImpl implements ListService {
                 .map(ListMapper::toDto)
                 .orElse(null);
     }
+
+    @Override
+    public GetListsByRecipeIdResponseDto getListsByRecipeId(Long recipeId) {
+        String email = jwtService.extractEmail(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
+        List<RecipeList> recipeList = recipeListRepository.findByUser_EmailAndRecipes_Id(email, recipeId)
+                .orElseThrow(() -> new RuntimeException()); //TODO cambiarlo por NOT_FOUND exception
+
+        return new GetListsByRecipeIdResponseDto(recipeList.stream()
+                .map(ListMapper::toDto)
+                .toList()
+        );
     }
+}

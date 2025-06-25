@@ -1,8 +1,8 @@
 package edu.uade.cookingrecipes.controller;
 
+import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
 import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
 import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.ListService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +18,21 @@ import java.util.List;
 public class ListController {
 
     @Autowired
-    private ListService ListService;
+    private ListService listService;
 
     public ListController(ListService recipeListService) {
-        this.ListService = recipeListService;
+        this.listService = recipeListService;
     }
 
     @GetMapping("/") //Obtener todas las listas
     public ResponseEntity<List<ListResponseDto>> getAllLists() {
-        List<ListResponseDto> lists = ListService.getAllLists();
+        List<ListResponseDto> lists = listService.getAllLists();
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
 
     @PostMapping("/create") //Crear lista
     public ResponseEntity<ListResponseDto> createList(@RequestBody ListRequestDto requestDto) {
-        ListResponseDto createdList = ListService.createList(requestDto);
+        ListResponseDto createdList = listService.createList(requestDto);
         if(createdList != null) {
             return new ResponseEntity<>(createdList, HttpStatus.CREATED);
         }
@@ -41,7 +41,7 @@ public class ListController {
 
     @PostMapping("/{list}/{recipe}") //Agregar receta a la lista
     public ResponseEntity<ListResponseDto> addRecipeToList(@PathVariable Long list, @PathVariable Long recipe) {
-        ListResponseDto updatedList = ListService.addRecipeToList(list, recipe);
+        ListResponseDto updatedList = listService.addRecipeToList(list, recipe);
         if(updatedList != null) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -50,28 +50,33 @@ public class ListController {
 
     @DeleteMapping("/{list}") //Eliminar lista
     public ResponseEntity<Void> deleteList(@PathVariable Long list) {
-        boolean isDeleted = ListService.deleteList(list);
+        boolean isDeleted = listService.deleteList(list);
         if(isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); //TODO lo mismo que abajo (y en todo el controller)
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{list}/{recipe}") //Eliminar receta de la lista
     public ResponseEntity<ListResponseDto> removeRecipeFromList(@PathVariable Long list, @PathVariable Long recipe) {
-        ListResponseDto updatedList = ListService.removeRecipeFromList(list, recipe);
+        ListResponseDto updatedList = listService.removeRecipeFromList(list, recipe);
         if(updatedList != null) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK); //TODO lo mismo que abajo
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping("/{listId}") //Obtener lista por ID
     public ResponseEntity<ListResponseDto> getListById(@PathVariable Long listId) {
-        ListResponseDto list = ListService.getListById(listId);
+        ListResponseDto list = listService.getListById(listId);
         if (list != null) {
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(list, HttpStatus.OK); //TODO Cambiar el flujo por algo manejado por excepcion custom
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{recipeId}") //Obtener lista por id de receta contenida
+    public ResponseEntity<GetListsByRecipeIdResponseDto> getListByRecipeId(@PathVariable Long recipeId) {
+        return ResponseEntity.ok(listService.getListsByRecipeId(recipeId));
+    }
 }

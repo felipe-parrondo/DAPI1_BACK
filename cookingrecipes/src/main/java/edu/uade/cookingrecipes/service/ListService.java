@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service;
 
+import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
 import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
 import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
 
@@ -12,4 +13,5 @@ public interface ListService {
     ListResponseDto removeRecipeFromList(Long listId, Long recipeId);
     boolean deleteList(Long listId);
     ListResponseDto getListById(Long listId);
+    GetListsByRecipeIdResponseDto getListsByRecipeId (Long recipeId);
 }

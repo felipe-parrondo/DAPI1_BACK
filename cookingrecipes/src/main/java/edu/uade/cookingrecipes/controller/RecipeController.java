@@ -45,7 +45,7 @@ public class RecipeController {
             @RequestParam(required = false) String order,
             @RequestParam(required = false) String ingredient,
             @RequestParam(required = false) String sortByDate,
-            @RequestParam(required = false) String username
+            @RequestParam(required = false) String username //TODO
     ) {
         List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient,
                 sortByDate, username);

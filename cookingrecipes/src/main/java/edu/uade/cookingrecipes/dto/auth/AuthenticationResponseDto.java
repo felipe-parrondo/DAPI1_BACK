@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public record AuthenticationResponseDto (
 
-        String token
+        String token,
+
+        Boolean isStudent
 
 ) implements Serializable {}
