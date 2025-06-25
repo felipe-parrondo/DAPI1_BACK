@@ -13,5 +13,5 @@ public interface ListService {
     ListResponseDto removeRecipeFromList(Long listId, Long recipeId);
     boolean deleteList(Long listId);
     ListResponseDto getListById(Long listId);
-    GetListsByRecipeIdResponseDto getListsByRecipeId (Long recipeId);
+    List<ListResponseDto> getListsByRecipeId (Long recipeId);
 }

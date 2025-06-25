@@ -75,8 +75,8 @@ public class ListController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{recipeId}") //Obtener lista por id de receta contenida
-    public ResponseEntity<GetListsByRecipeIdResponseDto> getListByRecipeId(@PathVariable Long recipeId) {
+    @GetMapping("/recipe/{recipeId}") //Obtener lista por id de receta contenida
+    public ResponseEntity<List<ListResponseDto>> getListByRecipeId(@PathVariable Long recipeId) {
         return ResponseEntity.ok(listService.getListsByRecipeId(recipeId));
     }
 }

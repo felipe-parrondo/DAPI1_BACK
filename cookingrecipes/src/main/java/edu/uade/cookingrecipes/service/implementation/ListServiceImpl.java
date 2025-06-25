@@ -7,6 +7,7 @@ import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
 import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
 import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.exceptions.NotFoundException;
 import edu.uade.cookingrecipes.mapper.ListMapper;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,10 +41,16 @@ public class ListServiceImpl implements ListService {
     @Override
     public List<ListResponseDto> getAllLists() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<RecipeList> recipeLists = recipeListRepository.findAllByUserId(1L);
-        return recipeLists.stream()
-                .map(ListMapper::toDto)
-                .collect(Collectors.toList());
+        Optional<AuthenticationModel> authentication = authenticationRepository.findByEmail(email);
+        if  (authentication.isPresent()) {
+            List<RecipeList> recipeLists = recipeListRepository.findAllByUserId(authentication.get().getId());
+            return recipeLists.stream()
+                    .map(ListMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+        else {
+            throw new NotFoundException("Usuario no encontrado");
+        }
     }
 
     @Override
@@ -106,14 +114,25 @@ public class ListServiceImpl implements ListService {
     }
 
     @Override
-    public GetListsByRecipeIdResponseDto getListsByRecipeId(Long recipeId) {
-        String email = jwtService.extractEmail(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
-        List<RecipeList> recipeList = recipeListRepository.findByUser_EmailAndRecipes_Id(email, recipeId)
-                .orElseThrow(() -> new RuntimeException()); //TODO cambiarlo por NOT_FOUND exception
+    public List<ListResponseDto> getListsByRecipeId(Long recipeId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        /*String email = jwtService.extractEmail(
+                SecurityContextHolder.getContext().getAuthentication().getCredentials().toString()
+        );*/
 
-        return new GetListsByRecipeIdResponseDto(recipeList.stream()
-                .map(ListMapper::toDto)
-                .toList()
-        );
+        Optional<AuthenticationModel> authentication = authenticationRepository.findByEmail(email);
+        if (authentication.isEmpty()) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        List<RecipeList> recipeList = recipeListRepository
+                .findByUser_IdAndRecipes_Id(authentication.get().getId(), recipeId)
+                .orElse(Collections.emptyList());
+
+        /*return new GetListsByRecipeIdResponseDto(
+                recipeList.stream().map(ListMapper::toDto).toList()
+        );*/
+        return recipeList.stream().map(ListMapper::toDto).toList();
     }
+
 }

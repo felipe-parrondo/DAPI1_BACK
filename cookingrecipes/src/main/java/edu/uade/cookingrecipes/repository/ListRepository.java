@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ListRepository extends JpaRepository<RecipeList, Long> {
     List<RecipeList> findAllByUserId(Long id);
-    Optional<List<RecipeList>> findByUser_EmailAndRecipes_Id(String email, Long recipeId);
+    Optional<List<RecipeList>> findByUser_IdAndRecipes_Id(Long id, Long recipeId);
 }

@@ -1,9 +1,12 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.File;
-
+/*
 @Service
 public class ImageServiceImpl {
 }
@@ -75,4 +78,4 @@ public class UploadFileService {
 
         return   file.getOriginalFilename();
     }
-}
+}*/
