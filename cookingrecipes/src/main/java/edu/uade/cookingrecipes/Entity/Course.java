@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.uade.cookingrecipes.Entity.Embeddable.Schedule;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,10 +25,12 @@ public class Course {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date", nullable = true)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date", nullable = true)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @Column(name = "description", length = 500)

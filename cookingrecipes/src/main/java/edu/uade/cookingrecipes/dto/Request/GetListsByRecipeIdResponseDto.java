@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public record GetListsByRecipeIdResponseDto (
-
     List<ListResponseDto> listRecipeResponse
 
 ) implements Serializable {}
