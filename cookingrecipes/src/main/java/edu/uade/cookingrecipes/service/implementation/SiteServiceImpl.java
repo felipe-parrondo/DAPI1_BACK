@@ -6,6 +6,7 @@ import edu.uade.cookingrecipes.dto.Response.SiteResponseDto;
 import edu.uade.cookingrecipes.mapper.SiteMapper;
 import edu.uade.cookingrecipes.repository.SiteRepository;
 import edu.uade.cookingrecipes.service.SiteService;
+import edu.uade.cookingrecipes.service.validations.SiteValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class SiteServiceImpl implements SiteService {
 
     @Autowired
     private SiteRepository siteRepository;
+    @Autowired
+    private SiteValidator siteValidator;
 
     @Override
     public List<SiteResponseDto> getAllSites() {
@@ -39,12 +42,12 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public SiteResponseDto createSite(SiteRequestDto siteDto) {
         Site site = SiteMapper.toEntity(siteDto);
-        if (site == null) {
-            throw new IllegalArgumentException("Invalid site data provided");
-        }
+        List<Site> existingSites = siteRepository.findAll();
+
+        siteValidator.validate(site, existingSites);
+
         Site savedSite = siteRepository.save(site);
         return SiteMapper.toDto(savedSite);
-
     }
 
     @Override
