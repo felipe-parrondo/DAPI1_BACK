@@ -8,6 +8,7 @@ import edu.uade.cookingrecipes.mapper.CourseMapper;
 import edu.uade.cookingrecipes.repository.CourseRepository;
 import edu.uade.cookingrecipes.repository.SiteRepository;
 import edu.uade.cookingrecipes.service.CourseService;
+import edu.uade.cookingrecipes.service.validations.CourseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +23,21 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private SiteRepository siteRepository;
+    @Autowired
+    private CourseValidator courseValidator;
 
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
         Course course = CourseMapper.toEntity(courseDto);
-        System.out.println(courseDto);
+        List<Course> existingCourses = courseRepository.findAll();
+
         Site site = siteRepository.findById(courseDto.getSiteId())
                 .orElseThrow(() -> new IllegalArgumentException("Site not found with id: " + courseDto.getSiteId()));
         course.setSite(site);
         course.setActive(true);
+
+        courseValidator.validate(course, existingCourses);
+
         course = courseRepository.save(course);
         return CourseMapper.toDto(course);
     }
