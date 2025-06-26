@@ -12,7 +12,6 @@ import java.time.LocalTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduleRequestDto {
     @JsonProperty("dayOfWeek")
     private String dayOfWeek;

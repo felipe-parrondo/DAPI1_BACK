@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import edu.uade.cookingrecipes.dto.Request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.Response.AttendanceResponseDto;
 import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
 import edu.uade.cookingrecipes.service.AttendanceService;
@@ -29,6 +30,15 @@ public class CourseController {
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
+    @PostMapping("/") //Crear un nuevo curso
+    public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto courseDto) {
+        CourseResponseDto createdCourse = courseService.createCourse(courseDto);
+        if (createdCourse != null) {
+            return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping("/{userId}/{courseId}/register_attendance") //Registrar asistencia de un usuario en un curso
     public ResponseEntity<AttendanceResponseDto> registerAttendance(@PathVariable Long userId,
                                                                     @PathVariable Long courseId) {
@@ -39,7 +49,7 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{courseId}/{userId}/attendance") //Obtener asistencia de un usuario en un curso
+    @GetMapping("/{userId}/{courseId}/attendance") //Obtener asistencia de un usuario en un curso
     public ResponseEntity<AttendanceResponseDto> getUserAttendanceInCourse(@PathVariable Long courseId,
                                                                            @PathVariable Long userId) {
         AttendanceResponseDto attendance = attendanceService.getUserAttendanceInCourse(courseId, userId);
@@ -67,8 +77,8 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/{courseId}/enroll") //Inscribir un usuario a un curso
-    public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId, @RequestParam Long userId) {
+    @PostMapping("/{courseId}/{userId}/enroll") //Inscribir un usuario a un curso
+    public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId, @PathVariable Long userId) {
         boolean isEnrolled = courseService.enrollUserInCourse(courseId, userId);
         if (isEnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);

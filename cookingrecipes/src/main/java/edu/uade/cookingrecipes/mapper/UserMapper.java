@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.mapper;
 
+import edu.uade.cookingrecipes.dto.Response.UserResponseDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.PaymentInformationModel;
@@ -38,5 +39,18 @@ public class UserMapper {
         paymentInformationModel.setIsCredit(registerRequest.paymentInformation().isCredit());
         paymentInformationModel.setOwnerName(registerRequest.paymentInformation().ownerName());
         return paymentInformationModel;
+    }
+
+    public static UserResponseDto toDto(UserModel user) {
+        if (user == null) {
+            return null;
+        }
+        return new UserResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getUsername(),
+                user.getAddress(),
+                user.getIsStudent()
+        );
     }
 }

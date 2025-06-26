@@ -1,9 +1,12 @@
 package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.Entity.Course;
+import edu.uade.cookingrecipes.Entity.Site;
+import edu.uade.cookingrecipes.dto.Request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
 import edu.uade.cookingrecipes.mapper.CourseMapper;
 import edu.uade.cookingrecipes.repository.CourseRepository;
+import edu.uade.cookingrecipes.repository.SiteRepository;
 import edu.uade.cookingrecipes.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,21 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private SiteRepository siteRepository;
+
+    @Override
+    public CourseResponseDto createCourse(CourseRequestDto courseDto) {
+        Course course = CourseMapper.toEntity(courseDto);
+        System.out.println(courseDto);
+        Site site = siteRepository.findById(courseDto.getSiteId())
+                .orElseThrow(() -> new IllegalArgumentException("Site not found with id: " + courseDto.getSiteId()));
+        course.setSite(site);
+        course.setActive(true);
+        course = courseRepository.save(course);
+        return CourseMapper.toDto(course);
+    }
 
     @Override
     public List<CourseResponseDto> getAllCourses() {
@@ -42,16 +60,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean enrollUserInCourse(Long userId, Long courseId) {
+    public boolean enrollUserInCourse(Long courseId, Long userId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null || !course.isActive()) {
             return false;
         }
-        // Assuming there's a method to enroll a user in a course
-        // This part would typically involve more logic, such as checking if the user is already enrolled
-        // and if the course has available spots.
-        // For now, we will just return true to indicate success.
-        return true; // Placeholder for actual enrollment logic
+        course.getStudents().add(userId);
+        courseRepository.save(course);
+        return true;
     }
 
     @Override
@@ -60,9 +76,10 @@ public class CourseServiceImpl implements CourseService {
         if (course == null || !course.isActive()) {
             return false;
         }
-        // Assuming there's a method to unroll a user from a course
-        // This part would typically involve more logic, such as checking if the user is enrolled in the course.
-        // For now, we will just return true to indicate success.
-        return true; // Placeholder for actual unrolling logic
+        if (course.getStudents().remove(userId)) {
+            courseRepository.save(course);
+            return true;
+        }
+        return false;
     }
 }

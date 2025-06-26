@@ -79,6 +79,11 @@ public class Course {
     @Column(name = "media_url")
     private List<String> mediaUrl;
 
+    @ElementCollection
+    @CollectionTable(name = "course_students", joinColumns = @JoinColumn(name = "course_id"))
+    @Column(name = "student_id")
+    private List<Long> students;
+
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 }
