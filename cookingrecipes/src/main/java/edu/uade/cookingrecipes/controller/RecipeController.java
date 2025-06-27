@@ -1,10 +1,10 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
-import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
-import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
-import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
+import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;

@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service.validations;
 
-import edu.uade.cookingrecipes.Entity.Site;
+import edu.uade.cookingrecipes.entity.Site;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

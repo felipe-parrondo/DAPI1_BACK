@@ -1,8 +1,8 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.dto.Request.CourseRequestDto;
-import edu.uade.cookingrecipes.dto.Response.AttendanceResponseDto;
-import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
+import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
+import edu.uade.cookingrecipes.dto.response.attendance.CourseAttendanceResponseDto;
+import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.service.AttendanceService;
 import edu.uade.cookingrecipes.service.CourseService;
 import io.swagger.annotations.Api;
@@ -40,9 +40,9 @@ public class CourseController {
     }
 
     @PostMapping("/{userId}/{courseId}/register_attendance") //Registrar asistencia de un usuario en un curso
-    public ResponseEntity<AttendanceResponseDto> registerAttendance(@PathVariable Long userId,
-                                                                    @PathVariable Long courseId) {
-        AttendanceResponseDto attendance = attendanceService.registerAttendance(userId, courseId);
+    public ResponseEntity<CourseAttendanceResponseDto> registerAttendance(@PathVariable Long userId,
+                                                                          @PathVariable Long courseId) {
+        CourseAttendanceResponseDto attendance = attendanceService.registerCourseAttendance(userId, courseId);
         if (attendance != null) {
             return new ResponseEntity<>(attendance, HttpStatus.CREATED);
         }
@@ -50,11 +50,20 @@ public class CourseController {
     }
 
     @GetMapping("/{userId}/{courseId}/attendance") //Obtener asistencia de un usuario en un curso
-    public ResponseEntity<AttendanceResponseDto> getUserAttendanceInCourse(@PathVariable Long courseId,
-                                                                           @PathVariable Long userId) {
-        AttendanceResponseDto attendance = attendanceService.getUserAttendanceInCourse(courseId, userId);
+    public ResponseEntity<CourseAttendanceResponseDto> getUserAttendanceInCourse(@PathVariable Long userId,
+                                                                                 @PathVariable Long courseId) {
+        CourseAttendanceResponseDto attendance = attendanceService.getUserAttendanceInCourse(userId, courseId);
         if (attendance != null) {
             return new ResponseEntity<>(attendance, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{courseId}/attendance") //Obtener asistencia de todos los usuarios en un curso
+    public ResponseEntity<List<CourseAttendanceResponseDto>> getAllAttendancesInCourse(@PathVariable Long courseId) {
+        List<CourseAttendanceResponseDto> attendances = attendanceService.getAllAttendancesInCourse(courseId);
+        if (attendances != null && !attendances.isEmpty()) {
+            return new ResponseEntity<>(attendances, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -77,18 +86,18 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/{courseId}/{userId}/enroll") //Inscribir un usuario a un curso
-    public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId, @PathVariable Long userId) {
-        boolean isEnrolled = courseService.enrollUserInCourse(courseId, userId);
+    @PostMapping("/{courseId}/enroll") //Inscribir al usuario actual a un curso
+    public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId) {
+        boolean isEnrolled = courseService.enrollUserInCourse(courseId);
         if (isEnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/{courseId}/{userId}/unroll") //Desinscribir un usuario de un curso
-    public ResponseEntity<Void> unrollUserFromCourse(@PathVariable Long courseId, @PathVariable Long userId) {
-        boolean isUnrolled = courseService.unrollUserFromCourse(courseId, userId);
+    @DeleteMapping("/{courseId}/unroll") //Desinscribir al usuario actual a un curso
+    public ResponseEntity<Void> unrollUserFromCourse(@PathVariable Long courseId) {
+        boolean isUnrolled = courseService.unrollUserFromCourse(courseId);
         if (isUnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }

@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service.validations;
 
-import edu.uade.cookingrecipes.Entity.Course;
+import edu.uade.cookingrecipes.entity.Course;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

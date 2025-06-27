@@ -1,10 +1,10 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.Entity.RecipeList;
-import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
-import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.entity.RecipeList;
+import edu.uade.cookingrecipes.dto.request.ListRequestDto;
+import edu.uade.cookingrecipes.dto.response.ListResponseDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

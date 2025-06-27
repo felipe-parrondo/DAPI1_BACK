@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.dto.Response.UserResponseDto;
+import edu.uade.cookingrecipes.dto.response.UserResponseDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.PaymentInformationModel;

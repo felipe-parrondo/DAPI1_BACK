@@ -1,11 +1,13 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
+import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
@@ -30,6 +32,8 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthenticationRepository authenticationRepository;
 
     @Override
     public List<RecipeResponseDto> getAllRecipes() {
@@ -67,14 +71,15 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
-        String address = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = userRepository.findByAddress(address);
-        System.out.println(address);
-        if (user == null) throw new NoSuchElementException("User not found: " + address);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+        if (user == null) throw new NoSuchElementException("User not found: " + email);
 
         if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {
             throw new IllegalArgumentException("Recipe with name '" +
-                    recipeRequestDto.getName() + "' already exists for user: " + address);
+                    recipeRequestDto.getName() + "' already exists for user: " + email);
         }
 
         Recipe recipe = RecipeMapper.toEntity(recipeRequestDto);

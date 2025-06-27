@@ -1,10 +1,10 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.Entity.Rating;
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
-import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.Rating;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
+import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RatingMapper;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.repository.RatingRepository;
