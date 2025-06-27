@@ -8,12 +8,15 @@ import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
+import edu.uade.cookingrecipes.service.ImageService;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,14 +25,24 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    @Autowired
-    private RecipeRepository recipeRepository;
+    private final RecipeRepository recipeRepository;
 
-    @Autowired
-    private IngredientService ingredientService;
+    private final IngredientService ingredientService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final ImageService imageService;
+
+
+    private final String MEDIA_RESOURCE_IDENTIFIER = "recipes";
+
+    public RecipeServiceImpl(RecipeRepository recipeRepository, IngredientService ingredientService, UserRepository userRepository,
+                             ImageService imageService) {
+        this.recipeRepository = recipeRepository;
+        this.ingredientService = ingredientService;
+        this.userRepository = userRepository;
+        this.imageService = imageService;
+    }
 
     @Override
     public List<RecipeResponseDto> getAllRecipes() {
@@ -66,21 +79,20 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
+    public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto, List<MultipartFile> files) {
         String address = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = userRepository.findByAddress(address);
         System.out.println(address);
-        if (user == null) throw new NoSuchElementException("User not found: " + address);
-
+        if (user == null)
+            throw new NoSuchElementException("User not found: " + address);
         if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {
             throw new IllegalArgumentException("Recipe with name '" +
                     recipeRequestDto.getName() + "' already exists for user: " + address);
         }
-
         Recipe recipe = RecipeMapper.toEntity(recipeRequestDto);
         recipe.setUser(user);
-
         Recipe savedRecipe = recipeRepository.save(recipe);
+        files.forEach(f -> imageService.saveImage(f, MEDIA_RESOURCE_IDENTIFIER, savedRecipe.getId().toString()));
         return RecipeMapper.toDto(savedRecipe);
     }
 
