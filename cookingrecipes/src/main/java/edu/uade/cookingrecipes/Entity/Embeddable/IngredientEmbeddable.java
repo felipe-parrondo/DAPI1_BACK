@@ -13,5 +13,6 @@ import lombok.*;
 public class IngredientEmbeddable {
     private String name;
     private double quantity;
-    private double scale;
+    private Double scale;
+    private String unidad;
 }

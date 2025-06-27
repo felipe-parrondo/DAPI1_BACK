@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.service;
 
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface RecipeService {
     RecipeResponseDto getRecipeById(Long recipeId);
     List<String> getRecipeIngredients(Long recipeId);
     List<String> getRecipeDishTypes(Long recipeId);
+    List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId);
+
 }

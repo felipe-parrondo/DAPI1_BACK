@@ -3,6 +3,7 @@ package edu.uade.cookingrecipes.controller;
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.IngredientService;
@@ -165,4 +166,13 @@ public class RecipeController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    @GetMapping("/{recipeId}/full-ingredients")
+    public ResponseEntity<List<IngredientResponseDto>> getFullRecipeIngredients(@PathVariable Long recipeId) {
+        List<IngredientResponseDto> ingredients = recipeService.getFullIngredientsByRecipeId(recipeId);
+        if (ingredients != null) {
+            return new ResponseEntity<>(ingredients, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }

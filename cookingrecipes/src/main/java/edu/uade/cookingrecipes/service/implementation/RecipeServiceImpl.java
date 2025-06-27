@@ -3,6 +3,7 @@ package edu.uade.cookingrecipes.service.implementation;
 import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.Entity.Recipe;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.model.UserModel;
@@ -136,4 +137,18 @@ public class RecipeServiceImpl implements RecipeService {
                 .map(recipe -> Collections.singletonList(recipe.getDishType()))
                 .orElse(null);
     }
+    @Override
+    public List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+        if (recipe == null || recipe.getIngredients() == null) return null;
+
+        return recipe.getIngredients().stream().map(ingredient -> {
+            IngredientResponseDto dto = new IngredientResponseDto();
+            dto.setName(ingredient.getName());
+            dto.setQuantity(ingredient.getQuantity());
+            dto.setUnidad(ingredient.getUnidad());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 }

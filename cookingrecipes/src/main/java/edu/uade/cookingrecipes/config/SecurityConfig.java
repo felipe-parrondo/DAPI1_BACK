@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**", "/h2-console/**", "/recipes/recent").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/recipes/rating/{recipeId}", "/recipes/{recipeId}").permitAll()
                                 .requestMatchers("/recipes/rating/{recipeId}").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/recipes/{recipeId}/full-ingredients").permitAll()//TODO sacar cuando este hecho receta
                                 .requestMatchers("/**").authenticated())
                         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                         .authenticationProvider(authenticationProvider)
