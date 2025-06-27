@@ -21,6 +21,7 @@ public class JwtService {
     public String generateToken(AuthenticationModel userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getEmail())
+                .claim("email", userDetails.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSecretKey())
@@ -37,6 +38,10 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
