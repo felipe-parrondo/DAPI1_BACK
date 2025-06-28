@@ -18,10 +18,10 @@ public class CourseResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
-    private Schedule schedule;
+    private ScheduleResponseDto schedule;
     private int duration;
     private int maxParticipants;
-    private Site site;
+    private SiteResponseDto site;
     private double price;
     private double discount;
     private String teacherName;
@@ -31,5 +31,6 @@ public class CourseResponseDto {
     private String practices;
     private String tools;
     private List<String> mediaUrl;
+    private List<Long> studentIds;
     private boolean isActive;
 }

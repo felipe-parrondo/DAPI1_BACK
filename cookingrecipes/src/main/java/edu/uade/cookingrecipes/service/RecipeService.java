@@ -1,6 +1,5 @@
 package edu.uade.cookingrecipes.service;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
 import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
 import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;

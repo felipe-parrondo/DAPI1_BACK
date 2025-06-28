@@ -2,6 +2,8 @@ package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.Entity.Attendance;
 import edu.uade.cookingrecipes.dto.Response.AttendanceResponseDto;
+import edu.uade.cookingrecipes.mapper.CourseMapper;
+import edu.uade.cookingrecipes.mapper.UserMapper;
 import edu.uade.cookingrecipes.repository.AttendanceRepository;
 import edu.uade.cookingrecipes.repository.CourseRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
@@ -31,13 +33,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.setCourse(courseRepository.findById(courseId).orElseThrow(
                 () -> new IllegalArgumentException("Course not found with id: " + courseId)));
         attendance.setAttendanceDate(LocalDate.now());
-        attendance.setPresent(true); // Assuming the user is present when registering
+        attendance.setPresent(true);
 
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return new AttendanceResponseDto(
                 savedAttendance.getId(),
-                savedAttendance.getUser(),
-                savedAttendance.getCourse(),
+                UserMapper.toDto(savedAttendance.getUser()),
+                CourseMapper.toDto(savedAttendance.getCourse()),
                 savedAttendance.getAttendanceDate(),
                 savedAttendance.isPresent()
         );
@@ -50,8 +52,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .findFirst()
                 .map(attendance -> new AttendanceResponseDto(
                         attendance.getId(),
-                        attendance.getUser(),
-                        attendance.getCourse(),
+                        UserMapper.toDto(attendance.getUser()),
+                        CourseMapper.toDto(attendance.getCourse()),
                         attendance.getAttendanceDate(),
                         attendance.isPresent()))
                 .orElse(null);
