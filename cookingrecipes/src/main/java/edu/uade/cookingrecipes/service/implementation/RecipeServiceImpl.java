@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import edu.uade.cookingrecipes.entity.DishTypes;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,8 +32,6 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     private IngredientService ingredientService;
 
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private AuthenticationRepository authenticationRepository;
 
@@ -140,5 +140,12 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findById(recipeId)
                 .map(recipe -> Collections.singletonList(recipe.getDishType()))
                 .orElse(null);
+    }
+
+    @Override
+    public List<String> getAllDishTypes() {
+        return Arrays.stream(DishTypes.values())
+                .map(DishTypes::name)
+                .toList();
     }
 }

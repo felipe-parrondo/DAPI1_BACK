@@ -45,7 +45,7 @@ public class RecipeController {
             @RequestParam(required = false) String order,
             @RequestParam(required = false) String ingredient,
             @RequestParam(required = false) String sortByDate,
-            @RequestParam(required = false) String username //TODO
+            @RequestParam(required = false) String username
     ) {
         List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient,
                 sortByDate, username);
@@ -162,6 +162,15 @@ public class RecipeController {
         List<IngredientEmbeddable> ingredients = ingredientService.getAllIngredients();
         if (ingredients != null) {
             return new ResponseEntity<>(ingredients, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/dishType") //Obtener todos los tipos de platos
+    public ResponseEntity<List<String>> getAllDishTypes() {
+        List<String> dishTypes = recipeService.getAllDishTypes();
+        if (dishTypes != null) {
+            return new ResponseEntity<>(dishTypes, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
