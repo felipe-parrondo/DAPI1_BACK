@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.entity.DishTypes;
+import edu.uade.cookingrecipes.entity.enums.DishTypes;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
@@ -10,7 +10,6 @@ import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
-import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,16 +76,27 @@ public class RecipeServiceImpl implements RecipeService {
                 .orElse(null);
         if (user == null) throw new NoSuchElementException("User not found: " + email);
 
-        if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {
-            throw new IllegalArgumentException("Recipe with name '" +
-                    recipeRequestDto.getName() + "' already exists for user: " + email);
-        }
-
         Recipe recipe = RecipeMapper.toEntity(recipeRequestDto);
         recipe.setUser(user);
 
         Recipe savedRecipe = recipeRepository.save(recipe);
         return RecipeMapper.toDto(savedRecipe);
+    }
+
+    @Override
+    public boolean validateRecipe(String recipeName) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+        if (user == null) throw new NoSuchElementException("User not found: " + email);
+
+        boolean exists = recipeRepository.existsByNameAndUser(recipeName, user);
+        if (exists) {
+            throw new IllegalArgumentException("Recipe with name '" + recipeName
+                    + "' already exists for user: " + user.getName());
+        }
+        return true;
     }
 
     @Override

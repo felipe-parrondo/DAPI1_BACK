@@ -61,6 +61,15 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/validate") //Validar receta
+    public ResponseEntity<Void> validateRecipe(@RequestBody String recipeName) {
+        boolean validatedRecipe = recipeService.validateRecipe(recipeName);
+        if (validatedRecipe) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping("/rating") //Valorar receta
     public ResponseEntity<RecipeResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
         RecipeResponseDto ratedRecipe = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);

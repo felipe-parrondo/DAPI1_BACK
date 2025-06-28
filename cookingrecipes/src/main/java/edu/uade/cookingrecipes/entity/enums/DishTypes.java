@@ -1,4 +1,4 @@
-package edu.uade.cookingrecipes.entity;
+package edu.uade.cookingrecipes.entity.enums;
 
 public enum DishTypes {
     ENTRADA, PLATO_PRINCIPAL, POSTRE, GUARNICION, ENSALADA, SOPA, PAN, PASTA, ARROZ, PESCADO, MARISCOS, AVES, CARNE,

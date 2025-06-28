@@ -96,8 +96,9 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/unroll") //Desinscribir al usuario actual a un curso
-    public ResponseEntity<Void> unrollUserFromCourse(@PathVariable Long courseId) {
-        boolean isUnrolled = courseService.unrollUserFromCourse(courseId);
+    public ResponseEntity<Void> unrollUserFromCourse(@PathVariable Long courseId,
+                                                     @RequestBody boolean AccountBalanceRefund) {
+        boolean isUnrolled = courseService.unrollUserFromCourse(courseId, AccountBalanceRefund);
         if (isUnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
