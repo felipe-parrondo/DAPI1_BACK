@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.entity.AccountMovement;
+import edu.uade.cookingrecipes.entity.Classroom;
 import edu.uade.cookingrecipes.entity.Course;
 import edu.uade.cookingrecipes.entity.Site;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
@@ -8,10 +9,7 @@ import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.mapper.CourseMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
-import edu.uade.cookingrecipes.repository.AuthenticationRepository;
-import edu.uade.cookingrecipes.repository.CourseRepository;
-import edu.uade.cookingrecipes.repository.AccountMovementRepository;
-import edu.uade.cookingrecipes.repository.SiteRepository;
+import edu.uade.cookingrecipes.repository.*;
 import edu.uade.cookingrecipes.service.CourseService;
 import edu.uade.cookingrecipes.service.validations.CourseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ public class CourseServiceImpl implements CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
-    private SiteRepository siteRepository;
+    private ClassroomRepository classroomRepository;
 
     @Autowired
     private CourseValidator courseValidator;
@@ -44,10 +42,6 @@ public class CourseServiceImpl implements CourseService {
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
         Course course = CourseMapper.toEntity(courseDto);
         List<Course> existingCourses = courseRepository.findAll();
-
-        Site site = siteRepository.findById(courseDto.getSiteId())
-                .orElseThrow(() -> new IllegalArgumentException("Site not found with id: " + courseDto.getSiteId()));
-        course.setSite(site);
         course.setActive(true);
 
         courseValidator.validate(course, existingCourses);

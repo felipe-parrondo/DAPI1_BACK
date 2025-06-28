@@ -21,7 +21,7 @@ public class CourseMapper {
                 ScheduleMapper.toDto(course.getSchedule()),
                 course.getDuration(),
                 course.getMaxParticipants(),
-                SiteMapper.toDto(course.getSite()),
+                ClassroomMapper.toDto(course.getClassroom()),
                 course.getPrice(),
                 course.getDiscount(),
                 course.getTeacherName(),

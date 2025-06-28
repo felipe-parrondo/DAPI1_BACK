@@ -48,8 +48,8 @@ public class Course {
     private int maxParticipants; //cupos de la clase
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "site_id", nullable = false)
-    private Site site;
+    @JoinColumn(name = "classroom_id")
+    private Classroom classroom;
 
     @Column(name = "price", nullable = false)
     private double price;

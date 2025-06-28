@@ -2,7 +2,11 @@ package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.dto.request.AttendanceRequestDto;
 import edu.uade.cookingrecipes.dto.response.AttendanceResponseDto;
+import edu.uade.cookingrecipes.entity.AttendanceRecord;
+import edu.uade.cookingrecipes.entity.Classroom;
 import edu.uade.cookingrecipes.entity.Course;
+import edu.uade.cookingrecipes.entity.Site;
+import edu.uade.cookingrecipes.entity.embeddable.Attendance;
 import edu.uade.cookingrecipes.entity.embeddable.Schedule;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
@@ -12,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,40 +31,68 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Autowired
     private AuthenticationRepository authenticationRepository;
 
+    @Autowired
+    private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private SiteRepository siteRepository;
+
+    @Autowired
+    private AttendanceRecordRepository attendanceRecordRepository;
+
     @Override
     public AttendanceResponseDto registerAttendance(AttendanceRequestDto attendanceDto) {
         AttendanceResponseDto attendanceResponse = new AttendanceResponseDto();
+
         Course course = courseRepository.findById(attendanceDto.getCourseId())
                 .orElseThrow(() -> new IllegalArgumentException("Course not found: " + attendanceDto.getCourseId()));
+
         UserModel user = getUser();
         Schedule schedule = course.getSchedule();
-        LocalDate PRUEBADIA = LocalDate.of(2024, 9, 1); // Fecha de prueba para el ejemplo
-        LocalTime PRUEBAHORA = LocalTime.of(13, 0); // Hora de inicio de la clase
+
+        LocalDate PRUEBADIA = LocalDate.of(2025, 7, 15); // Fecha de prueba para el ejemplo
+        LocalTime PRUEBAHORA = LocalTime.of(14, 30); // Hora de inicio de la clase
         List<LocalDate> classDates = getCourseDates(course);
 
         if (!classDates.contains(PRUEBADIA)) {
             throw new IllegalArgumentException("No hay clases hoy para el curso: " + course.getName());
         }
 
-        if (attendanceDto.isPresentSite() && !attendanceDto.isPresentClassroom()) {
-            attendanceResponse.setClassroomId(null);
-            attendanceResponse.setSiteId(attendanceDto.getSiteId());
-            attendanceResponse.setPresentSite(true);
-            attendanceResponse.setPresentClassroom(false);
-        } else if(attendanceDto.isPresentClassroom()) {
+        if (attendanceDto.isPresentClassroom()) {
             if (schedule.getStartTime().isAfter(PRUEBAHORA) || schedule.getEndTime().isBefore(PRUEBAHORA)) {
                 throw new IllegalArgumentException("Fuera del horario de clase para el curso: " + course.getName());
             }
-            attendanceResponse.setClassroomId(attendanceDto.getClassroomId());
-            attendanceResponse.setSiteId(attendanceDto.getSiteId());
-            attendanceResponse.setPresentSite(true);
-            attendanceResponse.setPresentClassroom(true);
-
+            findOrCreateClassroomFromQr(attendanceDto);
         }
+
+        AttendanceRecord record = attendanceRecordRepository
+                .findByCourseIdAndUserIdAndDate(attendanceDto.getCourseId(), user.getId(), PRUEBADIA)
+                .orElseGet(() -> AttendanceRecord.builder()
+                        .courseId(attendanceDto.getCourseId())
+                        .userId(user.getId())
+                        .date(PRUEBADIA)
+                        .presentSite(false)
+                        .presentClassroom(false)
+                        .counted(false)
+                        .build());
+
+        if (attendanceDto.isPresentSite()) {
+            record.setPresentSite(true);
+        }
+        if (attendanceDto.isPresentClassroom()) {
+            record.setPresentClassroom(true);
+        }
+
+        attendanceRecordRepository.save(record);
 
         attendanceResponse.setCourseId(attendanceDto.getCourseId());
         attendanceResponse.setUserId(user.getId());
         attendanceResponse.setPresenceDateTime(LocalDateTime.now().toString());
+        attendanceResponse.setSiteId(attendanceDto.getSiteId());
+        attendanceResponse.setClassroomId(attendanceDto.isPresentClassroom() ? attendanceDto.getClassroomId() : null);
+        attendanceResponse.setPresentSite(record.isPresentSite());
+        attendanceResponse.setPresentClassroom(record.isPresentClassroom());
+
         return attendanceResponse;
     }
 
@@ -92,5 +123,42 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
 
         return classDates;
+    }
+
+    private void findOrCreateClassroomFromQr(AttendanceRequestDto attendance) {
+        Long classroomId = attendance.getClassroomId();
+        Long siteId = attendance.getSiteId();
+        Long courseId = attendance.getCourseId();
+
+        Site site = siteRepository.findById(siteId)
+                .orElseThrow(() -> new RuntimeException("Sede no encontrada con ID: " + siteId));
+
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseGet(() -> {
+                    Classroom newClass = Classroom.builder()
+                            .id(classroomId)
+                            .classNumber("Aula-" + classroomId)
+                            .site(site)
+                            .build();
+
+                    return classroomRepository.save(newClass);
+                });
+
+        Course course = courseRepository.findById(courseId).orElseThrow(
+                () -> new RuntimeException("Curso no encontrado con ID: " + courseId));
+
+        if (course.getClassroom() == null) {
+            course.setClassroom(classroom);
+            courseRepository.save(course);
+        } else if (!course.getClassroom().equals(classroom)) {
+            throw new RuntimeException("El aula del curso no coincide con el aula del QR escaneado.");
+        }
+
+        List<Classroom> classrooms = site.getClassrooms();
+        if (!classrooms.contains(classroom)) {
+            classrooms.add(classroom);
+            site.setClassrooms(classrooms);
+            siteRepository.save(site);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class CourseResponseDto {
     private ScheduleResponseDto schedule;
     private int duration;
     private int maxParticipants;
-    private SiteResponseDto site;
+    private ClassroomResponseDto classroom;
     private double price;
     private double discount;
     private String teacherName;

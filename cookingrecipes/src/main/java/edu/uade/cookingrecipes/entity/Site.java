@@ -29,4 +29,6 @@ public class Site {
     private List<String> photoUrl;
     @Column(name = "location", length = 255, nullable = false)
     private String location;
+    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Classroom> classrooms;
 }

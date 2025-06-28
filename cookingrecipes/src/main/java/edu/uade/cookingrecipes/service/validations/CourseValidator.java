@@ -40,9 +40,6 @@ public class CourseValidator {
         if (course.getTeacherName() == null || course.getTeacherName().isEmpty()) {
             throw new IllegalArgumentException("Teacher name cannot be empty.");
         }
-        if (course.getSite() == null) {
-            throw new IllegalArgumentException("Site cannot be null.");
-        }
         if (course.getMediaUrl() == null || course.getMediaUrl().isEmpty()) {
             throw new IllegalArgumentException("Media URL cannot be empty.");
         }
