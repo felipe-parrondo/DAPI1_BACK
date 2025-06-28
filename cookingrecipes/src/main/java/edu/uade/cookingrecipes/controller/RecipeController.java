@@ -63,10 +63,10 @@ public class RecipeController {
     }
 
     @PostMapping("/validate") //Validar receta
-    public ResponseEntity<Void> validateRecipe(@RequestBody String recipeName) {
-        boolean validatedRecipe = recipeService.validateRecipe(recipeName);
-        if (validatedRecipe) {
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Long> validateRecipe(@RequestBody String recipeName) {
+        Long userId = recipeService.validateRecipe(recipeName);
+        if (userId != null) {
+            return new ResponseEntity<>(userId, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

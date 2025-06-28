@@ -85,7 +85,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public boolean validateRecipe(String recipeName) {
+    public Long validateRecipe(String recipeName) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
@@ -97,7 +97,7 @@ public class RecipeServiceImpl implements RecipeService {
             throw new IllegalArgumentException("Recipe with name '" + recipeName
                     + "' already exists for user: " + user.getName());
         }
-        return true;
+        return user.getId();
     }
 
     @Override

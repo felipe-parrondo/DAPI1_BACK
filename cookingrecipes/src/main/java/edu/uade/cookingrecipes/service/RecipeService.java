@@ -10,7 +10,7 @@ public interface RecipeService {
     List<RecipeResponseDto> getAllRecipes();
     List<RecipeResponseDto> filterRecipes(String dishType, String order, String ingredient, String sortByDate, String username);
     RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto);
-    boolean validateRecipe(String recipeName);
+    Long validateRecipe(String recipeName);
     boolean approveRecipe(Long recipeId);
     List<RecipeResponseDto> getRecentRecipes();
     boolean deleteRecipe(Long recipeId);
