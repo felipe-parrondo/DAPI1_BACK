@@ -26,11 +26,11 @@ public class Course {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "start_date", nullable = true)
+    @Column(name = "start_date", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = true)
+    @Column(name = "end_date", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

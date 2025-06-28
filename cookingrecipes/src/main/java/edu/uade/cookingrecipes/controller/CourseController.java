@@ -1,9 +1,7 @@
 package edu.uade.cookingrecipes.controller;
 
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
-import edu.uade.cookingrecipes.dto.response.attendance.CourseAttendanceResponseDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
-import edu.uade.cookingrecipes.service.AttendanceService;
 import edu.uade.cookingrecipes.service.CourseService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,6 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @Autowired
-    private AttendanceService attendanceService;
-
     @GetMapping("/") //Obtener todos los cursos
     public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
         List<CourseResponseDto> courses = courseService.getAllCourses();
@@ -37,35 +32,6 @@ public class CourseController {
             return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping("/{userId}/{courseId}/register_attendance") //Registrar asistencia de un usuario en un curso
-    public ResponseEntity<CourseAttendanceResponseDto> registerAttendance(@PathVariable Long userId,
-                                                                          @PathVariable Long courseId) {
-        CourseAttendanceResponseDto attendance = attendanceService.registerCourseAttendance(userId, courseId);
-        if (attendance != null) {
-            return new ResponseEntity<>(attendance, HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @GetMapping("/{userId}/{courseId}/attendance") //Obtener asistencia de un usuario en un curso
-    public ResponseEntity<CourseAttendanceResponseDto> getUserAttendanceInCourse(@PathVariable Long userId,
-                                                                                 @PathVariable Long courseId) {
-        CourseAttendanceResponseDto attendance = attendanceService.getUserAttendanceInCourse(userId, courseId);
-        if (attendance != null) {
-            return new ResponseEntity<>(attendance, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping("/{courseId}/attendance") //Obtener asistencia de todos los usuarios en un curso
-    public ResponseEntity<List<CourseAttendanceResponseDto>> getAllAttendancesInCourse(@PathVariable Long courseId) {
-        List<CourseAttendanceResponseDto> attendances = attendanceService.getAllAttendancesInCourse(courseId);
-        if (attendances != null && !attendances.isEmpty()) {
-            return new ResponseEntity<>(attendances, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{courseId}") //Obtener un curso

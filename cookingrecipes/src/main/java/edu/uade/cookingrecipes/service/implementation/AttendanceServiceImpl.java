@@ -1,116 +1,96 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.dto.response.attendance.SiteAttendanceResponseDto;
-import edu.uade.cookingrecipes.entity.CourseAttendance;
-import edu.uade.cookingrecipes.dto.response.attendance.CourseAttendanceResponseDto;
-import edu.uade.cookingrecipes.entity.SiteAttendance;
-import edu.uade.cookingrecipes.mapper.CourseMapper;
-import edu.uade.cookingrecipes.mapper.SiteMapper;
-import edu.uade.cookingrecipes.mapper.UserMapper;
+import edu.uade.cookingrecipes.dto.request.AttendanceRequestDto;
+import edu.uade.cookingrecipes.dto.response.AttendanceResponseDto;
+import edu.uade.cookingrecipes.entity.Course;
+import edu.uade.cookingrecipes.entity.embeddable.Schedule;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
+import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.*;
 import edu.uade.cookingrecipes.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
-    private CourseAttendanceRepository courseAttendanceRepository;
-
-    @Autowired
-    private SiteAttendanceRepository siteAttendanceRepository;
-
-    @Autowired
     private CourseRepository courseRepository;
 
     @Autowired
-    private SiteRepository siteRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private AuthenticationRepository authenticationRepository;
 
     @Override
-    public CourseAttendanceResponseDto registerCourseAttendance(Long userId, Long courseId) {
-        CourseAttendance attendance = new CourseAttendance();
-        attendance.setUser(userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("User not found with id: " + userId)));
-        attendance.setCourse(courseRepository.findById(courseId).orElseThrow(
-                () -> new IllegalArgumentException("Course not found with id: " + courseId)));
-        attendance.setAttendanceDate(LocalDate.now());
-        attendance.setPresent(true);
+    public AttendanceResponseDto registerAttendance(AttendanceRequestDto attendanceDto) {
+        AttendanceResponseDto attendanceResponse = new AttendanceResponseDto();
+        Course course = courseRepository.findById(attendanceDto.getCourseId())
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + attendanceDto.getCourseId()));
+        UserModel user = getUser();
+        Schedule schedule = course.getSchedule();
+        LocalDate PRUEBADIA = LocalDate.of(2024, 9, 1); // Fecha de prueba para el ejemplo
+        LocalTime PRUEBAHORA = LocalTime.of(13, 0); // Hora de inicio de la clase
+        List<LocalDate> classDates = getCourseDates(course);
 
-        CourseAttendance savedAttendance = courseAttendanceRepository.save(attendance);
-        return new CourseAttendanceResponseDto(
-                savedAttendance.getId(),
-                UserMapper.toDto(savedAttendance.getUser()),
-                CourseMapper.toDto(savedAttendance.getCourse()),
-                savedAttendance.getAttendanceDate(),
-                savedAttendance.isPresent()
-        );
+        if (!classDates.contains(PRUEBADIA)) {
+            throw new IllegalArgumentException("No hay clases hoy para el curso: " + course.getName());
+        }
+
+        if (attendanceDto.isPresentSite() && !attendanceDto.isPresentClassroom()) {
+            attendanceResponse.setClassroomId(null);
+            attendanceResponse.setSiteId(attendanceDto.getSiteId());
+            attendanceResponse.setPresentSite(true);
+            attendanceResponse.setPresentClassroom(false);
+        } else if(attendanceDto.isPresentClassroom()) {
+            if (schedule.getStartTime().isAfter(PRUEBAHORA) || schedule.getEndTime().isBefore(PRUEBAHORA)) {
+                throw new IllegalArgumentException("Fuera del horario de clase para el curso: " + course.getName());
+            }
+            attendanceResponse.setClassroomId(attendanceDto.getClassroomId());
+            attendanceResponse.setSiteId(attendanceDto.getSiteId());
+            attendanceResponse.setPresentSite(true);
+            attendanceResponse.setPresentClassroom(true);
+
+        }
+
+        attendanceResponse.setCourseId(attendanceDto.getCourseId());
+        attendanceResponse.setUserId(user.getId());
+        attendanceResponse.setPresenceDateTime(LocalDateTime.now().toString());
+        return attendanceResponse;
     }
 
-    @Override
-    public CourseAttendanceResponseDto getUserAttendanceInCourse(Long userId, Long courseId) {
-        return courseAttendanceRepository.findByUserIdAndCourseId(userId, courseId)
-                .stream()
-                .findFirst()
-                .map(attendance -> new CourseAttendanceResponseDto(
-                        attendance.getId(),
-                        UserMapper.toDto(attendance.getUser()),
-                        CourseMapper.toDto(attendance.getCourse()),
-                        attendance.getAttendanceDate(),
-                        attendance.isPresent()))
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
                 .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 
-    @Override
-    public SiteAttendanceResponseDto registerSiteAttendance(Long userId, Long siteId) {
-        SiteAttendance attendance = new SiteAttendance();
-        attendance.setUser(userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("User not found with id: " + userId)));
-        attendance.setSite(siteRepository.findById(siteId).orElseThrow(
-                () -> new IllegalArgumentException("Site not found with id: " + siteId)));
-        attendance.setAttendanceDate(LocalDate.now());
-        attendance.setPresent(true);
+    private List<LocalDate> getCourseDates(Course course) {
+        List<LocalDate> classDates = new ArrayList<>();
 
-        SiteAttendance savedAttendance = siteAttendanceRepository.save(attendance);
-        return new SiteAttendanceResponseDto(
-                savedAttendance.getId(),
-                UserMapper.toDto(savedAttendance.getUser()),
-                SiteMapper.toDto(savedAttendance.getSite()),
-                savedAttendance.getAttendanceDate(),
-                savedAttendance.isPresent()
-        );
-    }
+        if (course.getStartDate() == null || course.getEndDate() == null || course.getSchedule() == null) {
+            return classDates;
+        }
 
-    @Override
-    public SiteAttendanceResponseDto getUserAttendanceInSite(Long userId, Long siteId) {
-        return siteAttendanceRepository.findByUserIdAndSiteId(userId, siteId)
-                .stream()
-                .findFirst()
-                .map(attendance -> new SiteAttendanceResponseDto(
-                        attendance.getId(),
-                        UserMapper.toDto(attendance.getUser()),
-                        SiteMapper.toDto(attendance.getSite()),
-                        attendance.getAttendanceDate(),
-                        attendance.isPresent()))
-                .orElse(null);
-    }
+        LocalDate startDate = course.getStartDate();
 
-    @Override
-    public List<CourseAttendanceResponseDto> getAllAttendancesInCourse(Long courseId) {
-        return courseAttendanceRepository.findByCourseId(courseId)
-                .stream()
-                .map(attendance -> new CourseAttendanceResponseDto(
-                        attendance.getId(),
-                        UserMapper.toDto(attendance.getUser()),
-                        CourseMapper.toDto(attendance.getCourse()),
-                        attendance.getAttendanceDate(),
-                        attendance.isPresent()))
-                .toList();
+        while (!startDate.isAfter(course.getEndDate())) {
+            classDates.add(startDate);
+            startDate = startDate.plusWeeks(1);
+        }
+
+        return classDates;
     }
 }
