@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.service;
 
 import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
 import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface RecipeService {
     List<String> getRecipeIngredients(Long recipeId);
     List<String> getRecipeDishTypes(Long recipeId);
     List<String> getAllDishTypes();
+    List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId);
+
 }
