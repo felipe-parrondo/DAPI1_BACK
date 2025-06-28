@@ -63,10 +63,10 @@ public class RecipeController {
     }
 
     @PostMapping("/rating") //Valorar receta
-    public ResponseEntity<RecipeResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
-        RecipeResponseDto ratedRecipe = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
-        if (ratedRecipe != null) {
-            return new ResponseEntity<>(ratedRecipe, HttpStatus.OK);
+    public ResponseEntity<RatingResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
+        RatingResponseDto rating = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
+        if (rating != null) {
+            return new ResponseEntity<>(rating, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
