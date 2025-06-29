@@ -25,7 +25,7 @@ public class RatingServiceImpl implements RatingService {
     private RecipeRepository recipeRepository;
 
     @Override
-    public RecipeResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto) {
+    public RatingResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto) {
         Recipe recipe = recipeRepository.findById(ratingRequestDto.getRecipeId()).orElse(null);
         if (recipe == null) return null;
 
@@ -34,7 +34,7 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.save(rating);
         recipeRepository.save(recipe);
 
-        return RecipeMapper.toDto(recipe);
+        return RatingMapper.toDto(rating);
     }
 
     @Override
