@@ -7,10 +7,14 @@ import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
 import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RatingMapper;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
+import edu.uade.cookingrecipes.model.UserModel;
+import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.RatingRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,13 +28,18 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     private RecipeRepository recipeRepository;
 
-    @Override
-    public RatingResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto) {
-        Recipe recipe = recipeRepository.findById(ratingRequestDto.getRecipeId()).orElse(null);
-        if (recipe == null) return null;
+    @Autowired
+    private AuthenticationRepository authenticationRepository;
 
+    @Override
+    public RatingResponseDto ratingRecipe(RatingRequestDto ratingRequestDto) {
+        Recipe recipe = recipeRepository.findById(ratingRequestDto.getRecipeId()).orElse(null);
+        if (recipe == null)
+            throw new IllegalArgumentException("Recipe not found with ID: " + ratingRequestDto.getRecipeId());
+        UserModel user = getUser();
         Rating rating = RatingMapper.toEntity(ratingRequestDto);
         rating.setRecipe(recipe);
+        rating.setUser(user);
         ratingRepository.save(rating);
         recipeRepository.save(recipe);
 
@@ -76,9 +85,26 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
-        return ratingRepository.findByRecipeId(recipeId)
-                .stream()
-                .map(RatingMapper::toDto)
+        List<Rating> ratings = ratingRepository.findByRecipeId(recipeId);
+        UserModel actualUser = getUser();
+        return ratings.stream()
+                .map(rating -> {
+                    RatingResponseDto dto = RatingMapper.toDto(rating);
+                    dto.setMyRating(rating.getUser().getId().equals(actualUser.getId()));
+                    return dto;
+                })
                 .toList();
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }

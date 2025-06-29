@@ -17,7 +17,9 @@ public class RatingMapper {
                 rating.getComment(),
                 rating.getApproved(),
                 rating.getRatedAt(),
-                rating.getRecipe().getId()
+                rating.getRecipe().getId(),
+                false,
+                rating.getUser() != null ? rating.getUser().getId() : null
         );
     }
 

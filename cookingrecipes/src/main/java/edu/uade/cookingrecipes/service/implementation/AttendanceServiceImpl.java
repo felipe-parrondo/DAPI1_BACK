@@ -49,28 +49,25 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         UserModel user = getUser();
         Schedule schedule = course.getSchedule();
-
-        LocalDate PRUEBADIA = LocalDate.of(2025, 7, 15); // Fecha de prueba para el ejemplo
-        LocalTime PRUEBAHORA = LocalTime.of(14, 30); // Hora de inicio de la clase
         List<LocalDate> classDates = getCourseDates(course);
 
-        if (!classDates.contains(PRUEBADIA)) {
+        if (!classDates.contains(LocalDate.now())) {
             throw new IllegalArgumentException("No hay clases hoy para el curso: " + course.getName());
         }
 
         if (attendanceDto.isPresentClassroom()) {
-            if (schedule.getStartTime().isAfter(PRUEBAHORA) || schedule.getEndTime().isBefore(PRUEBAHORA)) {
+            if (schedule.getStartTime().isAfter(LocalTime.now()) || schedule.getEndTime().isBefore(LocalTime.now())) {
                 throw new IllegalArgumentException("Fuera del horario de clase para el curso: " + course.getName());
             }
             findOrCreateClassroomFromQr(attendanceDto);
         }
 
         AttendanceRecord record = attendanceRecordRepository
-                .findByCourseIdAndUserIdAndDate(attendanceDto.getCourseId(), user.getId(), PRUEBADIA)
+                .findByCourseIdAndUserIdAndDate(attendanceDto.getCourseId(), user.getId(), LocalDate.now())
                 .orElseGet(() -> AttendanceRecord.builder()
                         .courseId(attendanceDto.getCourseId())
                         .userId(user.getId())
-                        .date(PRUEBADIA)
+                        .date(LocalDate.now())
                         .presentSite(false)
                         .presentClassroom(false)
                         .counted(false)
@@ -94,6 +91,34 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendanceResponse.setPresentClassroom(record.isPresentClassroom());
 
         return attendanceResponse;
+    }
+
+    @Override
+    public List<AttendanceResponseDto> getAttendanceForACourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+
+        List<AttendanceRecord> attendanceRecords = attendanceRecordRepository.findByCourseId(courseId);
+        List<AttendanceResponseDto> attendanceResponses = new ArrayList<>();
+
+        for (AttendanceRecord record : attendanceRecords) {
+            UserModel user = authenticationRepository.findById(record.getUserId())
+                    .map(AuthenticationModel::getUser)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + record.getUserId()));
+
+            AttendanceResponseDto response = new AttendanceResponseDto();
+            response.setCourseId(courseId);
+            response.setUserId(user.getId());
+            response.setPresenceDateTime(record.getDate().atStartOfDay().toString());
+            response.setSiteId(record.isPresentSite() ? course.getClassroom().getSite().getId() : null);
+            response.setClassroomId(record.isPresentClassroom() ? course.getClassroom().getId() : null);
+            response.setPresentSite(record.isPresentSite());
+            response.setPresentClassroom(record.isPresentClassroom());
+
+            attendanceResponses.add(response);
+        }
+
+        return attendanceResponses;
     }
 
     private UserModel getUser() {
