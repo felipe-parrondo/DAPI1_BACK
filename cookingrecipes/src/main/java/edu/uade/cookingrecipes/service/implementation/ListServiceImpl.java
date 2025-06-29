@@ -1,15 +1,12 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.Entity.RecipeList;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.entity.RecipeList;
 import edu.uade.cookingrecipes.config.JwtService;
-import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
-import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
-import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.dto.request.ListRequestDto;
+import edu.uade.cookingrecipes.dto.response.ListResponseDto;
 import edu.uade.cookingrecipes.exceptions.NotFoundException;
 import edu.uade.cookingrecipes.mapper.ListMapper;
-import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;

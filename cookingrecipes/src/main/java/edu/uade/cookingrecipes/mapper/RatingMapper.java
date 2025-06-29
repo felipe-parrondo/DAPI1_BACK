@@ -1,8 +1,8 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.Entity.Rating;
-import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
-import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
+import edu.uade.cookingrecipes.entity.Rating;
+import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
+import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
 
 import java.time.LocalDateTime;
 

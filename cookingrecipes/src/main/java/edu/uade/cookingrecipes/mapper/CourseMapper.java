@@ -1,10 +1,10 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.Entity.Course;
-import edu.uade.cookingrecipes.dto.Request.CourseRequestDto;
-import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
-
-import java.time.LocalDate;
+import edu.uade.cookingrecipes.entity.Course;
+import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
+import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
+import edu.uade.cookingrecipes.mapper.embeddable.PracticeMapper;
+import edu.uade.cookingrecipes.mapper.embeddable.ScheduleMapper;
 
 public class CourseMapper {
     public static CourseResponseDto toDto(Course course) {
@@ -21,14 +21,14 @@ public class CourseMapper {
                 ScheduleMapper.toDto(course.getSchedule()),
                 course.getDuration(),
                 course.getMaxParticipants(),
-                SiteMapper.toDto(course.getSite()),
+                ClassroomMapper.toDto(course.getClassroom()),
                 course.getPrice(),
                 course.getDiscount(),
                 course.getTeacherName(),
                 course.getModality(),
                 course.getObjectives(),
                 course.getSubjects(),
-                course.getPractices(),
+                PracticeMapper.toDto(course.getPracticesList()),
                 course.getTools(),
                 course.getMediaUrl(),
                 course.getStudents(),
@@ -55,7 +55,7 @@ public class CourseMapper {
         course.setModality(courseDto.getModality());
         course.setObjectives(courseDto.getObjectives());
         course.setSubjects(courseDto.getSubjects());
-        course.setPractices(courseDto.getPractices());
+        course.setPracticesList(PracticeMapper.toEntity(courseDto.getPractices()));
         course.setTools(courseDto.getTools());
         course.setMediaUrl(courseDto.getMediaUrl());
 

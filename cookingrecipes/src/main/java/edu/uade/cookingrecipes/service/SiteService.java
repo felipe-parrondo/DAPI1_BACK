@@ -1,7 +1,7 @@
 package edu.uade.cookingrecipes.service;
 
-import edu.uade.cookingrecipes.dto.Request.SiteRequestDto;
-import edu.uade.cookingrecipes.dto.Response.SiteResponseDto;
+import edu.uade.cookingrecipes.dto.request.SiteRequestDto;
+import edu.uade.cookingrecipes.dto.response.SiteResponseDto;
 
 import java.util.List;
 

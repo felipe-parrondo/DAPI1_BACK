@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service.validations;
 
-import edu.uade.cookingrecipes.Entity.Course;
+import edu.uade.cookingrecipes.entity.Course;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -39,9 +39,6 @@ public class CourseValidator {
         }
         if (course.getTeacherName() == null || course.getTeacherName().isEmpty()) {
             throw new IllegalArgumentException("Teacher name cannot be empty.");
-        }
-        if (course.getSite() == null) {
-            throw new IllegalArgumentException("Site cannot be null.");
         }
         if (course.getMediaUrl() == null || course.getMediaUrl().isEmpty()) {
             throw new IllegalArgumentException("Media URL cannot be empty.");

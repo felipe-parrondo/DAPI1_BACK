@@ -1,7 +1,8 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.dto.Request.SiteRequestDto;
-import edu.uade.cookingrecipes.dto.Response.SiteResponseDto;
+import edu.uade.cookingrecipes.dto.request.SiteRequestDto;
+import edu.uade.cookingrecipes.dto.response.SiteResponseDto;
+import edu.uade.cookingrecipes.service.AttendanceService;
 import edu.uade.cookingrecipes.service.SiteService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,10 @@ public class SiteController {
 
     @Autowired
     private SiteService siteService;
+    @Autowired
+    private AttendanceService attendanceService;
 
-    @GetMapping("/") // get all courses
+    @GetMapping("/") // get all sites
     public ResponseEntity<List<SiteResponseDto>> getAllSites() {
         List<SiteResponseDto> sites = siteService.getAllSites();
         return new ResponseEntity<>(sites, HttpStatus.OK);

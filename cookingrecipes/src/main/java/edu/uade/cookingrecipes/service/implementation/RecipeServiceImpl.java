@@ -1,20 +1,23 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
-import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
+import edu.uade.cookingrecipes.entity.enums.DishTypes;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.mapper.RecipeMapper;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
+import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
-import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,7 +33,7 @@ public class RecipeServiceImpl implements RecipeService {
     private IngredientService ingredientService;
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthenticationRepository authenticationRepository;
 
     @Override
     public List<RecipeResponseDto> getAllRecipes() {
@@ -68,21 +71,33 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto) {
-        String address = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = userRepository.findByAddress(address);
-        System.out.println(address);
-        if (user == null) throw new NoSuchElementException("User not found: " + address);
-
-        if (recipeRepository.existsByNameAndUser(recipeRequestDto.getName(), user)) {
-            throw new IllegalArgumentException("Recipe with name '" +
-                    recipeRequestDto.getName() + "' already exists for user: " + address);
-        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+        if (user == null) throw new NoSuchElementException("User not found: " + email);
 
         Recipe recipe = RecipeMapper.toEntity(recipeRequestDto);
         recipe.setUser(user);
 
         Recipe savedRecipe = recipeRepository.save(recipe);
         return RecipeMapper.toDto(savedRecipe);
+    }
+
+    @Override
+    public Long validateRecipe(String recipeName) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+        if (user == null) throw new NoSuchElementException("User not found: " + email);
+
+        boolean exists = recipeRepository.existsByNameAndUser(recipeName, user);
+        if (exists) {
+            throw new IllegalArgumentException("Recipe with name '" + recipeName
+                    + "' already exists for user: " + user.getName());
+        }
+        return user.getId();
     }
 
     @Override
@@ -137,6 +152,14 @@ public class RecipeServiceImpl implements RecipeService {
                 .map(recipe -> Collections.singletonList(recipe.getDishType()))
                 .orElse(null);
     }
+
+    @Override
+    public List<String> getAllDishTypes() {
+        return Arrays.stream(DishTypes.values())
+                .map(DishTypes::name)
+                .toList();
+    }
+
     @Override
     public List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
@@ -150,5 +173,4 @@ public class RecipeServiceImpl implements RecipeService {
             return dto;
         }).collect(Collectors.toList());
     }
-
 }

@@ -46,4 +46,7 @@ public class UserModel {
     @OneToOne
     @JoinColumn(name = "payment_information", referencedColumnName = "id", nullable = true)
     private PaymentInformationModel paymentInformationModel;
+
+    @Column(name = "account_balance")
+    private Double accountBalance;
 }

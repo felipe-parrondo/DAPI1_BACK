@@ -1,8 +1,8 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.Entity.Site;
-import edu.uade.cookingrecipes.dto.Request.SiteRequestDto;
-import edu.uade.cookingrecipes.dto.Response.SiteResponseDto;
+import edu.uade.cookingrecipes.entity.Site;
+import edu.uade.cookingrecipes.dto.request.SiteRequestDto;
+import edu.uade.cookingrecipes.dto.response.SiteResponseDto;
 
 public class SiteMapper {
     public static SiteResponseDto toDto(Site site){

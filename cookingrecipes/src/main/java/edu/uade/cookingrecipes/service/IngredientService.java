@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 
 import java.util.List;
 
