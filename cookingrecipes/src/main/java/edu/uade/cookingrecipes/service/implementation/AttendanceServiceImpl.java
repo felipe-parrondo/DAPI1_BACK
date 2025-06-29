@@ -85,8 +85,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendanceResponse.setCourseId(attendanceDto.getCourseId());
         attendanceResponse.setUserId(user.getId());
         attendanceResponse.setPresenceDateTime(LocalDateTime.now().toString());
-        attendanceResponse.setSiteId(attendanceDto.getSiteId());
-        attendanceResponse.setClassroomId(attendanceDto.isPresentClassroom() ? attendanceDto.getClassroomId() : null);
         attendanceResponse.setPresentSite(record.isPresentSite());
         attendanceResponse.setPresentClassroom(record.isPresentClassroom());
 
@@ -94,30 +92,28 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public List<AttendanceResponseDto> getAttendanceForACourse(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+    public List<AttendanceResponseDto> getAttendanceForACourse(Long courseId) { // Obtiene la asistencia del usuario logeado en un curso
+        UserModel user = getUser();
+        List<AttendanceRecord> records = attendanceRecordRepository.findByCourseIdAndUserId(courseId, user.getId());
 
-        List<AttendanceRecord> attendanceRecords = attendanceRecordRepository.findByCourseId(courseId);
-        List<AttendanceResponseDto> attendanceResponses = new ArrayList<>();
-
-        for (AttendanceRecord record : attendanceRecords) {
-            UserModel user = authenticationRepository.findById(record.getUserId())
-                    .map(AuthenticationModel::getUser)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + record.getUserId()));
-
-            AttendanceResponseDto response = new AttendanceResponseDto();
-            response.setCourseId(courseId);
-            response.setUserId(user.getId());
-            response.setPresenceDateTime(record.getDate().atStartOfDay().toString());
-            response.setSiteId(record.isPresentSite() ? course.getClassroom().getSite().getId() : null);
-            response.setClassroomId(record.isPresentClassroom() ? course.getClassroom().getId() : null);
-            response.setPresentSite(record.isPresentSite());
-            response.setPresentClassroom(record.isPresentClassroom());
-
-            attendanceResponses.add(response);
+        if (records.isEmpty()) {
+            throw new IllegalArgumentException("No attendance records found for course ID: " + courseId);
         }
 
+        return getAttendanceResponseDtos(records);
+    }
+
+    private static List<AttendanceResponseDto> getAttendanceResponseDtos(List<AttendanceRecord> records) {
+        List<AttendanceResponseDto> attendanceResponses = new ArrayList<>();
+        for (AttendanceRecord record : records) {
+            AttendanceResponseDto response = new AttendanceResponseDto();
+            response.setCourseId(record.getCourseId());
+            response.setUserId(record.getUserId());
+            response.setPresenceDateTime(record.getDate().atStartOfDay().toString());
+            response.setPresentSite(record.isPresentSite());
+            response.setPresentClassroom(record.isPresentClassroom());
+            attendanceResponses.add(response);
+        }
         return attendanceResponses;
     }
 
