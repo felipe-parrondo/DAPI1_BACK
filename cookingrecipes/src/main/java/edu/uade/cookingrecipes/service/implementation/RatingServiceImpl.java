@@ -13,6 +13,7 @@ import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.RatingRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.service.RatingService;
+import edu.uade.cookingrecipes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,12 +32,15 @@ public class RatingServiceImpl implements RatingService {
     @Autowired
     private AuthenticationRepository authenticationRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public RatingResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto) {
         Recipe recipe = recipeRepository.findById(ratingRequestDto.getRecipeId()).orElse(null);
         if (recipe == null)
             throw new IllegalArgumentException("Recipe not found with ID: " + ratingRequestDto.getRecipeId());
-        UserModel user = getUser();
+        UserModel user = userService.getUser();
         Rating rating = RatingMapper.toEntity(ratingRequestDto);
         rating.setRecipe(recipe);
         rating.setUser(user);
@@ -86,7 +90,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
         List<Rating> ratings = ratingRepository.findByRecipeId(recipeId);
-        UserModel actualUser = getUser();
+        UserModel actualUser = userService.getUser();
         return ratings.stream()
                 .map(rating -> {
                     RatingResponseDto dto = RatingMapper.toDto(rating);
@@ -96,15 +100,12 @@ public class RatingServiceImpl implements RatingService {
                 .toList();
     }
 
-    private UserModel getUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = authenticationRepository.findByEmail(email)
-                .map(AuthenticationModel::getUser)
-                .orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
-        return user;
+    @Override
+    public void rejectRatingsByUserId(Long userId) {
+        List<Rating> ratingList = ratingRepository.findByUser_Id(userId);
+        ratingList.forEach(r -> {
+            r.setApproved(false);
+            ratingRepository.save(r);
+        });
     }
 }

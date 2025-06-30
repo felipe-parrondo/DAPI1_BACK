@@ -12,4 +12,5 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long>, JpaSpecificationExecutor<Recipe> {
     List<Recipe> findTop3ByOrderByIdDesc();
     boolean existsByNameAndUser(String name, UserModel user);
+    List<Recipe> findByUser_Id(Long userId);
 }
