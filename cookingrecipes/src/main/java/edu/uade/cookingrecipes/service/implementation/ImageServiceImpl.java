@@ -1,81 +1,60 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import org.springframework.http.ResponseEntity;
+import edu.uade.cookingrecipes.exceptions.NotFoundException;
+import edu.uade.cookingrecipes.service.ImageService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-/*
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+
 @Service
-public class ImageServiceImpl {
-}
+public class ImageServiceImpl implements ImageService {
 
+    private final String UPLOAD_FOLDER = ".//uploads//multimedia";
 
+    /*public void saveImage (MultipartFile file, String resourceIdentifier, String id) { //TODO baseRoute inside the service
+        try {
+            Files.createDirectories(Paths.get(BASE_ROUTE, resourceIdentifier));
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(BASE_ROUTE, resourceIdentifier, id, file.getOriginalFilename());
+            Files.write(path, bytes);
 
-@PostMapping("/cargarMultimedia/{idReceta}")
-public ResponseEntity<?> cargarMultimedia(@RequestBody List<MultipartFile> files,
-                                          @PathVariable Integer idReceta){
-    System.out.println("------------------------");
-    System.out.println(files);
-    if(files != null && files.size() != 0){
-        List<String> fallos = RecetaController.getInstancia().cargarMultimedia(files, idReceta);
-        if (fallos.size() > 0) {
-            if (fallos.get(0).equals("notFound")) {
-                String[] retorno = new String[]{};
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(retorno);
-            }
-            else
-                return ResponseEntity.badRequest().body(fallos);
+        } catch (IOException ignored) {
+            System.out.println(ignored);
+            throw new NotFoundException("");
         }
-        else
-            return ResponseEntity.status(HttpStatus.OK).body(fallos);
-    }
-    else{
-        String[] retorno = new String[] {};
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(retorno);
-    }
 
-}
-private UploadFileService uploadFileService = new UploadFileService();
-public List<String> cargarMultimedia(List<MultipartFile> files, Integer idReceta){
-    Optional<Receta> oReceta = recetaService.findById(idReceta);
-    List<String> fallos = new ArrayList<>();
-    if (oReceta.isPresent()) {
-
-        for(MultipartFile file: files) {
-            try {
-                uploadFileService.saveFile(file, idReceta);
-            }
-            catch (Exception e) {
-                fallos.add(file.getOriginalFilename());
-            }
-        }
-        if(fallos.size() > 0) {
-            Receta receta = oReceta.get();
-            receta.setEstado(Receta.Estado.ErrorImagenes);
-            recetaService.save(receta);
-        }
-    }
-    else{
-        fallos.add("notFound");
-    }
-    return fallos;
-};@Service
-public class UploadFileService {
-
-
-    private String UPLOAD_FOLDER = ".//src//main//resources//multimedia//";
-
-    public String saveFile(MultipartFile file, Integer idReceta) throws IOException{
-        File directorio = new File(UPLOAD_FOLDER + idReceta.toString());
+    }*/
+    public void saveFile(MultipartFile file, String id, String resourceIdentifier) throws IOException{
+        File directorio = new File(String.valueOf(Paths.get(UPLOAD_FOLDER, resourceIdentifier, id)));
         if (!directorio.exists())
             directorio.mkdirs();
 
         byte[] bytes = file.getBytes();
-        Path path = Paths.get(UPLOAD_FOLDER  + idReceta.toString() + "//" +  file.getOriginalFilename());
+        Path path = Paths.get(UPLOAD_FOLDER, resourceIdentifier, id, file.getOriginalFilename());
         Files.write(path,bytes);
 
-        return   file.getOriginalFilename();
+       // return   file.getOriginalFilename();
     }
-}*/
+
+    /**
+     * @param resourceIdentifier
+     * @param fileIdentifier
+     * @return Base64 String representing the image that was requested
+     * @throws IOException
+     */
+    public String readImage (String resourceIdentifier, String fileIdentifier) {
+        try {
+            File directory = new File(Paths.get(UPLOAD_FOLDER, resourceIdentifier).toString());
+            byte[] bytes = Files.readAllBytes(Paths.get(UPLOAD_FOLDER, resourceIdentifier, fileIdentifier));
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+}

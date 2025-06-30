@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RecipeRequestDto {
+    private Long id;
     private String name;
     private String description;
     private Integer servings;

@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -53,9 +55,10 @@ public class RecipeController {
         return new ResponseEntity<>(filteredRecipes, HttpStatus.OK);
     }
 
-    @PostMapping("/create") //Crear receta
-    public ResponseEntity<RecipeResponseDto> createRecipe(@RequestBody RecipeRequestDto recipeRequestDto) {
-        RecipeResponseDto createdRecipe = recipeService.createRecipe(recipeRequestDto);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) //Crear receta
+    public ResponseEntity<RecipeResponseDto> createRecipe(@RequestPart("recipe") RecipeRequestDto recipeRequestDto,
+                                                          @RequestPart(value = "mediaFiles", required = false) List<MultipartFile> files) {
+        RecipeResponseDto createdRecipe = recipeService.createRecipe(recipeRequestDto, files);
         if (createdRecipe != null) {
             return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
         }
