@@ -19,7 +19,7 @@ public class RecipeRequestDto {
     private String name;
     private String description;
     private Integer servings;
-    @JsonProperty("dishType")
+    @JsonProperty("dish_type")
     private String dishType;
     private List<String> photos;
     private List<IngredientEmbeddable> ingredients;

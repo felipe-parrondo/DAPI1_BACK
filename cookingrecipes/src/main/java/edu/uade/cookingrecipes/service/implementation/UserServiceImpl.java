@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RecipeService recipeService;
 
-    @Autowired
-    private RatingService ratingService;
+    /*@Autowired
+    private RatingService ratingService;*/
 
     @Autowired
     private UserRepository userRepository;
@@ -89,6 +89,6 @@ public class UserServiceImpl implements UserService {
         UserModel userModel = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
         authenticationService.deleteAuthenticationByUserModel(userModel);
         recipeService.rejectRecipesByUserId(userModel.getId());
-        ratingService.rejectRatingsByUserId(userModel.getId());
+        //ratingService.rejectRatingsByUserId(userModel.getId());
     }
 }
