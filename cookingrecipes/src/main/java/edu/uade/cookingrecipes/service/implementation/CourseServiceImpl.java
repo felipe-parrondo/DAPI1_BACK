@@ -80,7 +80,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponseDto getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null) return null;
+        if (course == null)
+            return null;
         return CourseMapper.toDto(course);
     }
 

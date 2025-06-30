@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface RecipeService {
     List<RecipeResponseDto> getAllRecipes();
-    List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, Pageable pageable);
+    List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, String sort);
     RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto, List<MultipartFile> files);
     Long validateRecipe(String recipeName);
     boolean approveRecipe(Long recipeId, Boolean isApproved);
