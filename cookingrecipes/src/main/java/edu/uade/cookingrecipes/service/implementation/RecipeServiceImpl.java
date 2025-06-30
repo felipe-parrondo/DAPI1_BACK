@@ -362,4 +362,13 @@ public class RecipeServiceImpl implements RecipeService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public void rejectRecipesByUserId(Long userId) {
+        List<Recipe> recipeList = recipeRepository.findByUser_Id(userId);
+        recipeList.forEach(r -> {
+            r.setApproved(false);
+            recipeRepository.save(r);
+        });
+    }
 }

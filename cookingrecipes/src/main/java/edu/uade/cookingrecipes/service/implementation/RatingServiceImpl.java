@@ -99,4 +99,13 @@ public class RatingServiceImpl implements RatingService {
                 })
                 .toList();
     }
+
+    @Override
+    public void rejectRatingsByUserId(Long userId) {
+        List<Rating> ratingList = ratingRepository.findByUser_Id(userId);
+        ratingList.forEach(r -> {
+            r.setApproved(false);
+            ratingRepository.save(r);
+        });
+    }
 }

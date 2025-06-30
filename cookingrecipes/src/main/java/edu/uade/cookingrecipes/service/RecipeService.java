@@ -1,6 +1,5 @@
 package edu.uade.cookingrecipes.service;
 
-import org.springframework.data.domain.Pageable;
 import edu.uade.cookingrecipes.entity.Recipe;
 import org.springframework.data.jpa.domain.Specification;
 import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
@@ -23,4 +22,5 @@ public interface RecipeService {
     List<String> getRecipeDishTypes(Long recipeId);
     List<String> getAllDishTypes();
     List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId);
+    void rejectRecipesByUserId(Long userId);
 }

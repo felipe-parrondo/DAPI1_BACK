@@ -11,4 +11,5 @@ public interface UserService {
     UserResponseDto getUserById(Long id);
     UserModel getUser();
     UserResponseDto getUserByToken();
+    void deleteUser(Long userId);
 }

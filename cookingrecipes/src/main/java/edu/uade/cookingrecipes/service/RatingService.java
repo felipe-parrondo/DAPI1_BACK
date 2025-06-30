@@ -12,4 +12,5 @@ public interface RatingService {
     boolean deleteRating(Long ratingId);
     boolean approveRating(Long ratingId, Boolean isApproved);
     List<RatingResponseDto> getRatingsByRecipeId(Long recipeId);
+    void rejectRatingsByUserId(Long userId);
 }

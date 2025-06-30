@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}") // Get user by ID
-    public ResponseEntity<UserResponseDto> getUserById(Long userId) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
         UserResponseDto user = userService.getUserById(userId);
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -44,8 +45,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/me") // Get user by token
-    public ResponseEntity<UserResponseDto> getUserByToken() { //TODO ???
+    public ResponseEntity<UserResponseDto> getUserByToken() {
         UserResponseDto user = userService.getUserByToken();
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
