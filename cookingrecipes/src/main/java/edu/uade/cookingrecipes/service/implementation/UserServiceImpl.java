@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,14 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AuthenticationRepository authenticationRepository;
+
+    @Override
+    public List<UserResponseDto> getAllUsers(Boolean isStudent) {
+        List<UserModel> users = userRepository.findByIsStudent(isStudent).orElse(new ArrayList<>());
+        return users.stream()
+                .map(user -> UserMapper.toDto(user, getAuthenticationByUser(user.getUsername()).getEmail()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<UserResponseDto> getAllUsers() {

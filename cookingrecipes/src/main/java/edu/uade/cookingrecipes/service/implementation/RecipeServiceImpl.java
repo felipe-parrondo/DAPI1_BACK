@@ -72,10 +72,20 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, Pageable pageable) {
-        Page<Recipe> result = recipeRepository.findAll(spec, pageable);
-        return result.getContent().stream()
+    public List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, String sort) {
+        List<Recipe> result = recipeRepository.findAll(spec);
+        List<RecipeResponseDto> recipeList = result.stream()
                 .map(RecipeMapper::toDto)
+                .toList();
+
+        Comparator<RecipeResponseDto> comparator = switch (sort) {
+            case "user" -> Comparator.comparing(RecipeResponseDto::getUsername, String.CASE_INSENSITIVE_ORDER);
+            case "recent" -> Comparator.comparing(RecipeResponseDto::getId).reversed();
+            default -> Comparator.comparing(RecipeResponseDto::getDishType, String.CASE_INSENSITIVE_ORDER);
+        };
+
+        return recipeList.stream()
+                .sorted(comparator)
                 .toList();
     }
     @Override
@@ -148,6 +158,7 @@ public class RecipeServiceImpl implements RecipeService {
         } else {
             recipe = RecipeMapper.toEntity(recipeRequestDto);
             recipe.setUser(user);
+            recipe.setApproved(null);
 
             // Solo guardar nombres de archivos
             if (recipe.getPhotos() != null) {
@@ -279,10 +290,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public boolean approveRecipe(Long recipeId) {
+    public boolean approveRecipe(Long recipeId, Boolean isApproved) {
         Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
         if (recipe == null) return false;
-        recipe.setApproved(true);
+        recipe.setApproved(isApproved);
         recipeRepository.save(recipe);
         for (IngredientEmbeddable ingredient : recipe.getIngredients()) {
             ingredientService.saveIfNotExists(ingredient.getName());

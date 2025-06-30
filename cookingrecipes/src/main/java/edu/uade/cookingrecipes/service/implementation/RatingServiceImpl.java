@@ -67,7 +67,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public boolean approveRating(Long ratingId) {
+    public boolean approveRating(Long ratingId, Boolean isApproved) {
         Rating rating = ratingRepository.findById(ratingId).orElse(null);
         Long recipeId = ratingRepository.findRecipeIdById(ratingId);
         Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
@@ -77,7 +77,7 @@ public class RatingServiceImpl implements RatingService {
         totalRating += rating.getRatingValue();
         recipe.setAverageRating(totalRating / recipe.getRatingsCount());
         recipeRepository.save(recipe);
-        rating.setApproved(true);
+        rating.setApproved(isApproved);
         ratingRepository.save(rating);
 
         return true;

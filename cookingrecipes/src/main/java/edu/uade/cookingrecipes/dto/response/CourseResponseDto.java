@@ -30,6 +30,7 @@ public class CourseResponseDto {
     private String subjects;
     private List<PracticeResponseDto> practices;
     private String tools;
+    private Long siteId;
     private List<String> mediaUrl;
     private List<Long> studentIds;
     private boolean isActive;

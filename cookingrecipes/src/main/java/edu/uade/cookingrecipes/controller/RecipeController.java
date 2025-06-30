@@ -52,17 +52,14 @@ public class RecipeController {
     public ResponseEntity<List<RecipeResponseDto>> filterRecipes(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String hasingredient,
-            @RequestParam(required = false) String hasntingredient,
+            @RequestParam(required = false) String hasIngredient,
+            @RequestParam(required = false) String hasntIngredient,
             @RequestParam(required = false) String user,
-            @RequestParam(required = false) Integer approved,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "asc") String sort
+            @RequestParam(required = false) Integer approved, //0: desaprobado, 1: aprobado, 2: pendientes
+            @RequestParam(required = false, defaultValue = "") String sort //default=dish, other values: user, recent. Make a default value if the string isn't in this 3 defined
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        Specification<Recipe> spec = RecipeSpecification.withFilters(name, type, hasingredient, hasntingredient, user, approved);
-        return ResponseEntity.ok(recipeService.filterRecipes(spec, pageable));
+        Specification<Recipe> spec = RecipeSpecification.withFilters(name, type, hasIngredient, hasntIngredient, user, approved);
+        return ResponseEntity.ok(recipeService.filterRecipes(spec, sort));
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) //Crear receta
@@ -93,18 +90,18 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/rating/{ratingId}/cr") //Aprobar/rechazar valoracion
-    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId) {
-        boolean ratedRecipe = ratingService.approveRating(ratingId);
+    @PutMapping("/rating/{ratingId}/cr/{isApproved}") //Aprobar/rechazar valoracion
+    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId, Boolean isApproved) {
+        boolean ratedRecipe = ratingService.approveRating(ratingId, isApproved);
         if (ratedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/{recipeId}/cr") //Aprobar/rechazar receta
-    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId) {
-        boolean approvedRecipe = recipeService.approveRecipe(recipeId);
+    @PutMapping("/{recipeId}/cr/{isApproved}") //Aprobar/rechazar receta
+    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId, Boolean isApproved) {
+        boolean approvedRecipe = recipeService.approveRecipe(recipeId, isApproved);
         if (approvedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);
         }

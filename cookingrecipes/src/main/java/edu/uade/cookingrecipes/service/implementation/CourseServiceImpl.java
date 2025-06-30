@@ -17,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +27,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private SiteRepository siteRepository;
 
     @Autowired
     private ClassroomRepository classroomRepository;
@@ -41,8 +46,12 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
         Course course = CourseMapper.toEntity(courseDto);
-        List<Course> existingCourses = courseRepository.findAll();
+        Site site = siteRepository
+                .findById(courseDto.getSiteId())
+                .orElseThrow(() -> new NoSuchElementException("invalid site id"));
+        course.setSite(site);
         course.setActive(true);
+        List<Course> existingCourses = courseRepository.findAll();
 
         courseValidator.validate(course, existingCourses);
 
@@ -59,9 +68,20 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<CourseResponseDto> getAllCoursesBySiteId(Long siteId) {
+        return courseRepository
+                .findBySite_Id(siteId)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(CourseMapper::toDto)
+                .toList();
+    }
+
+    @Override
     public CourseResponseDto getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null) return null;
+        if (course == null)
+            return null;
         return CourseMapper.toDto(course);
     }
 

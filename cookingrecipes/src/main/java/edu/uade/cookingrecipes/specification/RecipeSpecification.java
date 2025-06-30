@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RecipeSpecification {
 
@@ -37,11 +38,16 @@ public class RecipeSpecification {
             }
 
             if (user != null && !user.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("user").get("username"), user));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("user")), "%" + user.toLowerCase() + "%"));
             }
 
             if (approved != null) {
-                predicates.add(criteriaBuilder.equal(root.get("approved"), approved));
+                switch (approved) {
+                    case 0 -> predicates.add(criteriaBuilder.equal(root.get("approved"), false));
+                    case 1 -> predicates.add(criteriaBuilder.equal(root.get("approved"), true));
+                    case 2 -> predicates.add(criteriaBuilder.isNull(root.get("approved")));
+                    default -> {}
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
