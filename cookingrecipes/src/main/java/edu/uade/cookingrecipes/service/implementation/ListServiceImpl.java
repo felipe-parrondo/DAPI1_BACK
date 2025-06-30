@@ -51,7 +51,7 @@ public class ListServiceImpl implements ListService {
     }
 
     @Override
-    public ListResponseDto createList(ListRequestDto requestDto) {
+    public boolean createList(ListRequestDto requestDto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<AuthenticationModel> authentication = authenticationRepository.findByEmail(email);
         if  (authentication.isPresent()) {
@@ -63,11 +63,11 @@ public class ListServiceImpl implements ListService {
             UserModel user = authentication.get().getUser();
             user.setId(authentication.get().getId());
             list.setUser(user);
-            RecipeList savedList = recipeListRepository.save(list);
-            return ListMapper.toDto(savedList);
+            recipeListRepository.save(list);
+            return true;
         }
         else {
-            return null;
+            return false;
         }
     }
 

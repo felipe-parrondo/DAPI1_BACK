@@ -1,9 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.entity.AccountMovement;
-import edu.uade.cookingrecipes.entity.Classroom;
-import edu.uade.cookingrecipes.entity.Course;
-import edu.uade.cookingrecipes.entity.Site;
+import edu.uade.cookingrecipes.entity.*;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.mapper.CourseMapper;
@@ -43,46 +40,113 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private AccountMovementRepository accountMovementRepository;
 
+    @Autowired
+    private AttendanceRecordRepository attendanceRecordRepository;
+
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
         Course course = CourseMapper.toEntity(courseDto);
-        Site site = siteRepository
-                .findById(courseDto.getSiteId())
-                .orElseThrow(() -> new NoSuchElementException("invalid site id"));
-        course.setSite(site);
         course.setActive(true);
         List<Course> existingCourses = courseRepository.findAll();
 
         courseValidator.validate(course, existingCourses);
 
         course = courseRepository.save(course);
-        return CourseMapper.toDto(course);
+        return CourseMapper.toDto(course, "");
     }
 
     @Override
     public List<CourseResponseDto> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
+        List<Course> courses = courseRepository.findAll()
+                .stream()
+                .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
+                .toList();
         return courses.stream()
-                .map(CourseMapper::toDto)
+                .map(course -> CourseMapper.toDto(course, ""))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CourseResponseDto> getAllCoursesBySiteId(Long siteId) {
         return courseRepository
-                .findBySite_Id(siteId)
+                .findBySiteId(siteId)
                 .orElse(new ArrayList<>())
                 .stream()
-                .map(CourseMapper::toDto)
-                .toList();
+                .map(course -> CourseMapper.toDto(course, ""))
+                .collect(Collectors.toList());
     }
 
     @Override
     public CourseResponseDto getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null)
-            return null;
-        return CourseMapper.toDto(course);
+        if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
+        String attendance = getUserAttendanceForCourse(courseId);
+        return CourseMapper.toDto(course, attendance);
+    }
+
+    private String getUserAttendanceForCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
+        UserModel user = getUser();
+        String attendance = calculateAttendance(courseId, user.getId());
+        if (attendance == null) {
+            throw new IllegalArgumentException("No se pudo calcular la asistencia.");
+        }
+        return attendance;
+    }
+
+    private String calculateAttendance(Long courseId, Long userId) {
+        UserModel user = authenticationRepository.findById(userId)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+
+        List<AttendanceRecord> attendanceRecords = attendanceRecordRepository
+                .findByCourseIdAndUserId(courseId, user.getId());
+
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) {
+            throw new IllegalArgumentException("Curso no encontrado.");
+        }
+        if (attendanceRecords.isEmpty()) {
+            return "0%";
+        }
+
+        List<LocalDate> classDays = getDaysOfCourse(course);
+        List<LocalDate> pastClassDays = classDays.stream()
+                .filter(date -> !date.isAfter(LocalDate.now()))
+                .toList();
+
+        int totalPastClasses = pastClassDays.size();
+        if (totalPastClasses == 0) {
+            return "0%";
+        }
+
+        long attendedCount = attendanceRecords.stream()
+                .filter(record -> record.getDate() != null && !record.getDate().isAfter(LocalDate.now()))
+                .count();
+
+        double attendancePercentage = (attendedCount * 100.0) / totalPastClasses;
+        return String.format("%.2f%%", attendancePercentage);
+    }
+
+    private List<LocalDate> getDaysOfCourse(Course course) {
+        if (course.getSchedule() == null || course.getStartDate() == null || course.getEndDate() == null) {
+            return List.of();
+        }
+
+        List<LocalDate> classDays = new ArrayList<>();
+        LocalDate startDate = course.getStartDate();
+        LocalDate endDate = course.getEndDate();
+
+        while (!startDate.isAfter(endDate)) {
+            classDays.add(startDate);
+            startDate = startDate.plusDays(1);
+        }
+
+        return classDays;
     }
 
     @Override
@@ -137,6 +201,56 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
         return true;
     }
+
+    @Override
+    public boolean enrollUserInCourseByAdmin(Long courseId, Long userId) {
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null || !course.isActive()) {
+            throw new IllegalArgumentException("Curso no encontrado o inactivo.");
+        }
+        UserModel user = authenticationRepository.findById(userId)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+
+        if (course.getStudents().size() >= course.getMaxParticipants()) {
+            throw new IllegalArgumentException("El curso ha alcanzado el número máximo de participantes.");
+        }
+
+        AccountMovement movement = new AccountMovement();
+        movement.setDateTime(java.time.LocalDateTime.now());
+
+        if (user.getAccountBalance() <= 0.0) {
+            // Si el usuario paga en la sede
+            user.setAccountBalance(0.0);
+            movement.setAmount(course.getPrice());
+            movement.setReason("Pago en sede");
+        } else if (course.getPrice() > user.getAccountBalance()){
+            // Si el usuario paga una parte con saldo en cuenta y otra en sede
+            movement.setAmount(user.getAccountBalance());
+            movement.setReason("Pago con saldo en cuenta");
+            AccountMovement cardMovement = new AccountMovement();
+            cardMovement.setDateTime(java.time.LocalDateTime.now());
+            cardMovement.setAmount(course.getPrice() - user.getAccountBalance());
+            user.setAccountBalance(0.0);
+            cardMovement.setReason("Pago en sede");
+            cardMovement.setUser(user);
+            accountMovementRepository.save(cardMovement);
+        } else {
+            // Si el usuario paga con saldo en cuenta
+            movement.setAmount(course.getPrice());
+            movement.setReason("Pago con saldo en cuenta");
+            user.setAccountBalance(user.getAccountBalance() - course.getPrice());
+        }
+
+        course.getStudents().add(user.getId());
+        courseRepository.save(course);
+        return true;
+    }
+
     @Override
     public boolean unrollUserFromCourse(Long courseId, boolean accountBalanceRefund) {
         Course course = courseRepository.findById(courseId).orElse(null);

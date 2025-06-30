@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IngredientService {
     void saveIfNotExists(String name);
-    List<IngredientEmbeddable> getAllIngredients();
+    List<String> getAllIngredients();
 }

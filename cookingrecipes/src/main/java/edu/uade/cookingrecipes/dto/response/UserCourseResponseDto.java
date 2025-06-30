@@ -1,7 +1,6 @@
 package edu.uade.cookingrecipes.dto.response;
 
 import edu.uade.cookingrecipes.dto.response.embeddable.PracticeResponseDto;
-import edu.uade.cookingrecipes.dto.response.embeddable.ScheduleResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponseDto {
+public class UserCourseResponseDto {
     private Long id;
     private String name;
     private LocalDate startDate;
@@ -33,6 +32,5 @@ public class CourseResponseDto {
     private List<String> tools;
     private List<String> supplies;
     private List<String> mediaUrl;
-    private String attendancePercentage;
+    private String assistance;
 }
-

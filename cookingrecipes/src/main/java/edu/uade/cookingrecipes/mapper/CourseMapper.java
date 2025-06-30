@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CourseMapper {
 
-    public static CourseResponseDto toDto(Course course) {
+    public static CourseResponseDto toDto(Course course, String coursePercentage) {
         if (course == null) {
             return null;
         }
@@ -21,10 +21,11 @@ public class CourseMapper {
                 course.getStartDate(),
                 course.getEndDate(),
                 course.getDescription(),
-                ScheduleMapper.toDto(course.getSchedule()),
+                ScheduleMapper.toString(course.getSchedule()),
                 course.getDuration(),
                 course.getMaxParticipants(),
-                ClassroomMapper.toDto(course.getClassroom()),
+                course.getClassroom().getClassNumber(),
+                course.getClassroom().getSite().getAddress(),
                 course.getPrice(),
                 course.getDiscount(),
                 course.getTeacherName(),
@@ -33,10 +34,9 @@ public class CourseMapper {
                 course.getSubjects(),
                 PracticeMapper.toDto(course.getPracticesList()),
                 course.getTools(),
-                course.getSite().getId(),
+                course.getSupplies(),
                 course.getMediaUrl(),
-                course.getStudents(),
-                course.isActive()
+                coursePercentage
         );
     }
 

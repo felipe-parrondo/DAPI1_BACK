@@ -177,9 +177,9 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/ingredient") //Obtener todas los ingredientes
-    public ResponseEntity<List<IngredientEmbeddable>> getAllIngredients() {
-        List<IngredientEmbeddable> ingredients = ingredientService.getAllIngredients();
+    @GetMapping("/ingredients") //Obtener todas los ingredientes
+    public ResponseEntity<List<String>> getAllIngredients() {
+        List<String> ingredients = ingredientService.getAllIngredients();
         if (ingredients != null) {
             return new ResponseEntity<>(ingredients, HttpStatus.OK);
         }
@@ -195,7 +195,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{recipeId}/full-ingredients")
+    @GetMapping("/{recipeId}/full-ingredients") // Obtener los ingredientes de una receta
     public ResponseEntity<List<IngredientResponseDto>> getFullRecipeIngredients(@PathVariable Long recipeId) {
         List<IngredientResponseDto> ingredients = recipeService.getFullIngredientsByRecipeId(recipeId);
         if (ingredients != null) {
