@@ -12,8 +12,11 @@ import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,29 +44,11 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeResponseDto> filterRecipes(String dishType, String order, String ingredient,
-                                                 String sortByDate, String username) {
-        List<Recipe> recipes = recipeRepository.findAll();
-
-        return recipes.stream()
-                .filter(r -> dishType == null || r.getDishType().equalsIgnoreCase(dishType))
-                .filter(r -> username == null || r.getUser().getName().equalsIgnoreCase(username))
-                .filter(r -> ingredient == null || r.getIngredients().stream()
-                        .anyMatch(i -> i.getName().equalsIgnoreCase(ingredient)))
-                .sorted((r1, r2) -> {
-                    if ("asc".equalsIgnoreCase(order)) {
-                        return r1.getName().compareToIgnoreCase(r2.getName());
-                    } else if ("desc".equalsIgnoreCase(order)) {
-                        return r2.getName().compareToIgnoreCase(r1.getName());
-                    } else if ("newest".equalsIgnoreCase(sortByDate)) {
-                        return r2.getId().compareTo(r1.getId());
-                    } else if ("oldest".equalsIgnoreCase(sortByDate)) {
-                        return r1.getId().compareTo(r2.getId());
-                    }
-                    return 0;
-                })
+    public List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, Pageable pageable) {
+        Page<Recipe> result = recipeRepository.findAll(spec, pageable);
+        return result.getContent().stream()
                 .map(RecipeMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
