@@ -36,6 +36,7 @@ public class CourseRequestDto {
     private String subjects;
     private List<PracticeRequestDto> practices;
     private String tools;
+    private Long siteId;
     @JsonProperty("mediaUrl")
     private List<String> mediaUrl;
 }

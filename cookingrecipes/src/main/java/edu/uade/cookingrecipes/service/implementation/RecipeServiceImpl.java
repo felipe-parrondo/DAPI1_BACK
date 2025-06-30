@@ -279,10 +279,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public boolean approveRecipe(Long recipeId) {
+    public boolean approveRecipe(Long recipeId, Boolean isApproved) {
         Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
         if (recipe == null) return false;
-        recipe.setApproved(true);
+        recipe.setApproved(isApproved);
         recipeRepository.save(recipe);
         for (IngredientEmbeddable ingredient : recipe.getIngredients()) {
             ingredientService.saveIfNotExists(ingredient.getName());

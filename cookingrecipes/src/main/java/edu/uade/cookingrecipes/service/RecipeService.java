@@ -15,7 +15,7 @@ public interface RecipeService {
     List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, Pageable pageable);
     RecipeResponseDto createRecipe(RecipeRequestDto recipeRequestDto, List<MultipartFile> files);
     Long validateRecipe(String recipeName);
-    boolean approveRecipe(Long recipeId);
+    boolean approveRecipe(Long recipeId, Boolean isApproved);
     List<RecipeResponseDto> getRecentRecipes();
     boolean deleteRecipe(Long recipeId);
     RecipeResponseDto getRecipeById(Long recipeId);

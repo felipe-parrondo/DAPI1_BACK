@@ -93,18 +93,18 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/rating/{ratingId}/cr") //Aprobar/rechazar valoracion
-    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId) {
-        boolean ratedRecipe = ratingService.approveRating(ratingId);
+    @PutMapping("/rating/{ratingId}/cr/{isApproved}") //Aprobar/rechazar valoracion
+    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId, Boolean isApproved) {
+        boolean ratedRecipe = ratingService.approveRating(ratingId, isApproved);
         if (ratedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/{recipeId}/cr") //Aprobar/rechazar receta
-    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId) {
-        boolean approvedRecipe = recipeService.approveRecipe(recipeId);
+    @PutMapping("/{recipeId}/cr/{isApproved}") //Aprobar/rechazar receta
+    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId, Boolean isApproved) {
+        boolean approvedRecipe = recipeService.approveRecipe(recipeId, isApproved);
         if (approvedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);
         }

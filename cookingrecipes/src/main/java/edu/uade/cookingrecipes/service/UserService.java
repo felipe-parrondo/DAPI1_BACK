@@ -6,6 +6,7 @@ import edu.uade.cookingrecipes.model.UserModel;
 import java.util.List;
 
 public interface UserService {
+    List<UserResponseDto> getAllUsers(Boolean isStudent);
     List<UserResponseDto> getAllUsers();
     UserResponseDto getUserById(Long id);
     UserResponseDto getUserByToken();

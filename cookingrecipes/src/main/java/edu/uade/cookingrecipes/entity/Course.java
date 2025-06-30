@@ -69,6 +69,10 @@ public class Course {
     @Column(name = "subjects", length = 1000, nullable = false)
     private String subjects;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "site_id", nullable = false)
+    private Site site;
+
     @ElementCollection
     @CollectionTable(name = "course_practices", joinColumns = @JoinColumn(name = "course_id"))
     @Column(name = "practices")
