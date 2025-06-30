@@ -20,8 +20,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -63,9 +65,10 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.filterRecipes(spec, pageable));
     }
 
-    @PostMapping("/create") //Crear receta
-    public ResponseEntity<RecipeResponseDto> createRecipe(@RequestBody RecipeRequestDto recipeRequestDto) {
-        RecipeResponseDto createdRecipe = recipeService.createRecipe(recipeRequestDto);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) //Crear receta
+    public ResponseEntity<RecipeResponseDto> createRecipe(@RequestPart("recipe") RecipeRequestDto recipeRequestDto,
+                                                          @RequestPart(value = "mediaFiles", required = false) List<MultipartFile> files) {
+        RecipeResponseDto createdRecipe = recipeService.createRecipe(recipeRequestDto, files);
         if (createdRecipe != null) {
             return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
         }
