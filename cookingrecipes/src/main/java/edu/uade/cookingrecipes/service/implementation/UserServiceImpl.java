@@ -53,7 +53,8 @@ public class UserServiceImpl implements UserService {
                 getAuthenticationByUser(getUser().getUsername()).getEmail());
     }
 
-    private UserModel getUser() {
+    @Override
+    public UserModel getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)

@@ -9,5 +9,6 @@ public interface UserService {
     List<UserResponseDto> getAllUsers(Boolean isStudent);
     List<UserResponseDto> getAllUsers();
     UserResponseDto getUserById(Long id);
+    UserModel getUser();
     UserResponseDto getUserByToken();
 }
