@@ -1,13 +1,22 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.Entity.Course;
-import edu.uade.cookingrecipes.dto.Response.CourseResponseDto;
+import edu.uade.cookingrecipes.entity.AccountMovement;
+import edu.uade.cookingrecipes.entity.Classroom;
+import edu.uade.cookingrecipes.entity.Course;
+import edu.uade.cookingrecipes.entity.Site;
+import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
+import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.mapper.CourseMapper;
-import edu.uade.cookingrecipes.repository.CourseRepository;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
+import edu.uade.cookingrecipes.model.UserModel;
+import edu.uade.cookingrecipes.repository.*;
 import edu.uade.cookingrecipes.service.CourseService;
+import edu.uade.cookingrecipes.service.validations.CourseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +25,30 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private CourseValidator courseValidator;
+
+    @Autowired
+    private AuthenticationRepository authenticationRepository;
+
+    @Autowired
+    private AccountMovementRepository accountMovementRepository;
+
+    @Override
+    public CourseResponseDto createCourse(CourseRequestDto courseDto) {
+        Course course = CourseMapper.toEntity(courseDto);
+        List<Course> existingCourses = courseRepository.findAll();
+        course.setActive(true);
+
+        courseValidator.validate(course, existingCourses);
+
+        course = courseRepository.save(course);
+        return CourseMapper.toDto(course);
+    }
 
     @Override
     public List<CourseResponseDto> getAllCourses() {
@@ -42,27 +75,102 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean enrollUserInCourse(Long userId, Long courseId) {
+    public boolean enrollUserInCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null || !course.isActive()) {
-            return false;
+            throw new IllegalArgumentException("Curso no encontrado o inactivo.");
         }
-        // Assuming there's a method to enroll a user in a course
-        // This part would typically involve more logic, such as checking if the user is already enrolled
-        // and if the course has available spots.
-        // For now, we will just return true to indicate success.
-        return true; // Placeholder for actual enrollment logic
+        if (course.getStudents().size() >= course.getMaxParticipants()) {
+            throw new IllegalArgumentException("El curso ha alcanzado el número máximo de participantes.");
+        }
+        UserModel user = getUser();
+
+        AccountMovement movement = new AccountMovement();
+        movement.setDateTime(java.time.LocalDateTime.now());
+
+        if (user.getAccountBalance() <= 0.0) {
+            // Si el usuario paga con tarjeta
+            user.setAccountBalance(0.0);
+            movement.setAmount(course.getPrice());
+            movement.setReason("Pago con tarjeta");
+        } else if (course.getPrice() > user.getAccountBalance()){
+            // Si el usuario paga con saldo en cuenta
+            movement.setAmount(user.getAccountBalance());
+            movement.setReason("Pago con saldo en cuenta");
+            AccountMovement cardMovement = new AccountMovement();
+            cardMovement.setDateTime(java.time.LocalDateTime.now());
+            cardMovement.setAmount(course.getPrice() - user.getAccountBalance());
+            user.setAccountBalance(0.0);
+            cardMovement.setReason("Pago con tarjeta");
+            cardMovement.setUser(user);
+            accountMovementRepository.save(cardMovement);
+        } else {
+            // Si el usuario paga con saldo en cuenta
+            movement.setAmount(course.getPrice());
+            movement.setReason("Pago con saldo en cuenta");
+            user.setAccountBalance(user.getAccountBalance() - course.getPrice());
+        }
+
+        movement.setUser(user);
+        accountMovementRepository.save(movement);
+        course.getStudents().add(user.getId());
+        courseRepository.save(course);
+        return true;
+    }
+    @Override
+    public boolean unrollUserFromCourse(Long courseId, boolean accountBalanceRefund) {
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null || !course.isActive()) {
+            throw new IllegalArgumentException("Curso no encontrado o inactivo.");
+        }
+        UserModel user = getUser();
+        AccountMovement movement = new AccountMovement();
+        movement.setDateTime(java.time.LocalDateTime.now());
+        double refundAmount = calculateRefundAmount(course);
+
+        if (accountBalanceRefund) {
+            user.setAccountBalance(user.getAccountBalance() + refundAmount);
+            movement.setAmount(refundAmount);
+            movement.setReason("Reintegro a cuenta");
+        } else {
+            movement.setAmount(refundAmount);
+            movement.setReason("Reintegro a tarjeta");
+        }
+
+        movement.setUser(user);
+        if (course.getStudents().remove(user.getId())) {
+            accountMovementRepository.save(movement);
+            courseRepository.save(course);
+            return true;
+        }
+        return false;
     }
 
-    @Override
-    public boolean unrollUserFromCourse(Long courseId, Long userId) {
-        Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null || !course.isActive()) {
-            return false;
+    private double calculateRefundAmount(Course course) {
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = course.getStartDate();
+        LocalDate nineDaysBefore = startDate.minusDays(9);
+
+        if (today.isBefore(nineDaysBefore)) {
+            return course.getPrice(); // 100% de reintegro
+        } else if (!today.isAfter(startDate.minusDays(1))) {
+            return course.getPrice() * 0.7; // 70% de reintegro
+        } else if (today.isEqual(startDate)) {
+            return course.getPrice() * 0.5; // 50% de reintegro
+        } else {
+            return 0.0; // No reintegro si ya comenzó el curso
         }
-        // Assuming there's a method to unroll a user from a course
-        // This part would typically involve more logic, such as checking if the user is enrolled in the course.
-        // For now, we will just return true to indicate success.
-        return true; // Placeholder for actual unrolling logic
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }

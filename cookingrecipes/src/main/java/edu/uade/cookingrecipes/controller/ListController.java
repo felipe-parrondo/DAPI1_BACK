@@ -1,8 +1,7 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.dto.Request.GetListsByRecipeIdResponseDto;
-import edu.uade.cookingrecipes.dto.Request.ListRequestDto;
-import edu.uade.cookingrecipes.dto.Response.ListResponseDto;
+import edu.uade.cookingrecipes.dto.request.ListRequestDto;
+import edu.uade.cookingrecipes.dto.response.ListResponseDto;
 import edu.uade.cookingrecipes.service.ListService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

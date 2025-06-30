@@ -1,8 +1,8 @@
 package edu.uade.cookingrecipes.mapper;
 
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 
 public class RecipeMapper {
     public static RecipeResponseDto toDto(Recipe recipe) {
