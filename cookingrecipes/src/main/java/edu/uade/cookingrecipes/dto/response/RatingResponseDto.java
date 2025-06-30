@@ -16,4 +16,6 @@ public class RatingResponseDto {
     private Boolean approved;
     private LocalDateTime ratedAt;
     private Long recipeId;
+    private boolean isMyRating;
+    private Long userId;
 }
