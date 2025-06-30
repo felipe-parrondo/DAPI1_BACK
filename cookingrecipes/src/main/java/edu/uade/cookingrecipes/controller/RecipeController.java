@@ -1,12 +1,12 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.Entity.Embeddable.IngredientEmbeddable;
-import edu.uade.cookingrecipes.Entity.Recipe;
-import edu.uade.cookingrecipes.dto.Request.RatingRequestDto;
-import edu.uade.cookingrecipes.dto.Request.RecipeRequestDto;
-import edu.uade.cookingrecipes.dto.Response.IngredientResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RatingResponseDto;
-import edu.uade.cookingrecipes.dto.Response.RecipeResponseDto;
+import edu.uade.cookingrecipes.entity.Recipe;
+import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
+import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
+import edu.uade.cookingrecipes.dto.request.RecipeRequestDto;
+import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
+import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
@@ -15,7 +15,6 @@ import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -69,6 +68,15 @@ public class RecipeController {
         RecipeResponseDto createdRecipe = recipeService.createRecipe(recipeRequestDto);
         if (createdRecipe != null) {
             return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/validate") //Validar receta
+    public ResponseEntity<Long> validateRecipe(@RequestBody String recipeName) {
+        Long userId = recipeService.validateRecipe(recipeName);
+        if (userId != null) {
+            return new ResponseEntity<>(userId, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -177,6 +185,16 @@ public class RecipeController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/dishType") //Obtener todos los tipos de platos
+    public ResponseEntity<List<String>> getAllDishTypes() {
+        List<String> dishTypes = recipeService.getAllDishTypes();
+        if (dishTypes != null) {
+            return new ResponseEntity<>(dishTypes, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("/{recipeId}/full-ingredients")
     public ResponseEntity<List<IngredientResponseDto>> getFullRecipeIngredients(@PathVariable Long recipeId) {
         List<IngredientResponseDto> ingredients = recipeService.getFullIngredientsByRecipeId(recipeId);
@@ -185,5 +203,4 @@ public class RecipeController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 }

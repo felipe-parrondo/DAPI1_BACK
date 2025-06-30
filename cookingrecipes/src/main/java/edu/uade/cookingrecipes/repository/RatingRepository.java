@@ -1,7 +1,6 @@
 package edu.uade.cookingrecipes.repository;
 
-import edu.uade.cookingrecipes.Entity.Rating;
-import edu.uade.cookingrecipes.Entity.Recipe;
+import edu.uade.cookingrecipes.entity.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

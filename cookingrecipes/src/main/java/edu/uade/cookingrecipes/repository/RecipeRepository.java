@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.repository;
 
-import edu.uade.cookingrecipes.Entity.Recipe;
+import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.model.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

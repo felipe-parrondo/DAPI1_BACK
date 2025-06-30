@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.specification;
 
-import edu.uade.cookingrecipes.Entity.Recipe;
+import edu.uade.cookingrecipes.entity.Recipe;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
