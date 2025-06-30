@@ -49,15 +49,6 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{courseId}/user") //Obtener porcentaje de asistencia para un curso del usuario logeado
-    public ResponseEntity<String> getUserAttendanceForCourse(@PathVariable Long courseId) {
-        String UserAttendancePercentage = courseService.getUserAttendanceForCourse(courseId);
-        if (UserAttendancePercentage != null) {
-            return new ResponseEntity<>(UserAttendancePercentage, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @DeleteMapping("/{courseId}") //Eliminar un curso
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
         boolean isDeleted = courseService.deleteCourse(courseId);

@@ -52,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
         courseValidator.validate(course, existingCourses);
 
         course = courseRepository.save(course);
-        return CourseMapper.toDto(course);
+        return CourseMapper.toDto(course, "");
     }
 
     @Override
@@ -62,29 +62,29 @@ public class CourseServiceImpl implements CourseService {
                 .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
                 .toList();
         return courses.stream()
-                .map(CourseMapper::toDto)
+                .map(course -> CourseMapper.toDto(course, ""))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CourseResponseDto> getAllCoursesBySiteId(Long siteId) {
         return courseRepository
-                .findBySite_Id(siteId)
+                .findBySiteId(siteId)
                 .orElse(new ArrayList<>())
                 .stream()
-                .map(CourseMapper::toDto)
-                .toList();
+                .map(course -> CourseMapper.toDto(course, ""))
+                .collect(Collectors.toList());
     }
 
     @Override
     public CourseResponseDto getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
-        return CourseMapper.toDto(course);
+        String attendance = getUserAttendanceForCourse(courseId);
+        return CourseMapper.toDto(course, attendance);
     }
 
-    @Override
-    public String getUserAttendanceForCourse(Long courseId) {
+    private String getUserAttendanceForCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
         UserModel user = getUser();

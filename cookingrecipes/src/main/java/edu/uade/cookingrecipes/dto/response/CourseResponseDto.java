@@ -33,5 +33,6 @@ public class CourseResponseDto {
     private List<String> tools;
     private List<String> supplies;
     private List<String> mediaUrl;
+    private String attendancePercentage;
 }
 
