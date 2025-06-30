@@ -339,14 +339,17 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public List<String> getRecipeDishTypes(Long recipeId) {
         return recipeRepository.findById(recipeId)
-                .map(recipe -> Collections.singletonList(recipe.getDishType()))
+                .map(recipe -> {
+                    DishTypes tipo = DishTypes.valueOf(recipe.getDishType());
+                    return Collections.singletonList(tipo.getNombreAmigable());
+                })
                 .orElse(null);
     }
 
     @Override
     public List<String> getAllDishTypes() {
         return Arrays.stream(DishTypes.values())
-                .map(DishTypes::name)
+                .map(DishTypes::getNombreAmigable)
                 .toList();
     }
 

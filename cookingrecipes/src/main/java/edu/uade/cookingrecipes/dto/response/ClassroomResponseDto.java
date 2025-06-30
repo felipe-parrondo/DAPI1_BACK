@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClassroomResponseDto {
     private Long id;
-    private String number;
+    private Integer number;
     private Site site;
 }

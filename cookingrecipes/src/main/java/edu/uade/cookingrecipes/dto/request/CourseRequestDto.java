@@ -33,9 +33,10 @@ public class CourseRequestDto {
     private String teacherName;
     private String modality;
     private String objectives;
-    private String subjects;
+    private List<String> subjects;
     private List<PracticeRequestDto> practices;
-    private String tools;
+    private List<String> tools;
+    private List<String> supplies;
     @JsonProperty("mediaUrl")
     private List<String> mediaUrl;
 }

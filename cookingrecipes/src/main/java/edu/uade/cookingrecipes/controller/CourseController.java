@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.controller;
 
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
+import edu.uade.cookingrecipes.dto.response.UserCourseResponseDto;
 import edu.uade.cookingrecipes.service.CourseService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,15 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{courseId}/user") //Obtener porcentaje de asistencia para un curso del usuario logeado
+    public ResponseEntity<String> getUserAttendanceForCourse(@PathVariable Long courseId) {
+        String UserAttendancePercentage = courseService.getUserAttendanceForCourse(courseId);
+        if (UserAttendancePercentage != null) {
+            return new ResponseEntity<>(UserAttendancePercentage, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @DeleteMapping("/{courseId}") //Eliminar un curso
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
         boolean isDeleted = courseService.deleteCourse(courseId);
@@ -55,6 +65,16 @@ public class CourseController {
     @PostMapping("/{courseId}/enroll") //Inscribir al usuario actual a un curso
     public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId) {
         boolean isEnrolled = courseService.enrollUserInCourse(courseId);
+        if (isEnrolled) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/{courseId}/{userId}/enrollAdmin") //Inscribir a un usuario por admin a un curso
+    public ResponseEntity<Void> enrollUserInCourseByAdmin(@PathVariable Long courseId,
+                                                           @PathVariable Long userId) {
+        boolean isEnrolled = courseService.enrollUserInCourseByAdmin(courseId, userId);
         if (isEnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }

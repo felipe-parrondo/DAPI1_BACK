@@ -18,10 +18,11 @@ public class CourseMapper {
                 course.getStartDate(),
                 course.getEndDate(),
                 course.getDescription(),
-                ScheduleMapper.toDto(course.getSchedule()),
+                ScheduleMapper.toString(course.getSchedule()),
                 course.getDuration(),
                 course.getMaxParticipants(),
-                ClassroomMapper.toDto(course.getClassroom()),
+                course.getClassroom().getClassNumber(),
+                course.getClassroom().getSite().getAddress(),
                 course.getPrice(),
                 course.getDiscount(),
                 course.getTeacherName(),
@@ -30,9 +31,8 @@ public class CourseMapper {
                 course.getSubjects(),
                 PracticeMapper.toDto(course.getPracticesList()),
                 course.getTools(),
-                course.getMediaUrl(),
-                course.getStudents(),
-                course.isActive()
+                course.getSupplies(),
+                course.getMediaUrl()
         );
     }
 

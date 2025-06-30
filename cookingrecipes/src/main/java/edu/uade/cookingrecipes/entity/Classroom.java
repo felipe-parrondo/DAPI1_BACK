@@ -15,7 +15,7 @@ public class Classroom {
     @Id
     private Long id;
 
-    private String classNumber;
+    private Integer classNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Site site;
