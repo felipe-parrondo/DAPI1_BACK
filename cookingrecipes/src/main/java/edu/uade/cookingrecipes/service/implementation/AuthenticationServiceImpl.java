@@ -62,7 +62,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationModel authenticationModel = authenticationRepository.findByEmail(authRequest.email())
                 .orElseThrow(() -> new NoSuchElementException("user doesn't exist"));
 
-        return new AuthenticationResponseDto(jwtService.generateToken(authenticationModel), authenticationModel.getUser().getIsStudent());
+        return new AuthenticationResponseDto(
+                jwtService.generateToken(authenticationModel),
+                authenticationModel.getUser().getIsStudent(),
+                "ADMIN".equals(authenticationModel.getRole().toString())
+        );
     }
 
     @Override
@@ -173,6 +177,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authModel.setPassword(passwordEncoder.encode("12345"));
         authModel.setUser(userModel);
 
+        authenticationRepository.save(authModel);
+    }
+
+    @Override
+    public void deleteAuthenticationByUserModel(UserModel userModel) {
+        AuthenticationModel authModel = authenticationRepository.findByUsername(userModel.getUsername())
+                .orElseThrow(() -> new NoSuchElementException("invalid user id"));
+        authModel.setPassword(passwordEncoder.encode("DESACTIVADO"));
         authenticationRepository.save(authModel);
     }
 }

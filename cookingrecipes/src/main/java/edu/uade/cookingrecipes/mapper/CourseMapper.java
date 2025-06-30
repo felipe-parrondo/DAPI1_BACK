@@ -5,8 +5,11 @@ import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.mapper.embeddable.PracticeMapper;
 import edu.uade.cookingrecipes.mapper.embeddable.ScheduleMapper;
+import edu.uade.cookingrecipes.service.SiteService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CourseMapper {
+
     public static CourseResponseDto toDto(Course course) {
         if (course == null) {
             return null;

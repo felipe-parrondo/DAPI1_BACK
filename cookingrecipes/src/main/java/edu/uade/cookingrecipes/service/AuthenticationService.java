@@ -8,6 +8,8 @@ import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.dto.auth.UserSuggestionResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
+import edu.uade.cookingrecipes.model.AuthenticationModel;
+import edu.uade.cookingrecipes.model.UserModel;
 
 public interface AuthenticationService {
 
@@ -24,4 +26,6 @@ public interface AuthenticationService {
     void changePassword(ChangePasswordRequestDto changePasswordRequest);
 
     void createTestUser();
+
+    void deleteAuthenticationByUserModel(UserModel userModel);
 }

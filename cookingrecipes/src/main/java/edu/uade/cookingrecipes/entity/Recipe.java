@@ -55,6 +55,6 @@ public class Recipe {
     @Column(name = "ratings_count", nullable = false)
     private int ratingsCount;
 
-    @Column(name = "approved", nullable = false)
+    @Column(name = "approved", nullable = true)
     private Boolean approved;
 }
