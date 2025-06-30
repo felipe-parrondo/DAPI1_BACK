@@ -32,7 +32,7 @@ public class RatingServiceImpl implements RatingService {
     private AuthenticationRepository authenticationRepository;
 
     @Override
-    public RatingResponseDto ratingRecipe(RatingRequestDto ratingRequestDto) {
+    public RatingResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto) {
         Recipe recipe = recipeRepository.findById(ratingRequestDto.getRecipeId()).orElse(null);
         if (recipe == null)
             throw new IllegalArgumentException("Recipe not found with ID: " + ratingRequestDto.getRecipeId());

@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
@@ -9,10 +10,15 @@ import edu.uade.cookingrecipes.dto.response.RecipeResponseDto;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
+import edu.uade.cookingrecipes.specification.RecipeSpecification;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,15 +50,19 @@ public class RecipeController {
 
     @GetMapping("/filter") //Obtener recetas filtradas
     public ResponseEntity<List<RecipeResponseDto>> filterRecipes(
-            @RequestParam(required = false) String dishType,
-            @RequestParam(required = false) String order,
-            @RequestParam(required = false) String ingredient,
-            @RequestParam(required = false) String sortByDate,
-            @RequestParam(required = false) String username
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String hasingredient,
+            @RequestParam(required = false) String hasntingredient,
+            @RequestParam(required = false) String user,
+            @RequestParam(required = false) Integer approved,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "asc") String sort
     ) {
-        List<RecipeResponseDto> filteredRecipes = recipeService.filterRecipes(dishType, order, ingredient,
-                sortByDate, username);
-        return new ResponseEntity<>(filteredRecipes, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Specification<Recipe> spec = RecipeSpecification.withFilters(name, type, hasingredient, hasntingredient, user, approved);
+        return ResponseEntity.ok(recipeService.filterRecipes(spec, pageable));
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) //Crear receta
@@ -75,10 +85,10 @@ public class RecipeController {
     }
 
     @PostMapping("/rating") //Valorar receta
-    public ResponseEntity<RatingResponseDto> ratingRecipe(@RequestBody RatingRequestDto ratingRequestDto) {
-        RatingResponseDto ratedRecipe = ratingService.ratingRecipe(ratingRequestDto);
-        if (ratedRecipe != null) {
-            return new ResponseEntity<>(ratedRecipe, HttpStatus.OK);
+    public ResponseEntity<RatingResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
+        RatingResponseDto rating = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
+        if (rating != null) {
+            return new ResponseEntity<>(rating, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
