@@ -36,5 +36,4 @@ public class AttendanceController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 }

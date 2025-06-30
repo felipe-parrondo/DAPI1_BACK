@@ -6,6 +6,7 @@ import edu.uade.cookingrecipes.model.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -45,10 +46,8 @@ public class Recipe {
     @Column(name = "ingredient", nullable = false)
     private List<IngredientEmbeddable> ingredients;
 
-    @ElementCollection
-    @CollectionTable(name = "recipe_steps", joinColumns = @JoinColumn(name = "recipe_id"))
-    @Column(name = "step", nullable = false)
-    private List<Step> steps;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Step> steps = new ArrayList<>();
 
     @Column(name = "average_rating", nullable = false)
     private double averageRating;
