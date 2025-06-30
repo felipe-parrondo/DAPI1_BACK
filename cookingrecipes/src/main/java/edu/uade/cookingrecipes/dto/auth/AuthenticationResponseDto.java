@@ -6,6 +6,8 @@ public record AuthenticationResponseDto (
 
         String token,
 
-        Boolean isStudent
+        Boolean isStudent,
+
+        Boolean isAdmin
 
 ) implements Serializable {}

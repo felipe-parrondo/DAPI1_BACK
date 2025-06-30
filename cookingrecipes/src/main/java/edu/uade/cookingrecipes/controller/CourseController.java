@@ -26,6 +26,11 @@ public class CourseController {
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
+    @GetMapping("/site/{siteId}") //Obtener todos los cursos de un site
+    public ResponseEntity<List<CourseResponseDto>> getAllCoursesBySiteId(@PathVariable Long siteId) {
+        return ResponseEntity.ok(courseService.getAllCoursesBySiteId(siteId));
+    }
+
     @PostMapping("/") //Crear un nuevo curso
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto courseDto) {
         CourseResponseDto createdCourse = courseService.createCourse(courseDto);

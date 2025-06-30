@@ -6,22 +6,44 @@ import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
+import edu.uade.cookingrecipes.service.AuthenticationService;
+import edu.uade.cookingrecipes.service.RatingService;
+import edu.uade.cookingrecipes.service.RecipeService;
 import edu.uade.cookingrecipes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
+    private RecipeService recipeService;
+
+    @Autowired
+    private RatingService ratingService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthenticationRepository authenticationRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Override
+    public List<UserResponseDto> getAllUsers(Boolean isStudent) {
+        List<UserModel> users = userRepository.findByIsStudent(isStudent).orElse(new ArrayList<>());
+        return users.stream()
+                .map(user -> UserMapper.toDto(user, getAuthenticationByUser(user.getUsername()).getEmail()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<UserResponseDto> getAllUsers() {
@@ -44,7 +66,8 @@ public class UserServiceImpl implements UserService {
                 getAuthenticationByUser(getUser().getUsername()).getEmail());
     }
 
-    private UserModel getUser() {
+    @Override
+    public UserModel getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
@@ -59,5 +82,13 @@ public class UserServiceImpl implements UserService {
     private AuthenticationModel getAuthenticationByUser(String userName) {
         return authenticationRepository.findByUsername(userName)
                 .orElseThrow(() -> new IllegalArgumentException("Authentication not found for user: " + userName));
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        UserModel userModel = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
+        authenticationService.deleteAuthenticationByUserModel(userModel);
+        recipeService.rejectRecipesByUserId(userModel.getId());
+        ratingService.rejectRatingsByUserId(userModel.getId());
     }
 }

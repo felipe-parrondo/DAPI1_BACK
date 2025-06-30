@@ -34,3 +34,4 @@ public class CourseResponseDto {
     private List<String> supplies;
     private List<String> mediaUrl;
 }
+

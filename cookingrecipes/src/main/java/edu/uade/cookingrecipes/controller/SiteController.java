@@ -17,7 +17,7 @@ import java.util.List;
 @Api(value = "Site Operations")
 @Validated
 @RestController
-@RequestMapping("/site")
+@RequestMapping("/sites")
 @RequiredArgsConstructor
 public class SiteController {
 

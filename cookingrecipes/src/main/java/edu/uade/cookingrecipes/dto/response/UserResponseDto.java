@@ -14,6 +14,7 @@ public class UserResponseDto {
     private String email;
     private String address;
     private boolean isStudent;
-    private String paymentInformation;
+    private String paymentInformation; //TODO devolver el objeto
     private Double accountBalance;
+    //TODO agregar toda la clase excepto password
 }

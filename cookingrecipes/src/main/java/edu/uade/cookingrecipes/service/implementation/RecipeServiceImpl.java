@@ -18,6 +18,12 @@ import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.ImageService;
 import edu.uade.cookingrecipes.service.IngredientService;
 import edu.uade.cookingrecipes.service.RecipeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,29 +72,21 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeResponseDto> filterRecipes(String dishType, String order, String ingredient,
-                                                 String sortByDate, String username) {
-        List<Recipe> recipes = recipeRepository.findAll();
-
-        return recipes.stream()
-                .filter(r -> dishType == null || r.getDishType().equalsIgnoreCase(dishType))
-                .filter(r -> username == null || r.getUser().getName().equalsIgnoreCase(username))
-                .filter(r -> ingredient == null || r.getIngredients().stream()
-                        .anyMatch(i -> i.getName().equalsIgnoreCase(ingredient)))
-                .sorted((r1, r2) -> {
-                    if ("asc".equalsIgnoreCase(order)) {
-                        return r1.getName().compareToIgnoreCase(r2.getName());
-                    } else if ("desc".equalsIgnoreCase(order)) {
-                        return r2.getName().compareToIgnoreCase(r1.getName());
-                    } else if ("newest".equalsIgnoreCase(sortByDate)) {
-                        return r2.getId().compareTo(r1.getId());
-                    } else if ("oldest".equalsIgnoreCase(sortByDate)) {
-                        return r1.getId().compareTo(r2.getId());
-                    }
-                    return 0;
-                })
+    public List<RecipeResponseDto> filterRecipes(Specification<Recipe> spec, String sort) {
+        List<Recipe> result = recipeRepository.findAll(spec);
+        List<RecipeResponseDto> recipeList = result.stream()
                 .map(RecipeMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
+
+        Comparator<RecipeResponseDto> comparator = switch (sort) {
+            case "user" -> Comparator.comparing(RecipeResponseDto::getUsername, String.CASE_INSENSITIVE_ORDER);
+            case "recent" -> Comparator.comparing(RecipeResponseDto::getId).reversed();
+            default -> Comparator.comparing(RecipeResponseDto::getDishType, String.CASE_INSENSITIVE_ORDER);
+        };
+
+        return recipeList.stream()
+                .sorted(comparator)
+                .toList();
     }
     @Override
     @Transactional
@@ -160,6 +158,7 @@ public class RecipeServiceImpl implements RecipeService {
         } else {
             recipe = RecipeMapper.toEntity(recipeRequestDto);
             recipe.setUser(user);
+            recipe.setApproved(null);
 
             // Solo guardar nombres de archivos
             if (recipe.getPhotos() != null) {
@@ -291,10 +290,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public boolean approveRecipe(Long recipeId) {
+    public boolean approveRecipe(Long recipeId, Boolean isApproved) {
         Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
         if (recipe == null) return false;
-        recipe.setApproved(true);
+        recipe.setApproved(isApproved);
         recipeRepository.save(recipe);
         for (IngredientEmbeddable ingredient : recipe.getIngredients()) {
             ingredientService.saveIfNotExists(ingredient.getName());
@@ -365,5 +364,14 @@ public class RecipeServiceImpl implements RecipeService {
             dto.setUnidad(ingredient.getUnidad());
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void rejectRecipesByUserId(Long userId) {
+        List<Recipe> recipeList = recipeRepository.findByUser_Id(userId);
+        recipeList.forEach(r -> {
+            r.setApproved(false);
+            recipeRepository.save(r);
+        });
     }
 }
