@@ -46,10 +46,6 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
         Course course = CourseMapper.toEntity(courseDto);
-        Site site = siteRepository
-                .findById(courseDto.getSiteId())
-                .orElseThrow(() -> new NoSuchElementException("invalid site id"));
-        course.setSite(site);
         course.setActive(true);
         List<Course> existingCourses = courseRepository.findAll();
 
