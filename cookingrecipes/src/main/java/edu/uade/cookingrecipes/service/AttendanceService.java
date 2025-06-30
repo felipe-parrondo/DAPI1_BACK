@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AttendanceService {
     AttendanceResponseDto registerAttendance(AttendanceRequestDto attendanceRequestDto);
+    List<AttendanceResponseDto> getAttendanceForACourse(Long courseId);
 }

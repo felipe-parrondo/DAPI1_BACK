@@ -5,6 +5,7 @@ import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.PaymentInformationModel;
 import edu.uade.cookingrecipes.model.UserModel;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class UserMapper {
 
@@ -41,16 +42,25 @@ public class UserMapper {
         return paymentInformationModel;
     }
 
-    public static UserResponseDto toDto(UserModel user) {
+    public static UserResponseDto toDto(UserModel user, String email) {
         if (user == null) {
             return null;
         }
-        return new UserResponseDto(
-                user.getId(),
-                user.getName(),
-                user.getUsername(),
-                user.getAddress(),
-                user.getIsStudent()
-        );
+
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(user.getId());
+        userResponseDto.setName(user.getName());
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setEmail(email);
+        userResponseDto.setAddress(user.getAddress());
+        userResponseDto.setStudent(user.getIsStudent());
+        if (user.getPaymentInformationModel() != null) {
+            userResponseDto.setPaymentInformation(user.getPaymentInformationModel().toString());
+        } else {
+            userResponseDto.setPaymentInformation(null);
+        }
+        userResponseDto.setAccountBalance(user.getAccountBalance());
+
+        return userResponseDto;
     }
 }

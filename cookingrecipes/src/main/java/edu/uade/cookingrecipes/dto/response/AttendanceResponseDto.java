@@ -12,7 +12,5 @@ public class AttendanceResponseDto {
     private Long courseId;
     private boolean presentSite;
     private boolean presentClassroom;
-    private Long siteId;
-    private Long classroomId;
     private String presenceDateTime;
 }
