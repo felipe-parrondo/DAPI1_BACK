@@ -92,7 +92,8 @@ public class RecipeController {
     }
 
     @PutMapping("/rating/{ratingId}/cr/{isApproved}") //Aprobar/rechazar valoracion
-    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId, Boolean isApproved) {
+    public ResponseEntity<Void> reviewRatingRecipe(@PathVariable Long ratingId,@PathVariable Boolean isApproved) {
+        logger.info(ratingId.toString()+" "+isApproved.toString());
         boolean ratedRecipe = ratingService.approveRating(ratingId, isApproved);
         if (ratedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -101,7 +102,8 @@ public class RecipeController {
     }
 
     @PutMapping("/{recipeId}/cr/{isApproved}") //Aprobar/rechazar receta
-    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId, Boolean isApproved) {
+    public ResponseEntity<Void> approveRecipe(@PathVariable Long recipeId,@PathVariable Boolean isApproved) {
+        logger.info(recipeId.toString()+" "+isApproved.toString());
         boolean approvedRecipe = recipeService.approveRecipe(recipeId, isApproved);
         if (approvedRecipe) {
             return new ResponseEntity<>(HttpStatus.OK);

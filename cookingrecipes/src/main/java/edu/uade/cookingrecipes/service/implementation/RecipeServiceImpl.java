@@ -144,8 +144,13 @@ public class RecipeServiceImpl implements RecipeService {
 
             recipe.getIngredients().clear();
             if (recipeRequestDto.getIngredients() != null) {
+                for (IngredientEmbeddable ingredient : recipeRequestDto.getIngredients()) {
+                    ingredient.setRecipe(recipe);
+                }
                 recipe.getIngredients().addAll(recipeRequestDto.getIngredients());
             }
+
+
 
             recipe.getSteps().clear();
             if (recipeRequestDto.getSteps() != null) {
@@ -176,6 +181,11 @@ public class RecipeServiceImpl implements RecipeService {
                         .map(this::getFileNameFromUrl)
                         .collect(Collectors.toList());
                 recipe.setPhotos(fileNames);
+            }
+            if (recipe.getIngredients() != null) {
+                for (IngredientEmbeddable ing : recipe.getIngredients()) {
+                    ing.setRecipe(recipe);
+                }
             }
 
             if (recipe.getSteps() != null) {

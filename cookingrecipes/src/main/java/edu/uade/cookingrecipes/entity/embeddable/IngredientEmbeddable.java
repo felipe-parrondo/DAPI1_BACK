@@ -17,7 +17,6 @@ public class IngredientEmbeddable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private double quantity;
     private String unidad;
