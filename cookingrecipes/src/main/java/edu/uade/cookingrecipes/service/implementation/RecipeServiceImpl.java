@@ -126,7 +126,7 @@ public class RecipeServiceImpl implements RecipeService {
             if (recipeRequestDto.getPhotos() != null) {
                 List<String> fileNames = recipeRequestDto.getPhotos().stream()
                         .map(this::getFileNameFromUrl)
-                        .collect(Collectors.toList());
+                        .toList();
                 recipe.getPhotos().addAll(fileNames);
             }
             recipe.setServings(recipeRequestDto.getServings());
@@ -138,7 +138,7 @@ public class RecipeServiceImpl implements RecipeService {
             if (recipeRequestDto.getPhotos() != null) {
                 List<String> fileNames = recipeRequestDto.getPhotos().stream()
                         .map(this::getFileNameFromUrl)
-                        .collect(Collectors.toList());
+                        .toList();
                 recipe.getPhotos().addAll(fileNames);
             }
 
@@ -305,9 +305,6 @@ public class RecipeServiceImpl implements RecipeService {
         if (recipe == null) return false;
         recipe.setApproved(isApproved);
         recipeRepository.save(recipe);
-        for (IngredientEmbeddable ingredient : recipe.getIngredients()) {
-            ingredientService.saveIfNotExists(ingredient.getName());
-        }
         return true;
     }
 

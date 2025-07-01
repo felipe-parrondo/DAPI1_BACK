@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.entity.Ingredient;
+import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.repository.IngredientRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +15,10 @@ public class IngredientServiceImpl implements IngredientService {
     private IngredientRepository ingredientRepository;
 
     @Override
-    public void saveIfNotExists(String name) {
-        ingredientRepository.findByName(name.toLowerCase().trim())
-                .orElseGet(() -> ingredientRepository.save(
-                        Ingredient.builder().name(name.toLowerCase().trim()).build()));
-    }
-
-    @Override
     public List<String> getAllIngredients() {
         return ingredientRepository.findAll()
                 .stream()
-                .map(Ingredient::getName)
+                .map(IngredientEmbeddable::getName)
                 .toList();
     }
 

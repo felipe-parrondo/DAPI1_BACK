@@ -11,7 +11,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "recipe") // <-- evita el ciclo
+@ToString(exclude = "recipe")
 public class IngredientEmbeddable {
 
     @Id
