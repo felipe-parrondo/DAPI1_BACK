@@ -59,6 +59,7 @@ public class UserController {
     @GetMapping("/me") // Get user by token
     public ResponseEntity<UserResponseDto> getUserByToken() {
         UserResponseDto user = userService.getUserByToken();
+        logger.info(user.toString());
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
