@@ -20,6 +20,7 @@ public class RatingResponseDto {
     private String urlAvatar;
     private String username;
     private Long recipeId;
+    @JsonProperty("isMyRating")
     private Boolean isMyRating;
     private Long userId;
 }
