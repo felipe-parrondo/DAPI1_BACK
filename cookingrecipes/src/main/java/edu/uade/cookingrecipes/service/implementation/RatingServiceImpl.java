@@ -115,26 +115,12 @@ public class RatingServiceImpl implements RatingService {
 
     @Override // Traer todos los comentarios de una receta, y si la receta la subiste vos, traer tus comentarios esten aprovados o no
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new NoSuchElementException("recipe not found"));
-
         UserModel user = userService.getUser();
 
-        List<Rating> ratings;
-        if (user.getId().equals(recipe.getUser().getId())) {
-            ratings = ratingRepository.findByRecipeIdAndUserId(recipeId, user.getId());
-        } else {
-            ratings = ratingRepository.findByRecipeIdAndApprovedTrue(recipeId);
-        }
-
-        return ratings.stream()
+        return ratingRepository.findByRecipeId(recipeId).stream()
+                .filter(r -> Boolean.TRUE.equals(r.getApproved()) || r.getUser().getId().equals(user.getId()))
                 .map(r -> RatingMapper.toDto(r, user))
-                .peek(r -> {
-                    if (r.getUserId().equals(user.getId())) {
-                        r.setIsMyRating(true);
-                    } else {
-                        r.setIsMyRating(false);
-                    }
-                })
+                .peek(r -> r.setIsMyRating(r.getUserId().equals(user.getId())))
                 .toList();
     }
 

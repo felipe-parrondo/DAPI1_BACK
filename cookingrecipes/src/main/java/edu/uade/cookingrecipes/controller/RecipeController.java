@@ -170,6 +170,7 @@ public class RecipeController {
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeId(@PathVariable Long recipeId) {
         logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeId(recipeId);
+        logger.info(recipeRatings.toString());
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 
@@ -177,6 +178,7 @@ public class RecipeController {
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeIdPublic(@PathVariable Long recipeId) {
         logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeIdPublic(recipeId);
+        logger.info(recipeRatings.toString());
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 
