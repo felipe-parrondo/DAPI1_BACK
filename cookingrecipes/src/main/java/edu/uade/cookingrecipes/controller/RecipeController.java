@@ -182,7 +182,7 @@ public class RecipeController {
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 
-    @GetMapping("/MyRatings") //Obtener todas las valoraciones del usuario logueado
+    @GetMapping("/myRatings") //Obtener todas las valoraciones del usuario logueado
     public ResponseEntity<List<RatingResponseDto>> getMyRatings() {
         logger.info("REQUESTING RATINGS FOR USER");
         List<RatingResponseDto> myRatings = ratingService.getRatingsByUser();
