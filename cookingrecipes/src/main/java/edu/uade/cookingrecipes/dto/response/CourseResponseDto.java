@@ -16,24 +16,24 @@ import java.util.List;
 public class CourseResponseDto {
     private Long id;
     private String name;
-    @JsonProperty("start_date")
+    @JsonProperty("startDate")
     private LocalDate startDate;
-    @JsonProperty("end_date")
+    @JsonProperty("endDate")
     private LocalDate endDate;
     private String description;
     private String schedule;
     private int duration;
-    @JsonProperty("max_participants")
+    @JsonProperty("maxParticipants")
     private int maxParticipants;
-    @JsonProperty("num_classroom")
+    @JsonProperty("numClassroom")
     private Integer numClassroom;
-    @JsonProperty("site_id")
+    @JsonProperty("siteId")
     private Long siteId;
-    @JsonProperty("site_address")
+    @JsonProperty("siteAddress")
     private String siteAddress;
     private double price;
     private double discount;
-    @JsonProperty("teacher_name")
+    @JsonProperty("teacherName")
     private String teacherName;
     private String modality;
     private String objectives;
@@ -41,9 +41,9 @@ public class CourseResponseDto {
     private List<PracticeResponseDto> practices;
     private List<String> tools;
     private List<String> supplies;
-    @JsonProperty("media_url")
+    @JsonProperty("mediaUrl")
     private List<String> mediaUrl;
-    @JsonProperty("attendance_percentage")
+    @JsonProperty("attendancePercentage")
     private String attendancePercentage;
 }
 
