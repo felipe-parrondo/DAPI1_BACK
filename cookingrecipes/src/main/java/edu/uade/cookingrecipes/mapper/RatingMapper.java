@@ -6,6 +6,7 @@ import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
 import edu.uade.cookingrecipes.model.UserModel;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class RatingMapper {
 

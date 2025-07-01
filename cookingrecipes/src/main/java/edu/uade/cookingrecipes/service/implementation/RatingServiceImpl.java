@@ -88,7 +88,6 @@ public class RatingServiceImpl implements RatingService {
 
         return true;
     }
-
     @Override
     public List<RatingResponseDto> getRatingsByStatus(Boolean status) {
         return ratingRepository.findByApproved(status).stream()
@@ -103,17 +102,22 @@ public class RatingServiceImpl implements RatingService {
                 .toList();
     }
 
-    @Override
+    @Override // Traer todos los comentarios de una receta, y si la receta la subiste vos, traer tus comentarios esten aprovados o no
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
-        List<Rating> ratings = ratingRepository.findByRecipeId(recipeId);
-        UserModel actualUser = userService.getUser();
+        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+        if (recipe == null) return List.of();
+
+        UserModel user = getUser();
+
+        List<Rating> ratings;
+        if (user.getId().equals(recipe.getUser().getId())) {
+            ratings = ratingRepository.findByRecipeIdAndUserId(recipeId, user.getId());
+        } else {
+            ratings = ratingRepository.findByRecipeIdAndApprovedTrue(recipeId);
+        }
+
         return ratings.stream()
-                .filter(r -> (!Objects.nonNull(r.getApproved()) && r.getApproved().equals(true)) || r.getUser().getId().equals(actualUser.getId()))
-                .map(rating -> {
-                    RatingResponseDto dto = RatingMapper.toDto(rating, actualUser);
-                    dto.setMyRating(rating.getUser().getId().equals(actualUser.getId()));
-                    return dto;
-                })
+                .map(r -> RatingMapper.toDto(r, user))
                 .toList();
     }
 
@@ -124,5 +128,17 @@ public class RatingServiceImpl implements RatingService {
             r.setApproved(false);
             ratingRepository.save(r);
         });
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }
