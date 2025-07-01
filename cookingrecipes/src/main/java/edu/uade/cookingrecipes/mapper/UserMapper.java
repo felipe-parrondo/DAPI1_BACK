@@ -22,8 +22,10 @@ public class UserMapper {
     public static UserModel registerRequestDtoToUserModel (RegisterRequestDto registerRequest) {
         UserModel userModel = new UserModel();
         userModel.setIsStudent(registerRequest.isStudent());
+        userModel.setUsername(registerRequest.username());
         userModel.setName(registerRequest.name());
         userModel.setAddress(registerRequest.address());
+        userModel.setAvatar(registerRequest.avatar());
         if (registerRequest.isStudent())
             userModel.setPaymentInformationModel(UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest));
         else
@@ -39,6 +41,8 @@ public class UserMapper {
         paymentInformationModel.setIdNumber(registerRequest.paymentInformation().idNumber());
         paymentInformationModel.setIsCredit(registerRequest.paymentInformation().isCredit());
         paymentInformationModel.setOwnerName(registerRequest.paymentInformation().ownerName());
+        paymentInformationModel.setUrlBackDNI(registerRequest.paymentInformation().urlBackDNI());
+        paymentInformationModel.setUrlFrontDNI(registerRequest.paymentInformation().urlFrontDNI());
         return paymentInformationModel;
     }
 

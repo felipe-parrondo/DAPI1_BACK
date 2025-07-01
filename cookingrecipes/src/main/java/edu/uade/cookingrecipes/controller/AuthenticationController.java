@@ -1,5 +1,7 @@
 package edu.uade.cookingrecipes.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uade.cookingrecipes.dto.auth.AuthenticationRequestDto;
 import edu.uade.cookingrecipes.dto.auth.AuthenticationResponseDto;
 import edu.uade.cookingrecipes.dto.auth.ChangePasswordRequestDto;
@@ -22,7 +24,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(value = "Authentication Operations")
 @Validated
@@ -49,12 +53,29 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(authRequest));
     }
 
-    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResponseDto> register (@Valid @RequestBody
-                                                               @NotNull(message = "{authentication-controller.register-service.register-request-not-null}")
-                                                               RegisterRequestDto registerRequest) {
-        logger.info(registerRequest.toString());
-        return ResponseEntity.ok(authenticationService.register(registerRequest));
+    @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AuthenticationResponseDto> register(
+            @RequestPart(value = "user") String userJson,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar,
+            @RequestPart(value = "front", required = false) MultipartFile front,
+            @RequestPart(value = "back", required = false) MultipartFile back
+    ) {
+        try {
+            logger.info(avatar.toString());
+            logger.info(front.toString());
+            logger.info(back.toString());
+            logger.info(userJson);
+            ObjectMapper objectMapper = new ObjectMapper();
+            RegisterRequestDto registerRequest = objectMapper.readValue(userJson, RegisterRequestDto.class);
+
+            AuthenticationResponseDto response = authenticationService.register(registerRequest, avatar, front, back);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.info(e.toString());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping(path = "/validate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import edu.uade.cookingrecipes.config.JwtService;
 import edu.uade.cookingrecipes.dto.response.UserResponseDto;
 import edu.uade.cookingrecipes.mapper.UserMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
@@ -25,6 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RecipeService recipeService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Autowired
     @Lazy
@@ -73,11 +77,8 @@ public class UserServiceImpl implements UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
-                .orElse(null);
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
 
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
         return user;
     }
 

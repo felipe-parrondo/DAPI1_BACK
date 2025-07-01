@@ -10,12 +10,13 @@ import edu.uade.cookingrecipes.dto.auth.ValidateCodeRequestDto;
 import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface AuthenticationService {
 
     AuthenticationResponseDto authenticate(AuthenticationRequestDto authRequest);
 
-    AuthenticationResponseDto register(RegisterRequestDto registerRequest);
+    AuthenticationResponseDto register(RegisterRequestDto registerRequest, MultipartFile avatar, MultipartFile dniFront, MultipartFile dniBack);
 
     UserSuggestionResponseDto validateRegister(ValidateRegisterRequestDto validateRegisterRequest);
 

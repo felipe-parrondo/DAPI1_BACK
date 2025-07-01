@@ -13,4 +13,6 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> findByUser_Id(Long userId);
     List<Rating> findByApproved(Boolean approved);
     List<Rating> findByRecipeIdAndApprovedTrue(Long recipeId);
+    List<Rating> findByRecipeId(Long recipeId);
+    List<Rating> findByApprovedIsNull();
 }

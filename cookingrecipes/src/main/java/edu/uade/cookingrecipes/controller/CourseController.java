@@ -86,4 +86,11 @@ public class CourseController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping("my-courses/{current}")
+    public ResponseEntity<List<CourseResponseDto>>  getMyCourses(@PathVariable Boolean current) {
+
+        List<CourseResponseDto> courses = courseService.getMyCourses(current);
+        return new ResponseEntity<>(courses, HttpStatus.OK);
+    }
 }

@@ -26,13 +26,16 @@ import edu.uade.cookingrecipes.repository.TempAuthenticationRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.AuthenticationService;
 import edu.uade.cookingrecipes.service.EmailService;
+import edu.uade.cookingrecipes.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PaymentInformationRepository paymentInformationRepository;
     private final JwtService jwtService;
     private final EmailService emailService;
+    private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -69,14 +73,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
     }
 
-    @Override
-    public AuthenticationResponseDto register(RegisterRequestDto registerRequest) {
+    public AuthenticationResponseDto register(RegisterRequestDto registerRequest, MultipartFile avatar, MultipartFile dniFront, MultipartFile dniBack) {
         PaymentInformationModel paymentInformationModel = null;
+
         if (registerRequest.isStudent()) {
             paymentInformationModel = UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest);
+            paymentInformationModel.setUrlFrontDNI(dniFront.getOriginalFilename());
+            paymentInformationModel.setUrlBackDNI(dniBack.getOriginalFilename());
             paymentInformationModel = paymentInformationRepository.save(paymentInformationModel);
         }
+
         UserModel userModel = UserMapper.registerRequestDtoToUserModel(registerRequest);
+        userModel.setAvatar(avatar.getOriginalFilename());
         AuthenticationModel authenticationModel = UserMapper.registerRequestDtoToAuthenticationModel(registerRequest);
         userModel.setPaymentInformationModel(paymentInformationModel);
         userModel = userRepository.save(userModel);
@@ -85,7 +93,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationModel = authenticationRepository.save(authenticationModel);
 
         tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).get());
-        return this.authenticate(new AuthenticationRequestDto(authenticationModel.getEmail(), authenticationModel.getPassword()));
+
+        try {
+            imageService.saveFile(avatar, userModel.getId().toString(), "users");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (registerRequest.isStudent()) {
+            try {
+                imageService.saveFile(dniBack, userModel.getId().toString(), "users");
+                imageService.saveFile(dniFront, userModel.getId().toString(), "users");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return this.authenticate(new AuthenticationRequestDto(registerRequest.email(), registerRequest.password()));
     }
 
     @Override
@@ -167,6 +190,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         paymentInfo.setCvv("123");
         paymentInfo.setExpirationDate("12/26");
         paymentInfo.setIdNumber("12345678");
+        paymentInfo.setUrlBackDNI("blaBack");
+        paymentInfo.setUrlFrontDNI("blaFront");
 
         paymentInfo = paymentInformationRepository.save(paymentInfo);
 
@@ -175,7 +200,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userModel.setUsername("testero");
         userModel.setAddress("Calle Falsa 123");
         userModel.setAvatar("media_recipe_temp_1751156847879.png");
-        userModel.setIsStudent(false);
+        userModel.setIsStudent(true);
         userModel.setPaymentInformationModel(paymentInfo);
         userModel.setAccountBalance(0.0);
 

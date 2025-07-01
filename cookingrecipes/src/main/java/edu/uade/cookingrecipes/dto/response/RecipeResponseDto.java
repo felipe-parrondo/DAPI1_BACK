@@ -22,4 +22,5 @@ public class RecipeResponseDto {
     private List<String> photos;
     private List<IngredientEmbeddable> ingredients;
     private List<Step> steps;
+    private Long userId;
 }

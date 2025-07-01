@@ -103,17 +103,17 @@ public class ListServiceImpl implements ListService {
         }
         return false;
     }
-    @Override //Obtener solo las listas aprovadas
+    @Override //Obtener solo las listas aprobadas
     public ListResponseDto getListById(Long listId) {
         RecipeList recipeListWithAllRecipes = recipeListRepository.findById(listId).orElse(null);
         RecipeList recipeListWithApprovedRecipes = new RecipeList();
 
         assert recipeListWithAllRecipes != null;
-        for (Recipe recipe : recipeListWithAllRecipes.getRecipes()) {
-            if (recipe.getApproved()) {
-                recipeListWithApprovedRecipes.getRecipes().add(recipe);
-            }
-        }
+        recipeListWithApprovedRecipes.setRecipes(recipeListWithAllRecipes.getRecipes()
+                .stream()
+                .filter(r -> Boolean.TRUE.equals(r.getApproved()))
+                .toList()
+        );
 
         recipeListWithApprovedRecipes.setId(recipeListWithAllRecipes.getId());
         recipeListWithApprovedRecipes.setName(recipeListWithAllRecipes.getName());
