@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.uade.cookingrecipes.dto.request.UpdateRatingRequestDto;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
@@ -151,12 +152,11 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/rating/{ratingId}/update") //Actualizar valoracion de receta
-    public ResponseEntity<RatingResponseDto> updateRating(@PathVariable Long ratingId,
-                                                          @RequestBody RatingRequestDto ratingRequestDto) {
-        RatingResponseDto updatedRating = ratingService.updateRating(ratingId, ratingRequestDto);
-        if (updatedRating != null) {
-            return new ResponseEntity<>(updatedRating, HttpStatus.OK);
+    @PutMapping("/update") //Actualizar valoracion de receta
+    public ResponseEntity<Void> updateRating(@RequestBody UpdateRatingRequestDto updateRatingRequestDto) {
+        boolean updatedRating = ratingService.updateRating(updateRatingRequestDto);
+        if (updatedRating) {
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

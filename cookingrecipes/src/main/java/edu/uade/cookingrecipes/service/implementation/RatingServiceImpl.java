@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import edu.uade.cookingrecipes.dto.request.UpdateRatingRequestDto;
 import edu.uade.cookingrecipes.entity.Rating;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
@@ -53,14 +54,15 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public RatingResponseDto updateRating(Long ratingId, RatingRequestDto ratingRequestDto) {
-        Rating rating = ratingRepository.findById(ratingId).orElse(null);
-        if (rating == null) return null;
+    public boolean updateRating(UpdateRatingRequestDto updateRatingRequestDto) {
+        Rating rating = ratingRepository.findById(updateRatingRequestDto.getId()).orElse(null);
+        if (rating == null) return false;
 
-        rating.setRatingValue(ratingRequestDto.getRatingValue());
-        rating.setComment(ratingRequestDto.getComment());
+        rating.setRatingValue(updateRatingRequestDto.getRatingValue());
+        rating.setComment(updateRatingRequestDto.getComment());
 
-        return RatingMapper.toDto(ratingRepository.save(rating), userService.getUser());
+        ratingRepository.save(rating);
+        return true;
     }
 
     @Override
