@@ -28,6 +28,8 @@ public class CourseRequestDto {
     @JsonProperty("maxParticipants")
     private int maxParticipants;
     private double price;
+    @JsonProperty("siteId")
+    private Long siteId;
     private double discount;
     @JsonProperty("teacherName")
     private String teacherName;
