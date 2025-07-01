@@ -1,7 +1,7 @@
 package edu.uade.cookingrecipes.service;
 
-import edu.uade.cookingrecipes.dto.response.BalanceMovementsResponseDto;
+import edu.uade.cookingrecipes.dto.response.MovementsBalanceResponseDto;
 
 public interface PaymentService {
-    BalanceMovementsResponseDto getBalanceMovements();
+    MovementsBalanceResponseDto getBalanceMovements();
 }

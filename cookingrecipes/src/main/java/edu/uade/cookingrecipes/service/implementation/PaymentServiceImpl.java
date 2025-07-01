@@ -1,7 +1,7 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.dto.response.BalanceMovementsResponseDto;
-import edu.uade.cookingrecipes.entity.AccountMovement;
+import edu.uade.cookingrecipes.dto.response.MovementsBalanceResponseDto;
+import edu.uade.cookingrecipes.entity.embeddable.AccountMovement;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     private AuthenticationRepository authenticationRepository;
 
     @Override
-    public BalanceMovementsResponseDto getBalanceMovements() {
+    public MovementsBalanceResponseDto getBalanceMovements() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         List<AccountMovement> movements = paymentMovementsRepository.findByUserId(user.getId());
 
-        return new BalanceMovementsResponseDto(
+        return new MovementsBalanceResponseDto(
                 user.getAccountBalance(),
                 movements
         );
