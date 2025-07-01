@@ -144,23 +144,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public List<RatingResponseDto> getRatingsByUser() {
-        UserModel user = getUser();
-        List<Rating> ratings = ratingRepository.findByUser_Id(user.getId());
-
-        return ratings.stream()
+        UserModel user = userService.getUser();
+        return ratingRepository.findByUser_Id(user.getId()).stream()
                 .map(r -> RatingMapper.toDto(r, user))
                 .toList();
-    }
-
-    private UserModel getUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = authenticationRepository.findByEmail(email)
-                .map(AuthenticationModel::getUser)
-                .orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
-        return user;
     }
 }
