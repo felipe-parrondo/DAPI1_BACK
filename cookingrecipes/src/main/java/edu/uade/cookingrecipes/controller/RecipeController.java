@@ -143,6 +143,11 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/rating/{ratingId}") //consigue valoracion de receta por id
+    public ResponseEntity<RatingResponseDto> getRatingById(@PathVariable Long ratingId) {
+        return ResponseEntity.ok(ratingService.getRatingById(ratingId));
+    }
+
     @GetMapping("/{recipeId}") //Obtener receta por ID
     public ResponseEntity<RecipeResponseDto> getRecipeById(@PathVariable Long recipeId) {
         RecipeResponseDto recipe = recipeService.getRecipeById(recipeId);
@@ -161,19 +166,17 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{ratingId}") // obtener rating por Id
-    public ResponseEntity<RatingResponseDto> getRatingById(@PathVariable Long ratingId) {
-        RatingResponseDto rating = ratingService.getRatingById(ratingId);
-        if (rating != null) {
-            return new ResponseEntity<>(rating, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @GetMapping("/rating/recipe/{recipeId}") //Obtener todas las valoraciones de una receta
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeId(@PathVariable Long recipeId) {
         logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeId(recipeId);
+        return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
+    }
+
+    @GetMapping("/rating/recipe/{recipeId}/public") //Obtener todas las valoraciones de una receta publica
+    public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeIdPublic(@PathVariable Long recipeId) {
+        logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
+        List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeIdPublic(recipeId);
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 

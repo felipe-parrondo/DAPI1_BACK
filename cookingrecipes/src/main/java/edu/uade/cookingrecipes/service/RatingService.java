@@ -16,6 +16,7 @@ public interface RatingService {
     List<RatingResponseDto> getRatingsByStatus(Boolean status);
     List<RatingResponseDto> getRatings();
     List<RatingResponseDto> getRatingsByRecipeId(Long recipeId);
+    List<RatingResponseDto> getRatingsByRecipeIdPublic(Long recipeId);
     void rejectRatingsByUserId(Long userId);
     RatingResponseDto getRatingById(Long ratingId);
     List<RatingResponseDto> getRatingsByUser();

@@ -20,6 +20,6 @@ public class RatingResponseDto {
     private String urlAvatar;
     private String username;
     private Long recipeId;
-    private boolean isMyRating;
+    private Boolean isMyRating;
     private Long userId;
 }
