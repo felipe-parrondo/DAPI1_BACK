@@ -77,14 +77,14 @@ public class RecipeController {
     }
 
     @PostMapping("/validate") //Validar receta
-    public ResponseEntity<Long> validateRecipe(@RequestBody String recipeName) {
+    public ResponseEntity<?> validateRecipe(@RequestBody String recipeName) {
         Long recipeId = recipeService.validateRecipe(recipeName);
         if (recipeId != null) {
             logger.info("ON VALIDATING RECIPE NAME: RECIPE NAME IN USE WITH ID: " + recipeId);
             return new ResponseEntity<>(recipeId, HttpStatus.BAD_REQUEST);
         }
         logger.info("ON VALIDATING RECIPE NAME: RECIPE AVAILABLE");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(0L);
     }
 
     @PostMapping("/rating") //Valorar receta
@@ -157,7 +157,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/update") //Actualizar valoracion de receta
+    @PutMapping("/rating") //Actualizar valoracion de receta
     public ResponseEntity<Void> updateRating(@RequestBody UpdateRatingRequestDto updateRatingRequestDto) {
         boolean updatedRating = ratingService.updateRating(updateRatingRequestDto);
         if (updatedRating) {
