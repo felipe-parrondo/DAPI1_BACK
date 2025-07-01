@@ -11,6 +11,7 @@ import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import edu.uade.cookingrecipes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private RecipeService recipeService;
 
     @Autowired
+    @Lazy
     private RatingService ratingService;
 
     @Autowired

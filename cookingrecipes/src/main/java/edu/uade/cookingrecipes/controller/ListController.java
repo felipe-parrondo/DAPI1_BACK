@@ -30,10 +30,10 @@ public class ListController {
     }
 
     @PostMapping("/create") //Crear lista
-    public ResponseEntity<ListResponseDto> createList(@RequestBody ListRequestDto requestDto) {
-        ListResponseDto createdList = listService.createList(requestDto);
-        if(createdList != null) {
-            return new ResponseEntity<>(createdList, HttpStatus.CREATED);
+    public ResponseEntity<Void> createList(@RequestBody ListRequestDto requestDto) {
+        boolean createdList = listService.createList(requestDto);
+        if(createdList) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -57,7 +57,7 @@ public class ListController {
     }
 
     @DeleteMapping("/{list}/{recipe}") //Eliminar receta de la lista
-    public ResponseEntity<ListResponseDto> removeRecipeFromList(@PathVariable Long list, @PathVariable Long recipe) {
+    public ResponseEntity<Void> removeRecipeFromList(@PathVariable Long list, @PathVariable Long recipe) {
         ListResponseDto updatedList = listService.removeRecipeFromList(list, recipe);
         if(updatedList != null) {
             return new ResponseEntity<>(HttpStatus.OK); //TODO lo mismo que abajo

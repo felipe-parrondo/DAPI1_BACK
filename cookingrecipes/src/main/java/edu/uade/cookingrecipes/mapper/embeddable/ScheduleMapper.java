@@ -26,4 +26,11 @@ public class ScheduleMapper {
 
         return dto;
     }
+
+    public static String toString(Schedule schedule) {
+        if (schedule == null) return null;
+
+        return String.format
+                ("%s: %s hs -  %s hs", schedule.getDayOfWeek(), schedule.getStartTime(), schedule.getEndTime());
+    }
 }

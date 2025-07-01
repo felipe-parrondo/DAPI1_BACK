@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.controller;
 
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
+import edu.uade.cookingrecipes.dto.response.UserCourseResponseDto;
 import edu.uade.cookingrecipes.service.CourseService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,16 @@ public class CourseController {
     @PostMapping("/{courseId}/enroll") //Inscribir al usuario actual a un curso
     public ResponseEntity<Void> enrollUserInCourse(@PathVariable Long courseId) {
         boolean isEnrolled = courseService.enrollUserInCourse(courseId);
+        if (isEnrolled) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/{courseId}/{userId}/enrollAdmin") //Inscribir a un usuario por admin a un curso
+    public ResponseEntity<Void> enrollUserInCourseByAdmin(@PathVariable Long courseId,
+                                                           @PathVariable Long userId) {
+        boolean isEnrolled = courseService.enrollUserInCourseByAdmin(courseId, userId);
         if (isEnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
