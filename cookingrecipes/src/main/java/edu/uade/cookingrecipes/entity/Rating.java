@@ -27,7 +27,7 @@ public class Rating {
     @Column(name = "comment", length = 1000)
     private String comment;
 
-    @Column(name = "approved", nullable = true)
+    @Column(name = "approved")
     private Boolean approved;
 
     @Column(name ="date", nullable = false)
