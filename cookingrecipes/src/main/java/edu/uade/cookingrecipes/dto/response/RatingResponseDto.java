@@ -17,6 +17,8 @@ public class RatingResponseDto {
     private String comment;
     private Boolean approved;
     private LocalDateTime ratedAt;
+    private String urlAvatar;
+    private String username;
     private Long recipeId;
     private boolean isMyRating;
     private Long userId;

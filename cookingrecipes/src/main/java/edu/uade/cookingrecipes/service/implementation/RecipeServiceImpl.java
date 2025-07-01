@@ -91,7 +91,7 @@ public class RecipeServiceImpl implements RecipeService {
         Comparator<RecipeResponseDto> comparator = switch (sort) {
             case "user" -> Comparator.comparing(RecipeResponseDto::getUsername, String.CASE_INSENSITIVE_ORDER);
             case "recent" -> Comparator.comparing(RecipeResponseDto::getId).reversed();
-            default -> Comparator.comparing(RecipeResponseDto::getDishType, String.CASE_INSENSITIVE_ORDER);
+            default -> Comparator.comparing(RecipeResponseDto::getDishType, String.CASE_INSENSITIVE_ORDER).reversed();
         };
 
         return recipeList.stream()

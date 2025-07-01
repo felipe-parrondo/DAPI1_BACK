@@ -182,9 +182,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userModel = userRepository.save(userModel);
 
         AuthenticationModel authModel = new AuthenticationModel();
-        authModel.setUsername("testero_user");
-        authModel.setEmail("testero@testero.com");
-        authModel.setRole(RoleEnum.ADMIN);
+        authModel.setUsername("testero");
+        authModel.setEmail("user@user.com");
+        authModel.setRole(RoleEnum.USER);
         authModel.setPassword(passwordEncoder.encode("12345"));
         authModel.setUser(userModel);
 

@@ -3,12 +3,13 @@ package edu.uade.cookingrecipes.mapper;
 import edu.uade.cookingrecipes.entity.Rating;
 import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
 import edu.uade.cookingrecipes.dto.response.RatingResponseDto;
+import edu.uade.cookingrecipes.model.UserModel;
 
 import java.time.LocalDateTime;
 
 public class RatingMapper {
 
-    public static RatingResponseDto toDto(Rating rating){
+    public static RatingResponseDto toDto(Rating rating, UserModel user){
         if (rating == null) return null;
 
         return new RatingResponseDto(
@@ -17,6 +18,8 @@ public class RatingMapper {
                 rating.getComment(),
                 rating.getApproved(),
                 rating.getRatedAt(),
+                user.getAvatar(),
+                user.getUsername(),
                 rating.getRecipe().getId(),
                 false,
                 rating.getUser() != null ? rating.getUser().getId() : null

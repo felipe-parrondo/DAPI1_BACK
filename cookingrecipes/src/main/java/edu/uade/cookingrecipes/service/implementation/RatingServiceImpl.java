@@ -49,7 +49,7 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.save(rating);
         recipeRepository.save(recipe);
 
-        return RatingMapper.toDto(rating);
+        return RatingMapper.toDto(rating, user);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class RatingServiceImpl implements RatingService {
         rating.setRatingValue(ratingRequestDto.getRatingValue());
         rating.setComment(ratingRequestDto.getComment());
 
-        return RatingMapper.toDto(ratingRepository.save(rating));
+        return RatingMapper.toDto(ratingRepository.save(rating), userService.getUser());
     }
 
     @Override
@@ -90,23 +90,16 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public List<RatingResponseDto> getRatingsByStatus(Integer status) {
-        Boolean statusFilter;
-        switch (status) {
-            case 0 -> statusFilter = false;
-            case 1 -> statusFilter = true;
-            case 2 -> statusFilter = null;
-            default -> {throw new NoSuchElementException("invalid status");}
-        }
-        return ratingRepository.findByApproved(statusFilter).stream()
-                .map(RatingMapper::toDto)
+    public List<RatingResponseDto> getRatingsByStatus(Boolean status) {
+        return ratingRepository.findByApproved(status).stream()
+                .map(r -> RatingMapper.toDto(r, userService.getUser()))
                 .toList();
     }
 
     @Override
     public List<RatingResponseDto> getRatings() {
         return ratingRepository.findAll().stream()
-                .map(RatingMapper::toDto)
+                .map(r -> RatingMapper.toDto(r, userService.getUser()))
                 .toList();
     }
 
@@ -115,8 +108,9 @@ public class RatingServiceImpl implements RatingService {
         List<Rating> ratings = ratingRepository.findByRecipeId(recipeId);
         UserModel actualUser = userService.getUser();
         return ratings.stream()
+                .filter(r -> (!Objects.nonNull(r.getApproved()) && r.getApproved().equals(true)) || r.getUser().getId().equals(actualUser.getId()))
                 .map(rating -> {
-                    RatingResponseDto dto = RatingMapper.toDto(rating);
+                    RatingResponseDto dto = RatingMapper.toDto(rating, actualUser);
                     dto.setMyRating(rating.getUser().getId().equals(actualUser.getId()));
                     return dto;
                 })

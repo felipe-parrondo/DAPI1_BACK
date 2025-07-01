@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
@@ -25,7 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @Api (value = "Recipe Operations")
@@ -41,7 +44,6 @@ public class RecipeController {
     private IngredientService ingredientService;
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
-
 
     @GetMapping("/") //Obtener todas las recetas del usuario que esta logueado
     public ResponseEntity<List<RecipeResponseDto>> getAllRecipes() {
@@ -84,6 +86,7 @@ public class RecipeController {
 
     @PostMapping("/rating") //Valorar receta
     public ResponseEntity<RatingResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
+        logger.info(ratingRequestDto.toString());
         RatingResponseDto rating = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
         if (rating != null) {
             return new ResponseEntity<>(rating, HttpStatus.OK);
@@ -163,10 +166,17 @@ public class RecipeController {
     }
 
     @GetMapping("/rating")
-    public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam Integer approved) { //0: desaprobado, 1: aprobado, 2: pendientes
-        if (Objects.nonNull(approved))
-            return ResponseEntity.ok(ratingService.getRatingsByStatus(approved));
-        return ResponseEntity.ok(ratingService.getRatings());
+    public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam Boolean isApproved) {
+        logger.info(Objects.nonNull(isApproved) ? isApproved.toString().toUpperCase(Locale.ROOT) + " RATINGS" : "PENDING RATINGS");
+        List<RatingResponseDto> returnList;
+        if (Objects.nonNull(isApproved)) {
+            returnList = ratingService.getRatingsByStatus(isApproved);
+            logger.info(returnList.toString());
+            return ResponseEntity.ok(returnList);
+        }
+        returnList = ratingService.getRatings();
+        logger.info(returnList.toString());
+        return ResponseEntity.ok(returnList);
     }
 
     @GetMapping("/ingredients/{recipeId}") //Obtener ingredientes de una receta
@@ -187,7 +197,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/ingredient") //Obtener todas los ingredientes
+    @GetMapping("/ingredients") //Obtener todas los ingredientes
     public ResponseEntity<List<String>> getAllIngredients() {
         List<String> ingredients = ingredientService.getAllIngredients();
         if (ingredients != null) {
