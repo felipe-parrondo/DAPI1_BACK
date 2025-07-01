@@ -177,7 +177,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/ingredients") //Obtener todas los ingredientes
+    @GetMapping("/ingredient") //Obtener todas los ingredientes
     public ResponseEntity<List<String>> getAllIngredients() {
         List<String> ingredients = ingredientService.getAllIngredients();
         if (ingredients != null) {

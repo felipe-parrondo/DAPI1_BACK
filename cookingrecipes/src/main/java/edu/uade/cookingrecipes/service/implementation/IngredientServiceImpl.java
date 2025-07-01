@@ -1,6 +1,5 @@
 package edu.uade.cookingrecipes.service.implementation;
 
-import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.entity.Ingredient;
 import edu.uade.cookingrecipes.repository.IngredientRepository;
 import edu.uade.cookingrecipes.service.IngredientService;
@@ -24,9 +23,10 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public List<String> getAllIngredients() {
-        List<Ingredient> ingredients = ingredientRepository.findAll();
-        return ingredients.stream()
+        return ingredientRepository.findAll()
+                .stream()
                 .map(Ingredient::getName)
                 .toList();
     }
+
 }

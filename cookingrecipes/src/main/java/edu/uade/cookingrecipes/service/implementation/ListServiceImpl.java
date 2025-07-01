@@ -103,11 +103,22 @@ public class ListServiceImpl implements ListService {
         }
         return false;
     }
-    @Override
+    @Override //Obtener solo las listas aprovadas
     public ListResponseDto getListById(Long listId) {
-        return recipeListRepository.findById(listId)
-                .map(ListMapper::toDto)
-                .orElse(null);
+        RecipeList recipeListWithAllRecipes = recipeListRepository.findById(listId).orElse(null);
+        RecipeList recipeListWithApprovedRecipes = new RecipeList();
+
+        assert recipeListWithAllRecipes != null;
+        for (Recipe recipe : recipeListWithAllRecipes.getRecipes()) {
+            if (recipe.getApproved()) {
+                recipeListWithApprovedRecipes.getRecipes().add(recipe);
+            }
+        }
+
+        recipeListWithApprovedRecipes.setId(recipeListWithAllRecipes.getId());
+        recipeListWithApprovedRecipes.setName(recipeListWithAllRecipes.getName());
+        recipeListWithApprovedRecipes.setUser(recipeListWithAllRecipes.getUser());
+        return ListMapper.toDto(recipeListWithApprovedRecipes);
     }
 
     @Override
