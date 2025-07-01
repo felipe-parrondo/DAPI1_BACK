@@ -3,6 +3,7 @@ package edu.uade.cookingrecipes.mapper;
 import edu.uade.cookingrecipes.entity.Course;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
+import edu.uade.cookingrecipes.entity.Site;
 import edu.uade.cookingrecipes.mapper.embeddable.PracticeMapper;
 import edu.uade.cookingrecipes.mapper.embeddable.ScheduleMapper;
 import edu.uade.cookingrecipes.service.SiteService;
@@ -25,7 +26,7 @@ public class CourseMapper {
                 course.getDuration(),
                 course.getMaxParticipants(),
                 course.getClassroom().getClassNumber(),
-                course.getClassroom().getSite().getId(),
+                course.getSite().getId(),
                 course.getClassroom().getSite().getAddress(),
                 course.getPrice(),
                 course.getDiscount(),
@@ -41,7 +42,7 @@ public class CourseMapper {
         );
     }
 
-    public static Course toEntity(CourseRequestDto courseDto) {
+    public static Course toEntity(CourseRequestDto courseDto, Site site) {
         if (courseDto == null) {
             return null;
         }
@@ -63,6 +64,8 @@ public class CourseMapper {
         course.setPracticesList(PracticeMapper.toEntity(courseDto.getPractices()));
         course.setTools(courseDto.getTools());
         course.setMediaUrl(courseDto.getMediaUrl());
+        course.setSite(site);
+        course.setSupplies(courseDto.getSupplies());
 
         return course;
     }

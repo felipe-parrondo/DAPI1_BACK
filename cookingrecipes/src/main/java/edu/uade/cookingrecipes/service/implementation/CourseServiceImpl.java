@@ -49,17 +49,20 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
-        Course course = CourseMapper.toEntity(courseDto);
+        Site site = siteRepository.findById(courseDto.getSiteId())
+                .orElseThrow(() -> new IllegalArgumentException("Sitio no encontrado."));
+        Course course = CourseMapper.toEntity(courseDto, site);
         course.setActive(true);
         List<Course> existingCourses = courseRepository.findAll();
 
         courseValidator.validate(course, existingCourses);
+        course.setClassroom(classroomRepository.findBySiteId(courseDto.getSiteId()));
 
         course = courseRepository.save(course);
         return CourseMapper.toDto(course, "");
     }
 
-    @Override
+    @Override // quiero imprimir todos los cursos que se traen
     public List<CourseResponseDto> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
