@@ -20,7 +20,7 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping("/") //Obtener todos los cursos
+    @GetMapping("/") //Obtener todos los cursos que no finalizaron
     public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
         List<CourseResponseDto> courses = courseService.getAllCourses();
         return new ResponseEntity<>(courses, HttpStatus.OK);
