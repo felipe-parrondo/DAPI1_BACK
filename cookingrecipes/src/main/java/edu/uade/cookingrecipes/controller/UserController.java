@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.dto.response.UserResponseDto;
 import edu.uade.cookingrecipes.service.UserService;
 import io.swagger.annotations.Api;
@@ -24,7 +25,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/") // Get all users
-    public ResponseEntity<List<UserResponseDto>> getAllUsers (@RequestParam Boolean isStudent) {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers (@RequestParam @JsonProperty("isStudent") Boolean isStudent) {
         if (Objects.nonNull(isStudent)) {
             return ResponseEntity.ok(userService.getAllUsers(isStudent));
         }
