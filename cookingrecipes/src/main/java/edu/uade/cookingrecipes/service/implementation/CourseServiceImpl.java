@@ -9,6 +9,7 @@ import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.*;
 import edu.uade.cookingrecipes.service.CourseService;
+import edu.uade.cookingrecipes.service.UserService;
 import edu.uade.cookingrecipes.service.validations.CourseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,6 +43,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public CourseResponseDto createCourse(CourseRequestDto courseDto) {
@@ -86,7 +90,7 @@ public class CourseServiceImpl implements CourseService {
     private String getUserAttendanceForCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
-        UserModel user = getUser();
+        UserModel user = userService.getUser();
         String attendance = calculateAttendance(courseId, user.getId());
         if (attendance == null) {
             throw new IllegalArgumentException("No se pudo calcular la asistencia.");
@@ -166,7 +170,7 @@ public class CourseServiceImpl implements CourseService {
         if (course.getStudents().size() >= course.getMaxParticipants()) {
             throw new IllegalArgumentException("El curso ha alcanzado el número máximo de participantes.");
         }
-        UserModel user = getUser();
+        UserModel user = userService.getUser();
 
         AccountMovement movement = new AccountMovement();
         movement.setDateTime(java.time.LocalDateTime.now());
@@ -256,7 +260,7 @@ public class CourseServiceImpl implements CourseService {
         if (course == null || !course.isActive()) {
             throw new IllegalArgumentException("Curso no encontrado o inactivo.");
         }
-        UserModel user = getUser();
+        UserModel user = userService.getUser();
         AccountMovement movement = new AccountMovement();
         movement.setDateTime(java.time.LocalDateTime.now());
         double refundAmount = calculateRefundAmount(course);
@@ -293,18 +297,6 @@ public class CourseServiceImpl implements CourseService {
         } else {
             return 0.0; // No reintegro si ya comenzó el curso
         }
-    }
-
-    private UserModel getUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = authenticationRepository.findByEmail(email)
-                .map(AuthenticationModel::getUser)
-                .orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
-        return user;
     }
 
     @Override

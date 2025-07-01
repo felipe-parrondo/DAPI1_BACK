@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AccountMovementRepository extends JpaRepository<AccountMovement, Long>{
+public interface AccountMovementRepository extends JpaRepository<AccountMovement, Long> {
     List<AccountMovement> findByUserId(Long userId);
 }
