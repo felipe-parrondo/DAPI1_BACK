@@ -177,6 +177,26 @@ public class RecipeController {
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 
+    @GetMapping("/MyRatings") //Obtener todas las valoraciones del usuario logueado
+    public ResponseEntity<List<RatingResponseDto>> getMyRatings() {
+        logger.info("REQUESTING RATINGS FOR USER");
+        List<RatingResponseDto> myRatings = ratingService.getRatingsByUser();
+        if (myRatings != null) {
+            return new ResponseEntity<>(myRatings, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/myRecipes") //Obtener recetas del usuario logueado
+    public ResponseEntity<List<RecipeResponseDto>> getMyRecipes() {
+        logger.info("REQUESTING RECIPES FOR USER");
+        List<RecipeResponseDto> myRecipes = recipeService.getRecipesByUser();
+        if (myRecipes != null) {
+            return new ResponseEntity<>(myRecipes, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("/rating")
     public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam(required = false) @JsonProperty("isApproved") Boolean isApproved) {
         logger.info(Objects.nonNull(isApproved) ? isApproved.toString().toUpperCase(Locale.ROOT) + " RATINGS" : "PENDING RATINGS");

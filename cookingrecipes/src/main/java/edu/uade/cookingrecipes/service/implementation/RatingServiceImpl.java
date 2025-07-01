@@ -141,6 +141,16 @@ public class RatingServiceImpl implements RatingService {
         return RatingMapper.toDto(rating,user);
     }
 
+    @Override
+    public List<RatingResponseDto> getRatingsByUser() {
+        UserModel user = getUser();
+        List<Rating> ratings = ratingRepository.findByUser_Id(user.getId());
+
+        return ratings.stream()
+                .map(r -> RatingMapper.toDto(r, user))
+                .toList();
+    }
+
     private UserModel getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
