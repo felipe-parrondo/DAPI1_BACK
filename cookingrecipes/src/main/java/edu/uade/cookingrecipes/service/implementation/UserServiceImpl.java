@@ -57,7 +57,8 @@ public class UserServiceImpl implements UserService {
                             u.getId(),
                             u.getPaymentInformationModel().getUrlFrontDNI(),
                             u.getPaymentInformationModel().getUrlBackDNI(),
-                            u.getPaymentInformationModel().getCardNumber()
+                            u.getPaymentInformationModel().getCardNumber(),
+                            u.getIsStudent()
                     );
                 })
                 .toList();

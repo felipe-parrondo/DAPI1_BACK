@@ -15,6 +15,8 @@ public record GetStudentUserResponseDto (
         @JsonProperty("backDni")
         String backDni,
         @JsonProperty("cardNumber")
-        String cardNumber
+        String cardNumber,
+        @JsonProperty("isStudent")
+        Boolean isStudent
 
 ) implements Serializable {}

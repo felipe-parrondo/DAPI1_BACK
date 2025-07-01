@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.mapper;
 
+import edu.uade.cookingrecipes.dto.auth.PaymentInformationDto;
 import edu.uade.cookingrecipes.dto.response.UserResponseDto;
 import edu.uade.cookingrecipes.dto.auth.RegisterRequestDto;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
@@ -59,7 +60,19 @@ public class UserMapper {
         userResponseDto.setAddress(user.getAddress());
         userResponseDto.setStudent(user.getIsStudent());
         if (user.getPaymentInformationModel() != null) {
-            userResponseDto.setPaymentInformation(user.getPaymentInformationModel().toString());
+            PaymentInformationModel pim = user.getPaymentInformationModel();
+            userResponseDto.setPaymentInformation(
+                    new PaymentInformationDto(
+                            pim.getOwnerName(),
+                            pim.getIsCredit(),
+                            pim.getCardNumber(),
+                            pim.getCvv(),
+                            pim.getExpirationDate(),
+                            pim.getIdNumber(),
+                            pim.getUrlBackDNI(),
+                            pim.getUrlFrontDNI()
+                    )
+            );
         } else {
             userResponseDto.setPaymentInformation(null);
         }

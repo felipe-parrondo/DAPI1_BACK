@@ -1,5 +1,7 @@
 package edu.uade.cookingrecipes.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.uade.cookingrecipes.dto.auth.PaymentInformationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +15,10 @@ public class UserResponseDto {
     private String username;
     private String email;
     private String address;
+    @JsonProperty("isStudent")
     private boolean isStudent;
-    private String paymentInformation; //TODO devolver el objeto
+    @JsonProperty("paymentInformation")
+    private PaymentInformationDto paymentInformation;
+    @JsonProperty("accountBalance")
     private Double accountBalance;
-    //TODO agregar toda la clase excepto password
 }
