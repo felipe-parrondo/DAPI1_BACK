@@ -25,11 +25,13 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/") // Get all users
-    public ResponseEntity<List<UserResponseDto>> getAllUsers (@RequestParam @JsonProperty("isStudent") Boolean isStudent) {
-        if (Objects.nonNull(isStudent)) {
-            return ResponseEntity.ok(userService.getAllUsers(isStudent));
-        }
+    public ResponseEntity<List<UserResponseDto>> getAllUsers () {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/students/{isStudent}") // Get all users
+    public ResponseEntity<List<UserResponseDto>> getAllUsersByStudent (@PathVariable @JsonProperty("isStudent") Boolean isStudent) {
+            return ResponseEntity.ok(userService.getAllUsers(isStudent));
     }
 
     @GetMapping("/{userId}") // Get user by ID
