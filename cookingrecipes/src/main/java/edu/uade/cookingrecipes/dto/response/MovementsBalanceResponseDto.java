@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class MovementsBalanceResponseDto {
     private Double balance;
-    private List<AccountMovement> movements;
+    private List<AccountMovementResponseDto> movements;
 }

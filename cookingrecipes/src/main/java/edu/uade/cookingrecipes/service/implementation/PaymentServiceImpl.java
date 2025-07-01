@@ -2,6 +2,7 @@ package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.dto.response.MovementsBalanceResponseDto;
 import edu.uade.cookingrecipes.entity.embeddable.AccountMovement;
+import edu.uade.cookingrecipes.mapper.AccountMovementMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
@@ -35,7 +36,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         return new MovementsBalanceResponseDto(
                 user.getAccountBalance(),
-                movements
+                movements.stream()
+                        .map(AccountMovementMapper::toDto)
+                        .toList()
         );
     }
 }
