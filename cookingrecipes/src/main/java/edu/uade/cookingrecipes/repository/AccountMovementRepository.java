@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.repository;
 
-import edu.uade.cookingrecipes.entity.AccountMovement;
+import edu.uade.cookingrecipes.entity.embeddable.AccountMovement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

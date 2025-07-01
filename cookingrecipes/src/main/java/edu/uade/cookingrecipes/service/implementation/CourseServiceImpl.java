@@ -3,6 +3,7 @@ package edu.uade.cookingrecipes.service.implementation;
 import edu.uade.cookingrecipes.entity.*;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
+import edu.uade.cookingrecipes.entity.embeddable.AccountMovement;
 import edu.uade.cookingrecipes.mapper.CourseMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,6 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
-import edu.uade.cookingrecipes.dto.response.BalanceMovementsResponseDto;
+import edu.uade.cookingrecipes.dto.response.MovementsBalanceResponseDto;
 import edu.uade.cookingrecipes.service.PaymentService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,8 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping("/movements") // Ver movimientos del usuario logeado
-    public ResponseEntity<BalanceMovementsResponseDto> getBalanceMovements() {
-        BalanceMovementsResponseDto balanceMovements = paymentService.getBalanceMovements();
+    public ResponseEntity<MovementsBalanceResponseDto> getBalanceMovements() {
+        MovementsBalanceResponseDto balanceMovements = paymentService.getBalanceMovements();
         if (balanceMovements != null) {
             return new ResponseEntity<>(balanceMovements, HttpStatus.OK);
         } else {
@@ -30,7 +30,7 @@ public class PaymentController {
 
     @GetMapping("/balance") // Ver balance del usuario logeado
     public ResponseEntity<Double> getBalance() {
-        BalanceMovementsResponseDto balanceMovements = paymentService.getBalanceMovements();
+        MovementsBalanceResponseDto balanceMovements = paymentService.getBalanceMovements();
         if (balanceMovements != null) {
             return new ResponseEntity<>(balanceMovements.getBalance(), HttpStatus.OK);
         } else {
