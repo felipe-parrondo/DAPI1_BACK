@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.dto.response.embeddable.PracticeResponseDto;
 import edu.uade.cookingrecipes.dto.response.embeddable.ScheduleResponseDto;
@@ -17,8 +18,10 @@ public class CourseResponseDto {
     private Long id;
     private String name;
     @JsonProperty("startDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @JsonProperty("endDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
     private String description;
     private String schedule;
