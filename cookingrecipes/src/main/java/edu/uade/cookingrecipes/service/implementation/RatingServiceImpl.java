@@ -131,6 +131,16 @@ public class RatingServiceImpl implements RatingService {
         });
     }
 
+    @Override
+    public RatingResponseDto getRatingById(Long ratingId) {
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new NoSuchElementException("Rating not found with ID: " + ratingId));
+
+        UserModel user = rating.getUser();
+
+        return RatingMapper.toDto(rating,user);
+    }
+
     private UserModel getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
