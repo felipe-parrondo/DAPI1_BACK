@@ -25,6 +25,7 @@ public class CourseMapper {
                 course.getDuration(),
                 course.getMaxParticipants(),
                 course.getClassroom().getClassNumber(),
+                course.getClassroom().getSite().getId(),
                 course.getClassroom().getSite().getAddress(),
                 course.getPrice(),
                 course.getDiscount(),
