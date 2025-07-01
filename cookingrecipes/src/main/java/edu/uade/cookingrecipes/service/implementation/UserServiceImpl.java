@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.service.implementation;
 
 import edu.uade.cookingrecipes.config.JwtService;
+import edu.uade.cookingrecipes.dto.response.GetStudentUserResponseDto;
 import edu.uade.cookingrecipes.dto.response.UserResponseDto;
 import edu.uade.cookingrecipes.mapper.UserMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
@@ -44,11 +45,22 @@ public class UserServiceImpl implements UserService {
     private AuthenticationService authenticationService;
 
     @Override
-    public List<UserResponseDto> getAllUsers(Boolean isStudent) {
+    public List<GetStudentUserResponseDto> getAllUsers(Boolean isStudent) {
         List<UserModel> users = userRepository.findByIsStudent(isStudent).orElse(new ArrayList<>());
         return users.stream()
-                .map(user -> UserMapper.toDto(user, getAuthenticationByUser(user.getUsername()).getEmail()))
-                .collect(Collectors.toList());
+                .map(u -> {
+                    String email = authenticationRepository.findByUsername(u.getUsername()).get().getEmail();
+                    return new GetStudentUserResponseDto(
+                            u.getUsername(),
+                            email,
+                            u.getAvatar(),
+                            u.getId(),
+                            u.getPaymentInformationModel().getUrlFrontDNI(),
+                            u.getPaymentInformationModel().getUrlBackDNI(),
+                            u.getPaymentInformationModel().getCardNumber()
+                    );
+                })
+                .toList();
     }
 
     @Override
