@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import edu.uade.cookingrecipes.dto.request.UpdateRatingRequestDto;
 import edu.uade.cookingrecipes.entity.Rating;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.request.RatingRequestDto;
@@ -53,14 +54,15 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public RatingResponseDto updateRating(Long ratingId, RatingRequestDto ratingRequestDto) {
-        Rating rating = ratingRepository.findById(ratingId).orElse(null);
-        if (rating == null) return null;
+    public boolean updateRating(UpdateRatingRequestDto updateRatingRequestDto) {
+        Rating rating = ratingRepository.findById(updateRatingRequestDto.getId()).orElse(null);
+        if (rating == null) return false;
 
-        rating.setRatingValue(ratingRequestDto.getRatingValue());
-        rating.setComment(ratingRequestDto.getComment());
+        rating.setRatingValue(updateRatingRequestDto.getRatingValue());
+        rating.setComment(updateRatingRequestDto.getComment());
 
-        return RatingMapper.toDto(ratingRepository.save(rating), userService.getUser());
+        ratingRepository.save(rating);
+        return true;
     }
 
     @Override
@@ -152,5 +154,27 @@ public class RatingServiceImpl implements RatingService {
             r.setApproved(false);
             ratingRepository.save(r);
         });
+    }
+
+    @Override
+    public List<RatingResponseDto> getRatingsByUser() {
+        UserModel user = getUser();
+        List<Rating> ratings = ratingRepository.findByUser_Id(user.getId());
+
+        return ratings.stream()
+                .map(r -> RatingMapper.toDto(r, user))
+                .toList();
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }

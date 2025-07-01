@@ -396,11 +396,33 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public List<RecipeResponseDto> getRecipesByUser() {
+        UserModel user = getUser();
+        List<Recipe> recipes = recipeRepository.findByUser_Id(user.getId());
+
+        return recipes.stream()
+                .map(RecipeMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void rejectRecipesByUserId(Long userId) {
         List<Recipe> recipeList = recipeRepository.findByUser_Id(userId);
         recipeList.forEach(r -> {
             r.setApproved(false);
             recipeRepository.save(r);
         });
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }

@@ -1,6 +1,7 @@
 package edu.uade.cookingrecipes.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.uade.cookingrecipes.dto.request.UpdateRatingRequestDto;
 import edu.uade.cookingrecipes.entity.Recipe;
 import edu.uade.cookingrecipes.dto.response.IngredientResponseDto;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
@@ -156,12 +157,11 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/rating/{ratingId}/update") //Actualizar valoracion de receta
-    public ResponseEntity<RatingResponseDto> updateRating(@PathVariable Long ratingId,
-                                                          @RequestBody RatingRequestDto ratingRequestDto) {
-        RatingResponseDto updatedRating = ratingService.updateRating(ratingId, ratingRequestDto);
-        if (updatedRating != null) {
-            return new ResponseEntity<>(updatedRating, HttpStatus.OK);
+    @PutMapping("/update") //Actualizar valoracion de receta
+    public ResponseEntity<Void> updateRating(@RequestBody UpdateRatingRequestDto updateRatingRequestDto) {
+        boolean updatedRating = ratingService.updateRating(updateRatingRequestDto);
+        if (updatedRating) {
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -178,6 +178,26 @@ public class RecipeController {
         logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeIdPublic(recipeId);
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
+    }
+
+    @GetMapping("/MyRatings") //Obtener todas las valoraciones del usuario logueado
+    public ResponseEntity<List<RatingResponseDto>> getMyRatings() {
+        logger.info("REQUESTING RATINGS FOR USER");
+        List<RatingResponseDto> myRatings = ratingService.getRatingsByUser();
+        if (myRatings != null) {
+            return new ResponseEntity<>(myRatings, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/myRecipes") //Obtener recetas del usuario logueado
+    public ResponseEntity<List<RecipeResponseDto>> getMyRecipes() {
+        logger.info("REQUESTING RECIPES FOR USER");
+        List<RecipeResponseDto> myRecipes = recipeService.getRecipesByUser();
+        if (myRecipes != null) {
+            return new ResponseEntity<>(myRecipes, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/rating")
