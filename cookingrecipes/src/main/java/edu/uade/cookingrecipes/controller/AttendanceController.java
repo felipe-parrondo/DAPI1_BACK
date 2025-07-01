@@ -20,10 +20,10 @@ public class AttendanceController {
     private AttendanceService attendanceService;
 
     @PostMapping("/") // Registrar asistencia de la sede/curso
-    public ResponseEntity<AttendanceResponseDto> registerAttendance(@RequestBody AttendanceRequestDto attendanceRequestDto) {
+    public ResponseEntity<Void> registerAttendance(@RequestBody AttendanceRequestDto attendanceRequestDto) {
         AttendanceResponseDto attendance = attendanceService.registerAttendance(attendanceRequestDto);
         if (attendance != null) {
-            return new ResponseEntity<>(attendance, HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

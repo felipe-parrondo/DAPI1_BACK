@@ -74,9 +74,10 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public boolean approveRating(Long ratingId, Boolean isApproved) {
-        Rating rating = ratingRepository.findById(ratingId).orElse(null);
-        Long recipeId = ratingRepository.findRecipeIdById(ratingId);
-        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new NoSuchElementException("rating not found"));
+        Recipe recipe = recipeRepository.findById(rating.getRecipe().getId())
+                .orElseThrow(() -> new NoSuchElementException("recipe not found"));
         if (recipe == null || rating == null) return false;
         recipe.setRatingsCount(recipe.getRatingsCount() + 1);
         double totalRating = recipe.getAverageRating() * (recipe.getRatingsCount() - 1);
@@ -98,7 +99,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public List<RatingResponseDto> getRatings() {
-        return ratingRepository.findAll().stream()
+        return ratingRepository.findByApprovedIsNull().stream()
                 .map(r -> RatingMapper.toDto(r, userService.getUser()))
                 .toList();
     }

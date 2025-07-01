@@ -18,7 +18,8 @@ public class RecipeMapper {
                 recipe.getDishType(),
                 recipe.getPhotos(),
                 recipe.getIngredients(),
-                recipe.getSteps()
+                recipe.getSteps(),
+                recipe.getUser().getId()
         );
     }
 

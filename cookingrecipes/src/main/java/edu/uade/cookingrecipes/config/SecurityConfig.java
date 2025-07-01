@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,7 +37,7 @@ public class SecurityConfig {
                         .authorizeHttpRequests(req -> req
                                 .requestMatchers("/auth/**", "/h2-console/**", "/recipes/recent", "/multimedia/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/recipes/rating/{recipeId}", "/recipes/{recipeId}").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/recipes/rating/{recipeId}", "/recipes/{recipeId}", "/recipes/filter").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/recipes/rating/{recipeId}", "/recipes/{recipeId}", "/recipes/filter", "/recipes/rating/recipe/{recipeId}").permitAll()
                                 .requestMatchers("/recipes/rating/{recipeId}").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/recipes/{recipeId}/full-ingredients").permitAll()//TODO sacar cuando este hecho receta
                                 .requestMatchers("/**").authenticated())

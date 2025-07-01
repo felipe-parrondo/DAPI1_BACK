@@ -33,11 +33,10 @@ public class ApplicationConfig {
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(),
                     user.getPassword(),
-                    List.of(new SimpleGrantedAuthority(roleName)) // O ajustá según cómo tengas el rol
+                    List.of(new SimpleGrantedAuthority(roleName))
             );
         };
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

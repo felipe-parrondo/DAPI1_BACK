@@ -298,15 +298,25 @@ public class RecipeServiceImpl implements RecipeService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserModel user = authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
-                .orElse(null);
-        if (user == null) throw new NoSuchElementException("User not found: " + email);
+                .orElseThrow(() -> new NoSuchElementException("User not found: " + email));
 
-        boolean exists = recipeRepository.existsByNameAndUser(recipeName, user);
-        if (exists) {
-            throw new IllegalArgumentException("Recipe with name '" + recipeName
-                    + "' already exists for user: " + user.getName());
+        List<Recipe> userRecipes = recipeRepository.findByUser_Id(user.getId()).stream()
+                .filter(r -> stripQuotes(recipeName).equals(r.getName()))
+                .toList();
+
+        if (!userRecipes.isEmpty()) {
+            return userRecipes.get(0).getId();
         }
-        return user.getId();
+
+        return null;
+    }
+
+    private String stripQuotes(String input) {
+        if (input != null && input.length() >= 2 &&
+                input.startsWith("\"") && input.endsWith("\"")) {
+            return input.substring(1, input.length() - 1);
+        }
+        return input;
     }
 
     @Override
@@ -383,21 +393,6 @@ public class RecipeServiceImpl implements RecipeService {
         return Arrays.stream(DishTypes.values())
                 .map(DishTypes::getNombreAmigable)
                 .toList();
-    }
-
-
-    @Override
-    public List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
-        if (recipe == null || recipe.getIngredients() == null) return null;
-
-        return recipe.getIngredients().stream().map(ingredient -> {
-            IngredientResponseDto dto = new IngredientResponseDto();
-            dto.setName(ingredient.getName());
-            dto.setQuantity(ingredient.getQuantity());
-            dto.setUnidad(ingredient.getUnidad());
-            return dto;
-        }).collect(Collectors.toList());
     }
 
     @Override

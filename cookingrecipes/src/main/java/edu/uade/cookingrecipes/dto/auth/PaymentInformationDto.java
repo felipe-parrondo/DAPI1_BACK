@@ -22,6 +22,11 @@ public record PaymentInformationDto (
         String expirationDate,
 
         @JsonProperty("numTramiteDNI")
-        String idNumber
+        String idNumber,
 
+        @JsonProperty("urlBackDNI")
+        String urlBackDNI,
+
+        @JsonProperty("urlFrontDNI")
+        String urlFrontDNI
 ) implements Serializable {}

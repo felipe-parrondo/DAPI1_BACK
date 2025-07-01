@@ -77,15 +77,17 @@ public class RecipeController {
 
     @PostMapping("/validate") //Validar receta
     public ResponseEntity<Long> validateRecipe(@RequestBody String recipeName) {
-        Long userId = recipeService.validateRecipe(recipeName);
-        if (userId != null) {
-            return new ResponseEntity<>(userId, HttpStatus.OK);
+        Long recipeId = recipeService.validateRecipe(recipeName);
+        if (recipeId != null) {
+            logger.info("ON VALIDATING RECIPE NAME: RECIPE NAME IN USE WITH ID: " + recipeId);
+            return new ResponseEntity<>(recipeId, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        logger.info("ON VALIDATING RECIPE NAME: RECIPE AVAILABLE");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/rating") //Valorar receta
-    public ResponseEntity<RatingResponseDto> ratingRecipe( @RequestBody RatingRequestDto ratingRequestDto) {
+    public ResponseEntity<RatingResponseDto> ratingRecipe(@RequestBody RatingRequestDto ratingRequestDto) {
         logger.info(ratingRequestDto.toString());
         RatingResponseDto rating = ratingService.ratingRecipe(ratingRequestDto.getRecipeId(), ratingRequestDto);
         if (rating != null) {
@@ -146,7 +148,7 @@ public class RecipeController {
         if (recipe != null) {
             return new ResponseEntity<>(recipe, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/rating/{ratingId}/update") //Actualizar valoracion de receta
@@ -161,12 +163,13 @@ public class RecipeController {
 
     @GetMapping("/rating/recipe/{recipeId}") //Obtener todas las valoraciones de una receta
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeId(@PathVariable Long recipeId) {
+        logger.info("REQUESTING RATINGS FOR RECIPE WITH ID " + recipeId.toString());
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeId(recipeId);
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
     }
 
     @GetMapping("/rating")
-    public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam Boolean isApproved) {
+    public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam(required = false) @JsonProperty("isApproved") Boolean isApproved) {
         logger.info(Objects.nonNull(isApproved) ? isApproved.toString().toUpperCase(Locale.ROOT) + " RATINGS" : "PENDING RATINGS");
         List<RatingResponseDto> returnList;
         if (Objects.nonNull(isApproved)) {
@@ -211,15 +214,6 @@ public class RecipeController {
         List<String> dishTypes = recipeService.getAllDishTypes();
         if (dishTypes != null) {
             return new ResponseEntity<>(dishTypes, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping("/{recipeId}/full-ingredients") // Obtener los ingredientes de una receta
-    public ResponseEntity<List<IngredientResponseDto>> getFullRecipeIngredients(@PathVariable Long recipeId) {
-        List<IngredientResponseDto> ingredients = recipeService.getFullIngredientsByRecipeId(recipeId);
-        if (ingredients != null) {
-            return new ResponseEntity<>(ingredients, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

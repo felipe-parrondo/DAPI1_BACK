@@ -21,6 +21,5 @@ public interface RecipeService {
     List<String> getRecipeIngredients(Long recipeId);
     List<String> getRecipeDishTypes(Long recipeId);
     List<String> getAllDishTypes();
-    List<IngredientResponseDto> getFullIngredientsByRecipeId(Long recipeId);
     void rejectRecipesByUserId(Long userId);
 }

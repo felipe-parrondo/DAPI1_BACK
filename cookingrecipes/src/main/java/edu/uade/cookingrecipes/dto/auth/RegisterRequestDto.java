@@ -7,22 +7,23 @@ import java.io.Serializable;
 
 public record RegisterRequestDto (
 
-    String password,
+        String password,
 
-    String name,
+        String name,
 
-    String username,
+        String username,
 
-    String email,
+        String email,
 
-    String address,
+        String address,
+        String avatar,
 
-    @JsonProperty("isStudent")
-    Boolean isStudent,
+        @JsonProperty("isStudent")
+        Boolean isStudent,
 
-    RoleEnum role,
+        RoleEnum role,
 
-    @JsonProperty("paymentInformation")
-    PaymentInformationDto paymentInformation
+        @JsonProperty("paymentInformation")
+        PaymentInformationDto paymentInformation
 
 ) implements Serializable {}

@@ -46,4 +46,9 @@ public class PaymentInformationModel {
 
     @Column(name = "id_number", nullable = false)
     private String idNumber;
+    @Column(name = "urlBackDNI", nullable = false)
+    private String urlBackDNI;
+
+    @Column(name = "urlFrontDNI", nullable = false)
+    private String urlFrontDNI;
 }

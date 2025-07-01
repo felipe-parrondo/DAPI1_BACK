@@ -70,6 +70,7 @@ public class CourseServiceImpl implements CourseService {
                 .findBySiteId(siteId)
                 .orElse(new ArrayList<>())
                 .stream()
+                .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
                 .map(course -> CourseMapper.toDto(course, ""))
                 .collect(Collectors.toList());
     }
@@ -304,5 +305,28 @@ public class CourseServiceImpl implements CourseService {
             throw new IllegalArgumentException("User not found: " + email);
         }
         return user;
+    }
+
+    @Override
+    public List<CourseResponseDto> getMyCourses(Boolean current) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        LocalDate today = LocalDate.now();
+
+        return courseRepository.findAll()
+                .stream()
+                .filter(course -> course.getStudents() != null && course.getStudents().contains(user.getId()))
+                .filter(course -> {
+                    if (Boolean.TRUE.equals(current)) {
+                        return course.getEndDate() == null || course.getEndDate().isAfter(today);
+                    } else {
+                        return course.getEndDate() != null && (course.getEndDate().isBefore(today) || course.getEndDate().isEqual(today));
+                    }
+                })
+                .map(course -> CourseMapper.toDto(course, ""))
+                .toList();
     }
 }
