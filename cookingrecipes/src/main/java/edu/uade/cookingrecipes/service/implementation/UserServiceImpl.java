@@ -11,6 +11,7 @@ import edu.uade.cookingrecipes.service.RatingService;
 import edu.uade.cookingrecipes.service.RecipeService;
 import edu.uade.cookingrecipes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RecipeService recipeService;
 
-    /*@Autowired
-    private RatingService ratingService;*/
+    @Autowired
+    @Lazy
+    private RatingService ratingService;
 
     @Autowired
     private UserRepository userRepository;
@@ -89,6 +91,6 @@ public class UserServiceImpl implements UserService {
         UserModel userModel = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
         authenticationService.deleteAuthenticationByUserModel(userModel);
         recipeService.rejectRecipesByUserId(userModel.getId());
-        //ratingService.rejectRatingsByUserId(userModel.getId());
+        ratingService.rejectRatingsByUserId(userModel.getId());
     }
 }

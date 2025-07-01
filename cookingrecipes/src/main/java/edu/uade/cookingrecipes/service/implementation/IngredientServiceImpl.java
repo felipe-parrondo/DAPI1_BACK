@@ -23,12 +23,10 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public List<IngredientEmbeddable> getAllIngredients() {
+    public List<String> getAllIngredients() {
         List<Ingredient> ingredients = ingredientRepository.findAll();
         return ingredients.stream()
-                .map(ingredient -> IngredientEmbeddable.builder()
-                        .name(ingredient.getName())
-                        .build())
+                .map(Ingredient::getName)
                 .toList();
     }
 }

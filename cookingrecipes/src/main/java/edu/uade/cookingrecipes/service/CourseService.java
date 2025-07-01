@@ -12,5 +12,6 @@ public interface CourseService {
     CourseResponseDto getCourseById(Long courseId);
     boolean deleteCourse(Long courseId);
     boolean enrollUserInCourse(Long courseId);
+    boolean enrollUserInCourseByAdmin(Long courseId, Long userId);
     boolean unrollUserFromCourse(Long courseId, boolean AccountBalanceRefund);
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ListService {
     List<ListResponseDto> getAllLists();
-    ListResponseDto createList(ListRequestDto requestDto);
+    boolean createList(ListRequestDto requestDto);
     ListResponseDto addRecipeToList(Long listId, Long recipeId);
     ListResponseDto removeRecipeFromList(Long listId, Long recipeId);
     boolean deleteList(Long listId);

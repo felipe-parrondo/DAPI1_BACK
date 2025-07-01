@@ -6,7 +6,6 @@ import edu.uade.cookingrecipes.entity.AttendanceRecord;
 import edu.uade.cookingrecipes.entity.Classroom;
 import edu.uade.cookingrecipes.entity.Course;
 import edu.uade.cookingrecipes.entity.Site;
-import edu.uade.cookingrecipes.entity.embeddable.Attendance;
 import edu.uade.cookingrecipes.entity.embeddable.Schedule;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
@@ -91,8 +90,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendanceResponse;
     }
 
-    @Override
-    public List<AttendanceResponseDto> getAttendanceForACourse(Long courseId) { // Obtiene la asistencia del usuario logeado en un curso
+    @Override // Obtiene la asistencia del usuario logeado en un curso
+    public List<AttendanceResponseDto> getAttendanceForACourse(Long courseId) {
         UserModel user = getUser();
         List<AttendanceRecord> records = attendanceRecordRepository.findByCourseIdAndUserId(courseId, user.getId());
 
@@ -158,7 +157,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .orElseGet(() -> {
                     Classroom newClass = Classroom.builder()
                             .id(classroomId)
-                            .classNumber("Aula-" + classroomId)
+                            .classNumber(classroomId.intValue())
                             .site(site)
                             .build();
 

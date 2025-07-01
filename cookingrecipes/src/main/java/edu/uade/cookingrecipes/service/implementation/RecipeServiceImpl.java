@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.service.implementation;
 
+import edu.uade.cookingrecipes.entity.RecipeList;
 import edu.uade.cookingrecipes.entity.embeddable.IngredientEmbeddable;
 import edu.uade.cookingrecipes.entity.embeddable.Media;
 import edu.uade.cookingrecipes.entity.embeddable.Step;
@@ -13,6 +14,7 @@ import edu.uade.cookingrecipes.mapper.RecipeMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
+import edu.uade.cookingrecipes.repository.ListRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.ImageService;
@@ -41,15 +43,23 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
+    @Autowired
     private final RecipeRepository recipeRepository;
 
+    @Autowired
     private final IngredientService ingredientService;
 
+    @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
     private final AuthenticationRepository authenticationRepository;
 
+    @Autowired
     private final ImageService imageService;
+
+    @Autowired
+    private ListRepository listRepository;
 
 
     private final String MEDIA_RESOURCE_IDENTIFIER = "recipes";
@@ -309,11 +319,23 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
     public boolean deleteRecipe(Long recipeId) {
-        if (!recipeRepository.existsById(recipeId)) {
+        Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+        if (recipeOptional.isEmpty()) {
             return false;
         }
-        recipeRepository.deleteById(recipeId);
+
+        Recipe recipe = recipeOptional.get();
+
+
+        List<RecipeList> listas = listRepository.findByRecipesContaining(recipe);
+        for (RecipeList lista : listas) {
+            lista.getRecipes().remove(recipe);
+            listRepository.save(lista);
+        }
+
+        recipeRepository.delete(recipe);
         return true;
     }
 

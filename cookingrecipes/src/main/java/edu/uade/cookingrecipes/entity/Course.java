@@ -66,8 +66,10 @@ public class Course {
     @Column(name = "objectives", length = 1000, nullable = false)
     private String objectives;
 
-    @Column(name = "subjects", length = 1000, nullable = false)
-    private String subjects;
+    @ElementCollection
+    @CollectionTable(name = "course_subjects", joinColumns = @JoinColumn(name = "course_id"))
+    @Column(name = "subjects")
+    private List<String> subjects;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", nullable = false)
@@ -78,8 +80,15 @@ public class Course {
     @Column(name = "practices")
     private List<Practice> practicesList;
 
-    @Column(name = "tools", length = 1000, nullable = false)
-    private String tools;
+    @ElementCollection
+    @CollectionTable(name = "course_supplies", joinColumns = @JoinColumn(name = "course_id"))
+    @Column(name = "tools")
+    private List<String> tools;
+
+    @ElementCollection
+    @CollectionTable(name = "course_supplies", joinColumns = @JoinColumn(name = "course_id"))
+    @Column(name = "supplies")
+    private List<String> supplies;
 
     @ElementCollection
     @CollectionTable(name = "course_media", joinColumns = @JoinColumn(name = "course_id"))

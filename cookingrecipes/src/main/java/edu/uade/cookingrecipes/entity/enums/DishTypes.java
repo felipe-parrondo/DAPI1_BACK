@@ -47,18 +47,11 @@ public enum DishTypes {
     MOUSSE("Mousse"),
     BUDIN("Budín"),
     TORTA("Torta"),
-    GALLETA("Galleta"),
-    BIZCOCHUELO("Bizcochuelo"),
-    MILANESA("Milanesa"),
-    ROLL("Roll"),
-    BROCHETA("Brocheta");
-
+    GALLETA("Galleta"),BIZCOCHUELO("Bizcochuelo"),MILANESA("Milanesa"),ROLL("Roll"),BROCHETA("Brocheta");
     private final String nombreAmigable;
-
     DishTypes(String nombreAmigable) {
         this.nombreAmigable = nombreAmigable;
     }
-
     public String getNombreAmigable() {
         return nombreAmigable;
     }
