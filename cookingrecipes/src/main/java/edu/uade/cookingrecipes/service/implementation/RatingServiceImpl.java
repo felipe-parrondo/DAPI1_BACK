@@ -73,6 +73,14 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public RatingResponseDto getRatingById(Long ratingId) {
+        return ratingRepository.findById(ratingId).stream()
+                .map(r -> RatingMapper.toDto(r, r.getUser()))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("invalid rating id"));
+    }
+
+    @Override
     public boolean approveRating(Long ratingId, Boolean isApproved) {
         Rating rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new NoSuchElementException("rating not found"));
@@ -105,10 +113,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Override // Traer todos los comentarios de una receta, y si la receta la subiste vos, traer tus comentarios esten aprovados o no
     public List<RatingResponseDto> getRatingsByRecipeId(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
-        if (recipe == null) return List.of();
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new NoSuchElementException("recipe not found"));
 
-        UserModel user = getUser();
+        UserModel user = userService.getUser();
 
         List<Rating> ratings;
         if (user.getId().equals(recipe.getUser().getId())) {
@@ -119,6 +126,22 @@ public class RatingServiceImpl implements RatingService {
 
         return ratings.stream()
                 .map(r -> RatingMapper.toDto(r, user))
+                .peek(r -> {
+                    if (r.getUserId().equals(user.getId())) {
+                        r.setIsMyRating(true);
+                    } else {
+                        r.setIsMyRating(false);
+                    }
+                })
+                .toList();
+    }
+
+    @Override
+    public List<RatingResponseDto> getRatingsByRecipeIdPublic(Long recipeId) {
+        List<Rating> ratingList = ratingRepository.findByRecipeId(recipeId);
+        return ratingList.stream()
+                .map(r -> RatingMapper.toDto(r, r.getUser()))
+                .peek(r -> r.setIsMyRating(null))
                 .toList();
     }
 
@@ -129,17 +152,5 @@ public class RatingServiceImpl implements RatingService {
             r.setApproved(false);
             ratingRepository.save(r);
         });
-    }
-
-    private UserModel getUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = authenticationRepository.findByEmail(email)
-                .map(AuthenticationModel::getUser)
-                .orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
-        return user;
     }
 }

@@ -10,9 +10,11 @@ public interface RatingService {
     RatingResponseDto ratingRecipe(Long recipeId, RatingRequestDto ratingRequestDto);
     RatingResponseDto updateRating(Long ratingId, RatingRequestDto ratingRequestDto);
     boolean deleteRating(Long ratingId);
+    RatingResponseDto getRatingById(Long ratingId);
     boolean approveRating(Long ratingId, Boolean isApproved);
     List<RatingResponseDto> getRatingsByStatus(Boolean status);
     List<RatingResponseDto> getRatings();
     List<RatingResponseDto> getRatingsByRecipeId(Long recipeId);
+    List<RatingResponseDto> getRatingsByRecipeIdPublic(Long recipeId);
     void rejectRatingsByUserId(Long userId);
 }
