@@ -88,11 +88,13 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new NoSuchElementException("rating not found"));
         Recipe recipe = recipeRepository.findById(rating.getRecipe().getId())
                 .orElseThrow(() -> new NoSuchElementException("recipe not found"));
-        if (recipe == null || rating == null) return false;
-        recipe.setRatingsCount(recipe.getRatingsCount() + 1);
-        double totalRating = recipe.getAverageRating() * (recipe.getRatingsCount() - 1);
-        totalRating += rating.getRatingValue();
-        recipe.setAverageRating(totalRating / recipe.getRatingsCount());
+
+        if (isApproved) {
+            recipe.setRatingsCount(recipe.getRatingsCount() + 1);
+            double totalRating = recipe.getAverageRating() * (recipe.getRatingsCount() - 1);
+            totalRating += rating.getRatingValue();
+            recipe.setAverageRating(totalRating / recipe.getRatingsCount());
+        }
         recipeRepository.save(recipe);
         rating.setApproved(isApproved);
         ratingRepository.save(rating);
