@@ -57,13 +57,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponseDto> getAllCourses() {
-        List<Course> courses = courseRepository.findAll()
+        return courseRepository.findAll()
                 .stream()
                 .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
-                .toList();
-        return courses.stream()
                 .map(course -> CourseMapper.toDto(course, ""))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

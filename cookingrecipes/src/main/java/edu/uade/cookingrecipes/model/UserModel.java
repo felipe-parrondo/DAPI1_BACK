@@ -40,6 +40,9 @@ public class UserModel {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "avatar", nullable = false)
+    private String avatar;
+
     @Column(name = "is_student", nullable = false)
     private Boolean isStudent;
 

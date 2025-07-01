@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Api (value = "Recipe Operations")
 @RestController
@@ -153,10 +154,17 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/rating/{recipeId}") //Obtener todas las valoraciones de una receta
+    @GetMapping("/rating/recipe/{recipeId}") //Obtener todas las valoraciones de una receta
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeId(@PathVariable Long recipeId) {
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeId(recipeId);
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);
+    }
+
+    @GetMapping("/rating")
+    public ResponseEntity<List<RatingResponseDto>> getRatingsByStatus(@RequestParam Integer approved) { //0: desaprobado, 1: aprobado, 2: pendientes
+        if (Objects.nonNull(approved))
+            return ResponseEntity.ok(ratingService.getRatingsByStatus(approved));
+        return ResponseEntity.ok(ratingService.getRatings());
     }
 
     @GetMapping("/ingredients/{recipeId}") //Obtener ingredientes de una receta
