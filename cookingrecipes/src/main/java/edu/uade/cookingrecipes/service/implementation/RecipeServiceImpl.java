@@ -15,6 +15,7 @@ import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.UserModel;
 import edu.uade.cookingrecipes.repository.AuthenticationRepository;
 import edu.uade.cookingrecipes.repository.ListRepository;
+import edu.uade.cookingrecipes.repository.RatingRepository;
 import edu.uade.cookingrecipes.repository.RecipeRepository;
 import edu.uade.cookingrecipes.repository.UserRepository;
 import edu.uade.cookingrecipes.service.ImageService;
@@ -60,6 +61,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Autowired
     private ListRepository listRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
 
     private final String MEDIA_RESOURCE_IDENTIFIER = "recipes";
@@ -354,7 +358,8 @@ public class RecipeServiceImpl implements RecipeService {
             lista.getRecipes().remove(recipe);
             listRepository.save(lista);
         }
-
+        ratingRepository.findByRecipeId(recipeId)
+                        .forEach(r -> ratingRepository.delete(r));
         recipeRepository.delete(recipe);
         return true;
     }

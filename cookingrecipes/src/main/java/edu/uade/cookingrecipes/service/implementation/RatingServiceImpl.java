@@ -145,8 +145,12 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public List<RatingResponseDto> getRatingsByUser() {
         UserModel user = userService.getUser();
-        return ratingRepository.findByUser_Id(user.getId()).stream()
+        List<RatingResponseDto> ratingResponseDtos =  ratingRepository.findByUser_Id(user.getId()).stream()
                 .map(r -> RatingMapper.toDto(r, user))
                 .toList();
+
+        ratingResponseDtos.forEach(r -> System.out.println(r.getUserId()));
+
+        return ratingResponseDtos;
     }
 }
