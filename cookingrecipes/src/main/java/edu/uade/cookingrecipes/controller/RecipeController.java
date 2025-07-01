@@ -154,7 +154,7 @@ public class RecipeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/rating/{recipeId}") //Obtener todas las valoraciones de una receta
+    @GetMapping("/rating/recipe/{recipeId}") //Obtener todas las valoraciones de una receta
     public ResponseEntity<List<RatingResponseDto>> getRatingsByRecipeId(@PathVariable Long recipeId) {
         List<RatingResponseDto> recipeRatings = ratingService.getRatingsByRecipeId(recipeId);
         return new ResponseEntity<>(recipeRatings, HttpStatus.OK);

@@ -60,9 +60,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseResponseDto> getAllCourses() {
+    public List<CourseResponseDto> getAllCourses() { //devuelve todos los activos
         List<Course> courses = courseRepository.findAll();
         return courses.stream()
+                .filter(c -> !(c.getEndDate().isAfter(LocalDate.now())))
                 .map(CourseMapper::toDto)
                 .collect(Collectors.toList());
     }

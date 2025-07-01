@@ -14,6 +14,7 @@ import java.util.List;
 public class RecipeResponseDto {
     private Long id;
     private String username;
+    private String avatar;
     private String name;
     private String description;
     private Integer servings;
