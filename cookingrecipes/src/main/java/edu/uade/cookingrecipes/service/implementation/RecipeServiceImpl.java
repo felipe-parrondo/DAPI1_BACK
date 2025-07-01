@@ -311,9 +311,9 @@ public class RecipeServiceImpl implements RecipeService {
         return true;
     }
 
-    @Override
+    @Override // Verificar que las recetas esten aprobadas
     public List<RecipeResponseDto> getRecentRecipes() {
-        return recipeRepository.findTop3ByOrderByIdDesc().stream()
+        return recipeRepository.findTop3ByApprovedTrueOrderByIdDesc().stream()
                 .map(RecipeMapper::toDto)
                 .collect(Collectors.toList());
     }

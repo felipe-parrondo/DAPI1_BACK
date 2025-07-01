@@ -160,13 +160,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void createTestUser() {
+        PaymentInformationModel paymentInfo = new PaymentInformationModel();
+        paymentInfo.setOwnerName("Carlos Perez");
+        paymentInfo.setIsCredit(true);
+        paymentInfo.setCardNumber("4111111111111111");
+        paymentInfo.setCvv("123");
+        paymentInfo.setExpirationDate("12/26");
+        paymentInfo.setIdNumber("12345678");
+
+        paymentInfo = paymentInformationRepository.save(paymentInfo);
+
         UserModel userModel = new UserModel();
         userModel.setName("Carlos Perez");
         userModel.setUsername("testero");
-        userModel.setAddress("t@hotmail.com");
+        userModel.setAddress("Calle Falsa 123");
+        userModel.setAvatar("media_recipe_temp_1751156847879.png");
         userModel.setIsStudent(false);
-        userModel.setPaymentInformationModel(null);
-        userModel.setAddress("calle false 123");
+        userModel.setPaymentInformationModel(paymentInfo);
+        userModel.setAccountBalance(0.0);
 
         userModel = userRepository.save(userModel);
 

@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -85,6 +87,27 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.save(rating);
 
         return true;
+    }
+
+    @Override
+    public List<RatingResponseDto> getRatingsByStatus(Integer status) {
+        Boolean statusFilter;
+        switch (status) {
+            case 0 -> statusFilter = false;
+            case 1 -> statusFilter = true;
+            case 2 -> statusFilter = null;
+            default -> {throw new NoSuchElementException("invalid status");}
+        }
+        return ratingRepository.findByApproved(statusFilter).stream()
+                .map(RatingMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<RatingResponseDto> getRatings() {
+        return ratingRepository.findAll().stream()
+                .map(RatingMapper::toDto)
+                .toList();
     }
 
     @Override
