@@ -146,7 +146,7 @@ public class RecipeController {
 
     @PutMapping("/rating/{ratingId}/update") //Actualizar valoracion de receta
     public ResponseEntity<RatingResponseDto> updateRating(@PathVariable Long ratingId,
-                                                                @RequestBody RatingRequestDto ratingRequestDto) {
+                                                          @RequestBody RatingRequestDto ratingRequestDto) {
         RatingResponseDto updatedRating = ratingService.updateRating(ratingId, ratingRequestDto);
         if (updatedRating != null) {
             return new ResponseEntity<>(updatedRating, HttpStatus.OK);
