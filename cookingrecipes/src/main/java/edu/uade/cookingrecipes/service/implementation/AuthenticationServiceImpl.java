@@ -12,6 +12,7 @@ import edu.uade.cookingrecipes.dto.auth.ValidateRegisterRequestDto;
 import edu.uade.cookingrecipes.exceptions.EmailAlreadyInUseException;
 import edu.uade.cookingrecipes.exceptions.EmailNotActivatedException;
 import edu.uade.cookingrecipes.exceptions.UsernameAlreadyInUseException;
+import edu.uade.cookingrecipes.mapper.PaymentInformationMapper;
 import edu.uade.cookingrecipes.mapper.UserMapper;
 import edu.uade.cookingrecipes.model.AuthenticationModel;
 import edu.uade.cookingrecipes.model.CodeModel;
@@ -73,7 +74,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
     }
 
-    public AuthenticationResponseDto register(RegisterRequestDto registerRequest, MultipartFile avatar, MultipartFile dniFront, MultipartFile dniBack) {
+    public AuthenticationResponseDto register(RegisterRequestDto registerRequest, MultipartFile avatar,
+                                              MultipartFile dniFront, MultipartFile dniBack) {
         PaymentInformationModel paymentInformationModel = null;
 
         if (registerRequest.isStudent()) {
@@ -90,7 +92,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userModel = userRepository.save(userModel);
         authenticationModel.setUser(userModel);
         authenticationModel.setPassword(passwordEncoder.encode(authenticationModel.getPassword()));
-        authenticationModel = authenticationRepository.save(authenticationModel);
+        authenticationRepository.save(authenticationModel);
 
         tempAuthRepository.delete(tempAuthRepository.findByEmail(registerRequest.email()).get());
 
@@ -108,6 +110,52 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 e.printStackTrace();
             }
         }
+        return this.authenticate(new AuthenticationRequestDto(registerRequest.email(), registerRequest.password()));
+    }
+
+    @Override
+    public AuthenticationResponseDto updateUser(RegisterRequestDto registerRequest, MultipartFile avatar,
+                                                MultipartFile dniFront, MultipartFile dniBack) {
+
+        UserModel user = getUser();
+        PaymentInformationModel paymentInformationModel;
+
+        user.setName(registerRequest.name());
+        user.setAddress(registerRequest.address());
+        user.setAvatar(avatar.getOriginalFilename());
+
+        try {
+            imageService.saveFile(avatar, user.getId().toString(), "users");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (registerRequest.isStudent()) {
+            if (user.getIsStudent()) {
+                user.setIsStudent(true);
+            }
+
+            user.setPaymentInformationModel(PaymentInformationMapper.toEntity(registerRequest.paymentInformation()));
+
+            paymentInformationModel = UserMapper.registerRequestDtoToPaymentInformationModel(registerRequest);
+            paymentInformationModel.setUrlFrontDNI(dniFront.getOriginalFilename());
+            paymentInformationModel.setUrlBackDNI(dniBack.getOriginalFilename());
+            paymentInformationRepository.save(paymentInformationModel);
+
+            try {
+                imageService.saveFile(dniBack, user.getId().toString(), "users");
+                imageService.saveFile(dniFront, user.getId().toString(), "users");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            user.setPaymentInformationModel(paymentInformationModel);
+        } else {
+            user.setIsStudent(false);
+            user.setPaymentInformationModel(null);
+        }
+
+        userRepository.save(user);
         return this.authenticate(new AuthenticationRequestDto(registerRequest.email(), registerRequest.password()));
     }
 
@@ -222,5 +270,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new NoSuchElementException("invalid user id"));
         authModel.setPassword(passwordEncoder.encode("DESACTIVADO"));
         authenticationRepository.save(authModel);
+    }
+
+    private UserModel getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = authenticationRepository.findByEmail(email)
+                .map(AuthenticationModel::getUser)
+                .orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found: " + email);
+        }
+        return user;
     }
 }

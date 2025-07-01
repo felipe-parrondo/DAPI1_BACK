@@ -16,8 +16,19 @@ public interface AuthenticationService {
 
     AuthenticationResponseDto authenticate(AuthenticationRequestDto authRequest);
 
-    AuthenticationResponseDto register(RegisterRequestDto registerRequest, MultipartFile avatar, MultipartFile dniFront, MultipartFile dniBack);
+    AuthenticationResponseDto register(
+            RegisterRequestDto registerRequest,
+            MultipartFile avatar,
+            MultipartFile dniFront,
+            MultipartFile dniBack
+    );
 
+    AuthenticationResponseDto updateUser(
+            RegisterRequestDto registerRequest,
+            MultipartFile avatar,
+            MultipartFile dniFront,
+            MultipartFile dniBack
+    );
     UserSuggestionResponseDto validateRegister(ValidateRegisterRequestDto validateRegisterRequest);
 
     void createCode(CreateCodeRequestDto createCodeRequest);

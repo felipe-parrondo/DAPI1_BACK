@@ -78,6 +78,31 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping(path = "/updateUser", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AuthenticationResponseDto> updateUser(
+            @RequestPart(value = "user") String userJson,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar,
+            @RequestPart(value = "front", required = false) MultipartFile front,
+            @RequestPart(value = "back", required = false) MultipartFile back
+    ) {
+        try {
+            logger.info(avatar.toString());
+            logger.info(front.toString());
+            logger.info(back.toString());
+            logger.info(userJson);
+            ObjectMapper objectMapper = new ObjectMapper();
+            RegisterRequestDto registerRequest = objectMapper.readValue(userJson, RegisterRequestDto.class);
+
+            AuthenticationResponseDto response = authenticationService.updateUser(registerRequest, avatar, front, back);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.info(e.toString());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PostMapping(path = "/validate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> validateRegister (@Valid @RequestBody
                                                   @NotNull(message = "{authentication-controller.register-service.validate-code-request-not-null}")
