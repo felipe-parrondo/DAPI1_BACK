@@ -21,4 +21,9 @@ public class UserResponseDto {
     private PaymentInformationDto paymentInformation;
     @JsonProperty("accountBalance")
     private Double accountBalance;
+    private String avatar;
+    @JsonProperty("frontDni")
+    private String frontDni;
+    @JsonProperty("backDni")
+    private String backDni;
 }

@@ -77,6 +77,9 @@ public class UserMapper {
             userResponseDto.setPaymentInformation(null);
         }
         userResponseDto.setAccountBalance(user.getAccountBalance());
+        userResponseDto.setAvatar(user.getAvatar());
+        userResponseDto.setFrontDni(user.getPaymentInformationModel().getUrlFrontDNI());
+        userResponseDto.setBackDni(user.getPaymentInformationModel().getUrlBackDNI());
 
         return userResponseDto;
     }
