@@ -9,14 +9,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttendanceRequestDto {
+
     @JsonProperty("courseId")
     private Long courseId;
+
     @JsonProperty("presentSite")
     private boolean presentSite;
+
     @JsonProperty("presentClassroom")
     private boolean presentClassroom;
+
     @JsonProperty("siteId")
     private Long siteId;
+
     @JsonProperty("classroomId")
     private Long classroomId;
 }

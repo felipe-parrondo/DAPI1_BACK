@@ -8,13 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponseDto {
+public class CourseResponseDto implements Serializable {
     private Long id;
     private String name;
     @JsonProperty("startDate")
@@ -46,7 +47,7 @@ public class CourseResponseDto {
     private List<String> supplies;
     @JsonProperty("mediaUrl")
     private List<String> mediaUrl;
-    @JsonProperty("attendancePercentage")
-    private String attendancePercentage;
+    @JsonProperty("assistance")
+    private String assistance;
 }
 

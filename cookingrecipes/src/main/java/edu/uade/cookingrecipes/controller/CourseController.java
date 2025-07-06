@@ -1,11 +1,11 @@
 package edu.uade.cookingrecipes.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
-import edu.uade.cookingrecipes.dto.response.UserCourseResponseDto;
 import edu.uade.cookingrecipes.service.CourseService;
 import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,17 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
+
     @GetMapping("/") //Obtener todos los cursos que no finalizaron
     public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
         List<CourseResponseDto> courses = courseService.getAllCourses();
+        return new ResponseEntity<>(courses, HttpStatus.OK);
+    }
+
+    @GetMapping("/public") //Obtener todos los cursos que no finalizaron
+    public ResponseEntity<List<CourseResponseDto>> getAllCoursesPublic() {
+        List<CourseResponseDto> courses = courseService.getAllCoursesPublic();
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
@@ -90,8 +98,8 @@ public class CourseController {
 
     @GetMapping("my-courses/{current}")
     public ResponseEntity<List<CourseResponseDto>>  getMyCourses(@PathVariable Boolean current) {
-
         List<CourseResponseDto> courses = courseService.getMyCourses(current);
+        logger.info("RETURNING MY COURSES: " + courses.toString());
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 }

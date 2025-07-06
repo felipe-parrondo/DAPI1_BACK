@@ -4,6 +4,8 @@ import edu.uade.cookingrecipes.dto.request.AttendanceRequestDto;
 import edu.uade.cookingrecipes.dto.response.AttendanceResponseDto;
 import edu.uade.cookingrecipes.service.AttendanceService;
 import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,11 @@ public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
 
+    private static final Logger logger = LoggerFactory.getLogger(AttendanceController.class);
+
     @PostMapping("/") // Registrar asistencia de la sede/curso
     public ResponseEntity<Void> registerAttendance(@RequestBody AttendanceRequestDto attendanceRequestDto) {
+        logger.info("REGISTERING ASSISTANCE WITH REQUEST: " + attendanceRequestDto.toString());
         AttendanceResponseDto attendance = attendanceService.registerAttendance(attendanceRequestDto);
         if (attendance != null) {
             return new ResponseEntity<>(HttpStatus.CREATED);

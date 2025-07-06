@@ -13,6 +13,7 @@ import edu.uade.cookingrecipes.repository.*;
 import edu.uade.cookingrecipes.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -51,18 +53,20 @@ public class AttendanceServiceImpl implements AttendanceService {
         List<LocalDate> classDates = getCourseDates(course);
 
         if (!classDates.contains(LocalDate.now())) {
-            throw new IllegalArgumentException("No hay clases hoy para el curso: " + course.getName());
+            return null;
         }
 
         if (attendanceDto.isPresentClassroom()) {
             if (schedule.getStartTime().isAfter(LocalTime.now()) || schedule.getEndTime().isBefore(LocalTime.now())) {
-                throw new IllegalArgumentException("Fuera del horario de clase para el curso: " + course.getName());
+                return null;
             }
             findOrCreateClassroomFromQr(attendanceDto);
         }
 
         AttendanceRecord record = attendanceRecordRepository
-                .findByCourseIdAndUserIdAndDate(attendanceDto.getCourseId(), user.getId(), LocalDate.now())
+                .findAll().stream()
+                .filter(r -> r.getDate().equals(LocalDate.now()) && r.getCourseId().equals(attendanceDto.getCourseId()) && r.getUserId().equals(user.getId()))
+                .findFirst()
                 .orElseGet(() -> AttendanceRecord.builder()
                         .courseId(attendanceDto.getCourseId())
                         .userId(user.getId())
@@ -70,11 +74,13 @@ public class AttendanceServiceImpl implements AttendanceService {
                         .presentSite(false)
                         .presentClassroom(false)
                         .counted(false)
-                        .build());
+                        .build()
+                );
 
         if (attendanceDto.isPresentSite()) {
             record.setPresentSite(true);
         }
+
         if (attendanceDto.isPresentClassroom()) {
             record.setPresentClassroom(true);
         }
@@ -117,14 +123,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     private UserModel getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = authenticationRepository.findByEmail(email)
+        return authenticationRepository.findByEmail(email)
                 .map(AuthenticationModel::getUser)
-                .orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User not found: " + email);
-        }
-        return user;
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
 
     private List<LocalDate> getCourseDates(Course course) {
@@ -149,8 +150,14 @@ public class AttendanceServiceImpl implements AttendanceService {
         Long siteId = attendance.getSiteId();
         Long courseId = attendance.getCourseId();
 
-        Site site = siteRepository.findById(siteId)
-                .orElseThrow(() -> new RuntimeException("Sede no encontrada con ID: " + siteId));
+        Site site;
+
+        if (siteId != null) {
+            site = siteRepository.findById(siteId)
+                    .orElseGet(() -> siteRepository.findById(1L).get());
+        } else {
+            site = siteRepository.findById(1L).get();
+        }
 
         Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseGet(() -> {
@@ -164,7 +171,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 });
 
         Course course = courseRepository.findById(courseId).orElseThrow(
-                () -> new RuntimeException("Curso no encontrado con ID: " + courseId));
+                () -> new NoSuchElementException("Curso no encontrado con ID: " + courseId));
 
         if (course.getClassroom() == null) {
             course.setClassroom(classroom);

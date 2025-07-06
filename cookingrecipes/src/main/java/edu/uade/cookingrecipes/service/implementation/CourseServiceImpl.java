@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,8 +63,19 @@ public class CourseServiceImpl implements CourseService {
         return CourseMapper.toDto(course, "");
     }
 
-    @Override // quiero imprimir todos los cursos que se traen
+    @Override
     public List<CourseResponseDto> getAllCourses() {
+        UserModel user = this.userService.getUser();
+        return courseRepository.findAll()
+                .stream()
+                .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
+                .filter(course -> !course.getStudents().contains(user.getId()))
+                .map(course -> CourseMapper.toDto(course, ""))
+                .toList();
+    }
+
+    @Override
+    public List<CourseResponseDto> getAllCoursesPublic() {
         return courseRepository.findAll()
                 .stream()
                 .filter(course -> course.getEndDate().isAfter(LocalDate.now()))
@@ -86,13 +98,11 @@ public class CourseServiceImpl implements CourseService {
     public CourseResponseDto getCourseById(Long courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
-        String attendance = getUserAttendanceForCourse(courseId);
-        return CourseMapper.toDto(course, attendance);
+        return CourseMapper.toDto(course, getUserAttendanceForCourse(courseId));
     }
 
     private String getUserAttendanceForCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null) throw new IllegalArgumentException("Curso no encontrado.");
+        courseRepository.findById(courseId).orElseThrow(() -> new NoSuchElementException("Curso no encontrado."));
         UserModel user = userService.getUser();
         String attendance = calculateAttendance(courseId, user.getId());
         if (attendance == null) {
@@ -321,7 +331,7 @@ public class CourseServiceImpl implements CourseService {
                         return course.getEndDate() != null && (course.getEndDate().isBefore(today) || course.getEndDate().isEqual(today));
                     }
                 })
-                .map(course -> CourseMapper.toDto(course, ""))
+                .map(course -> CourseMapper.toDto(course, getUserAttendanceForCourse(course.getId())))
                 .toList();
     }
 }

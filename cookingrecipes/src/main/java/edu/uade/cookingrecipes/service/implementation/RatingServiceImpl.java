@@ -131,6 +131,7 @@ public class RatingServiceImpl implements RatingService {
         List<Rating> ratingList = ratingRepository.findByRecipeId(recipeId);
         return ratingList.stream()
                 .map(r -> RatingMapper.toDto(r, r.getUser()))
+                .filter(r -> Boolean.TRUE.equals(r.getApproved()))
                 .peek(r -> r.setIsMyRating(null))
                 .toList();
     }

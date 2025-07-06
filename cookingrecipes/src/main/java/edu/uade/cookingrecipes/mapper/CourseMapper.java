@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CourseMapper {
 
-    public static CourseResponseDto toDto(Course course, String coursePercentage) {
+    public static CourseResponseDto toDto(Course course, String assistance) {
         if (course == null) {
             return null;
         }
@@ -38,7 +38,7 @@ public class CourseMapper {
                 course.getTools(),
                 course.getSupplies(),
                 course.getMediaUrl(),
-                coursePercentage
+                assistance
         );
     }
 
