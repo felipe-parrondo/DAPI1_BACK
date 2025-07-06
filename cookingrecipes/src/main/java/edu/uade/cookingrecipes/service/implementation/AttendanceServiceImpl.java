@@ -95,11 +95,10 @@ public class AttendanceServiceImpl implements AttendanceService {
         UserModel user = getUser();
         List<AttendanceRecord> records = attendanceRecordRepository.findByCourseIdAndUserId(courseId, user.getId());
 
-        if (records.isEmpty()) {
-            throw new IllegalArgumentException("No attendance records found for course ID: " + courseId);
-        }
-
-        return getAttendanceResponseDtos(records);
+        if (records.isEmpty())
+            return new ArrayList<>();
+        else
+            return getAttendanceResponseDtos(records);
     }
 
     private static List<AttendanceResponseDto> getAttendanceResponseDtos(List<AttendanceRecord> records) {

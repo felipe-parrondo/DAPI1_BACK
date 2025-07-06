@@ -88,6 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserModel userModel = UserMapper.registerRequestDtoToUserModel(registerRequest);
         userModel.setAvatar(avatar.getOriginalFilename());
         AuthenticationModel authenticationModel = UserMapper.registerRequestDtoToAuthenticationModel(registerRequest);
+        userModel.setAccountBalance(0D);
         userModel.setPaymentInformationModel(paymentInformationModel);
         userModel = userRepository.save(userModel);
         authenticationModel.setUser(userModel);

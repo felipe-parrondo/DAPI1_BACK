@@ -1,5 +1,6 @@
 package edu.uade.cookingrecipes.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.uade.cookingrecipes.dto.request.CourseRequestDto;
 import edu.uade.cookingrecipes.dto.response.CourseResponseDto;
 import edu.uade.cookingrecipes.dto.response.UserCourseResponseDto;
@@ -77,10 +78,10 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/{courseId}/unroll") //Desinscribir al usuario actual a un curso
+    @DeleteMapping("/{courseId}/unroll/{account}") //Desinscribir al usuario actual a un curso
     public ResponseEntity<Void> unrollUserFromCourse(@PathVariable Long courseId,
-                                                     @RequestBody boolean AccountBalanceRefund) {
-        boolean isUnrolled = courseService.unrollUserFromCourse(courseId, AccountBalanceRefund);
+                                                     @PathVariable boolean account) {
+        boolean isUnrolled = courseService.unrollUserFromCourse(courseId, account);
         if (isUnrolled) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
